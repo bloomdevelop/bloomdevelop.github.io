@@ -1,49 +1,56 @@
 ---
-interface Links {
-    url?: string;
-    title: string;
-    clipboard?: string;
-}
-
 interface Props {
     links: Links[];
 }
 
 const { links } = Astro.props;
-
-let copiedStates: { [key: number]: boolean } = {};
 ---
 
 <script>
-    function handleCopy(index: number, clipboard: string) {
-        navigator.clipboard.writeText(clipboard);
-        copiedStates[index] = true;
+    const copiedStates = {};
 
-        setTimeout(() => {
-            copiedStates[index] = false;
-        }, 2000);
-    }
+    document.addEventListener("DOMContentLoaded", () => {
+        document
+            .querySelectorAll("a[data-clipboard]")
+            .forEach((element, index) => {
+                element.addEventListener("click", (e) => {
+                    if (
+                        element instanceof HTMLElement &&
+                        element.dataset.clipboard
+                    ) {
+                        e.preventDefault();
+                        navigator.clipboard.writeText(
+                            element.dataset.clipboard,
+                        );
+
+                        const span = element.querySelector("span");
+                        if (span) {
+                            const originalText = span.textContent;
+                            span.textContent = "Copied!";
+                            span.classList.add("text-green-700");
+
+                            setTimeout(() => {
+                                span.textContent = originalText;
+                                span.classList.remove("text-green-700");
+                            }, 2000);
+                        }
+                    }
+                });
+            });
+    });
 </script>
 
 <div class="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4">
     {
         links.map((link, index) => (
             <a
-                class="text-center font-semibold text-2xl select-none bg-white border-2 transition-all  rounded-lg p-4 shadow-[0_0_0_2px_rgba(0,0,0,1)] hover:shadow-[0_0_0_4px_rgba(0,0,0,1)] hover:border-blue-500 hover:shadow-blue-500 active:shadow-[0_0_0_2px_rgba(0,0,0,1)]"
+                class="text-center font-semibold text-2xl select-none bg-white border-2 transition-all rounded-lg p-4 shadow-[0_0_0_2px_rgba(0,0,0,1)] hover:shadow-[0_0_0_4px_rgba(0,0,0,1)] hover:border-blue-500 hover:shadow-blue-500 active:shadow-[0_0_0_2px_rgba(0,0,0,1)]"
                 href={link.url || null}
                 target="_blank"
                 rel="noopener noreferrer"
-                onclick="handleCopy(index, link.clipboard)"
+                data-clipboard={link.clipboard}
             >
-                {link.clipboard ? (
-                    copiedStates[index] ? (
-                        <span class="text-green-700">Copied!</span>
-                    ) : (
-                        <span>{link.title}</span>
-                    )
-                ) : (
-                    <span>{link.title}</span>
-                )}
+                <span>{link.title}</span>
             </a>
         ))
     }
