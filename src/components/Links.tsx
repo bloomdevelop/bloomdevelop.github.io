@@ -10,15 +10,6 @@ export default function Links(props: LinksProps) {
     {},
   );
 
-  const colors = [
-    "bg-blue-100",
-    "bg-red-100",
-    "bg-green-100",
-    "bg-yellow-100",
-    "bg-purple-100",
-    "bg-pink-100",
-  ];
-
   useEffect(() => {
     Object.entries(copiedStates).forEach(([index, isCopied]) => {
       if (isCopied) {
@@ -36,7 +27,7 @@ export default function Links(props: LinksProps) {
     <div className="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4">
       {props.links.map((link, index) => (
         <motion.a
-          className={`text-center text-2xl font-bold ${colors[index % colors.length]} px-5 py-3 border-2 rounded-md transition-shadow duration-300 shadow-[0_2px_0_2px_rgba(0,0,0,1)] hover:shadow-[0_0_0px_rgba(0,0,0,0.5)]`}
+          className="text-center text-2xl font-bold bg-white px-5 py-3 border-2 rounded-md transition-shadow duration-300 shadow-[0_2px_0_2px_rgba(0,0,0,1)] hover:shadow-[0_0_0px_rgba(0,0,0,0.5)]"
           whileHover={{
             scale: 0.95,
           }}
