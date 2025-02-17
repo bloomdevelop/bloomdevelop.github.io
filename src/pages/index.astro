@@ -1,5 +1,5 @@
 ---
-import Links from "../components/Links.tsx";
+import Links from "../components/Links.astro";
 import MyName from "../components/MyName.astro";
 import Projects from "../components/Projects.astro";
 import Section from "../components/Section.astro";
@@ -65,7 +65,7 @@ const endDate = new Date(Date.now());
 <Layout>
     <MyName name="Bloom Perez" />
     <Section title="Links & Socials">
-        <Links links={links} client:only />
+        <Links links={links} />
     </Section>
     <Section title="About Myself">
         <div class="flex flex-col md:flex-row gap-4">
