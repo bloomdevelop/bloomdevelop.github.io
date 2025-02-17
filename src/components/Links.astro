@@ -12,16 +12,18 @@ interface Props {
 const { links } = Astro.props;
 
 let copiedStates: { [key: number]: boolean } = {};
-
-function handleCopy(index: number, clipboard: string) {
-    navigator.clipboard.writeText(clipboard);
-    copiedStates[index] = true;
-
-    setTimeout(() => {
-        copiedStates[index] = false;
-    }, 2000);
-}
 ---
+
+<script>
+    function handleCopy(index: number, clipboard: string) {
+        navigator.clipboard.writeText(clipboard);
+        copiedStates[index] = true;
+
+        setTimeout(() => {
+            copiedStates[index] = false;
+        }, 2000);
+    }
+</script>
 
 <div class="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4">
     {
