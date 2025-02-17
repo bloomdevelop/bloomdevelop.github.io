@@ -1,0 +1,10 @@
+/* clash-display-variable-bold */
+@font-face {
+	font-family: Clash Display Variable;
+	font-style: normal;
+	font-weight: 200 700;
+	font-stretch: 100%;
+	src: local("Clash Display Variable Bold"), local("ClashDisplayVariable-Bold"), url(clash-display-variable-bold.woff2) format("woff2"), url(clash-display-variable-bold.woff) format("woff");
+	font-display: auto;
+}
+
