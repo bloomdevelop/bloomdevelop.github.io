@@ -1,14 +1,15 @@
 ---
+import { Image } from "astro:assets";
+import pfp from "../assets/pfp.png";
 import Links from "../components/Links.astro";
 import MyName from "../components/MyName.astro";
 import Projects from "../components/Projects.astro";
 import Section from "../components/Section.astro";
 import Layout from "../layouts/Layout.astro";
-import { Image } from "astro:assets";
-import pfp from "../assets/pfp.png";
 import { getYearsBetweenDates } from "../utils";
+import type { LinksType, ProjectsType } from "../types";
 
-const links: Links[] = [
+const links: LinksType[] = [
     {
         title: "GitHub",
         url: "https://github.com/bloomdevelop",
@@ -27,7 +28,7 @@ const links: Links[] = [
     },
 ];
 
-const projects: Projects[] = [
+const projects: ProjectsType[] = [
     {
         title: "Github Search",
         description:
@@ -58,7 +59,7 @@ const projects: Projects[] = [
     },
 ];
 
-const startDate = new Date("2008-04-17");
+const startDate = new Date("2007-04-17");
 const endDate = new Date(Date.now());
 ---
 
