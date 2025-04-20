@@ -1,0 +1,43 @@
+---
+import type { RepoType } from "../types";
+
+interface Props {
+    projects: RepoType[];
+}
+
+const { projects } = Astro.props;
+---
+
+<script>
+    import { stagger, animate, spring } from "motion";
+
+    animate(
+        "#repository",
+        // @ts-ignore
+        {
+            opacity: [0, 1],
+            scale: [0, 1],
+        },
+        {
+            delay: stagger(0.2),
+            type: spring,
+            bounce: 0.2,
+        },
+    );
+</script>
+<div class="grid lg:grid-cols-5 md:grid-cols-3 sm:grid-cols-2 gap-4">
+    {
+        projects.map((project) => (
+            <a
+                id="repository"
+                href={project.link ? project.link : null}
+                class="card"
+            >
+                <h3 class="font-general-sans text-lg font-bold">
+                    {project.title}
+                </h3>
+                <p class="font-general-sans text-sm">{project.description}</p>
+            </a>
+        ))
+    }
+</div>

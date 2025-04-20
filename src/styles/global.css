@@ -1,7 +1,7 @@
-@import url("/fonts/inter/inter.css");
-@import url("/fonts/general-sans-variable/general-sans-variable.css");
-@import url("/fonts/clash-display-variable/clash-display-variable.css");
-@import "tailwindcss";
+@import url('/fonts/inter/inter.css');
+@import url('/fonts/general-sans-variable/general-sans-variable.css');
+@import url('/fonts/clash-display-variable/clash-display-variable.css');
+@import 'tailwindcss';
 
 @theme {
     --font-sans:
@@ -19,17 +19,297 @@
         BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
         "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
         "Segoe UI Symbol", "Noto Color Emoji";
+
+    --color-text-50: var(--text-50);
+    --color-text-100: var(--text-100);
+    --color-text-200: var(--text-200);
+    --color-text-300: var(--text-300);
+    --color-text-400: var(--text-400);
+    --color-text-500: var(--text-500);
+    --color-text-600: var(--text-600);
+    --color-text-700: var(--text-700);
+    --color-text-800: var(--text-800);
+    --color-text-900: var(--text-900);
+    --color-text-950: var(--text-950);
+
+    --color-background-50: var(--background-50);
+    --color-background-100: var(--background-100);
+    --color-background-200: var(--background-200);
+    --color-background-300: var(--background-300);
+    --color-background-400: var(--background-400);
+    --color-background-500: var(--background-500);
+    --color-background-600: var(--background-600);
+    --color-background-700: var(--background-700);
+    --color-background-800: var(--background-800);
+    --color-background-900: var(--background-900);
+    --color-background-950: var(--background-950);
+
+    --color-primary-50: var(--primary-50);
+    --color-primary-100: var(--primary-100);
+    --color-primary-200: var(--primary-200);
+    --color-primary-300: var(--primary-300);
+    --color-primary-400: var(--primary-400);
+    --color-primary-500: var(--primary-500);
+    --color-primary-600: var(--primary-600);
+    --color-primary-700: var(--primary-700);
+    --color-primary-800: var(--primary-800);
+    --color-primary-900: var(--primary-900);
+    --color-primary-950: var(--primary-950);
+
+    --color-secondary-50: var(--secondary-50);
+    --color-secondary-100: var(--secondary-100);
+    --color-secondary-200: var(--secondary-200);
+    --color-secondary-300: var(--secondary-300);
+    --color-secondary-400: var(--secondary-400);
+    --color-secondary-500: var(--secondary-500);
+    --color-secondary-600: var(--secondary-600);
+    --color-secondary-700: var(--secondary-700);
+    --color-secondary-800: var(--secondary-800);
+    --color-secondary-900: var(--secondary-900);
+    --color-secondary-950: var(--secondary-950);
+
+    --color-accent-50: var(--accent-50);
+    --color-accent-100: var(--accent-100);
+    --color-accent-200: var(--accent-200);
+    --color-accent-300: var(--accent-300);
+    --color-accent-400: var(--accent-400);
+    --color-accent-500: var(--accent-500);
+    --color-accent-600: var(--accent-600);
+    --color-accent-700: var(--accent-700);
+    --color-accent-800: var(--accent-800);
+    --color-accent-900: var(--accent-900);
+    --color-accent-950: var(--accent-950);
+}
+
+@layer base {
+
+    /*
+    The default border color has changed to `currentcolor` in Tailwind CSS v4,
+    so we've added these compatibility styles to make sure everything still
+    looks the same as it did with Tailwind CSS v3.
+
+    If we ever want to remove these styles, we need to add an explicit border
+    color utility to any element that depends on these defaults.
+    */
+
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentcolor);
+    }
+
+    :root {
+        --text-50: #e5ffed;
+        --text-100: #ccffdb;
+        --text-200: #99ffb8;
+        --text-300: #66ff94;
+        --text-400: #33ff70;
+        --text-500: #00ff4d;
+        --text-600: #00cc3d;
+        --text-700: #00992e;
+        --text-800: #00661f;
+        --text-900: #00330f;
+        --text-950: #001a08;
+
+        --background-50: #edf8f0;
+        --background-100: #daf1e0;
+        --background-200: #b5e3c1;
+        --background-300: #90d5a2;
+        --background-400: #6bc784;
+        --background-500: #46b965;
+        --background-600: #389451;
+        --background-700: #2a6f3c;
+        --background-800: #1c4a28;
+        --background-900: #0e2514;
+        --background-950: #07120a;
+
+        --primary-50: #ebfaef;
+        --primary-100: #d7f4de;
+        --primary-200: #aeeabd;
+        --primary-300: #86df9c;
+        --primary-400: #5ed47b;
+        --primary-500: #36c95b;
+        --primary-600: #2ba148;
+        --primary-700: #207936;
+        --primary-800: #155124;
+        --primary-900: #0b2812;
+        --primary-950: #051409;
+
+        --secondary-50: #e9fcee;
+        --secondary-100: #d2f9dc;
+        --secondary-200: #a5f3ba;
+        --secondary-300: #78ed97;
+        --secondary-400: #4be775;
+        --secondary-500: #1fe052;
+        --secondary-600: #18b442;
+        --secondary-700: #128731;
+        --secondary-800: #0c5a21;
+        --secondary-900: #062d10;
+        --secondary-950: #031608;
+
+        --accent-50: #e6feed;
+        --accent-100: #cefdda;
+        --accent-200: #9cfcb6;
+        --accent-300: #6bfa91;
+        --accent-400: #39f96c;
+        --accent-500: #08f748;
+        --accent-600: #06c639;
+        --accent-700: #05942b;
+        --accent-800: #03631d;
+        --accent-900: #02310e;
+        --accent-950: #011907;
+
+    }
+
+    .dark {
+        --text-50: #001a08;
+        --text-100: #00330f;
+        --text-200: #00661f;
+        --text-300: #00992e;
+        --text-400: #00cc3d;
+        --text-500: #00ff4d;
+        --text-600: #33ff70;
+        --text-700: #66ff94;
+        --text-800: #99ffb8;
+        --text-900: #ccffdb;
+        --text-950: #e5ffed;
+
+        --background-50: #07120a;
+        --background-100: #0e2514;
+        --background-200: #1c4a28;
+        --background-300: #2a6f3c;
+        --background-400: #389451;
+        --background-500: #46b965;
+        --background-600: #6bc784;
+        --background-700: #90d5a2;
+        --background-800: #b5e3c1;
+        --background-900: #daf1e0;
+        --background-950: #edf8f0;
+
+        --primary-50: #051409;
+        --primary-100: #0b2812;
+        --primary-200: #155124;
+        --primary-300: #207936;
+        --primary-400: #2ba148;
+        --primary-500: #36c95b;
+        --primary-600: #5ed47b;
+        --primary-700: #86df9c;
+        --primary-800: #aeeabd;
+        --primary-900: #d7f4de;
+        --primary-950: #ebfaef;
+
+        --secondary-50: #031608;
+        --secondary-100: #062d10;
+        --secondary-200: #0c5a21;
+        --secondary-300: #128731;
+        --secondary-400: #18b442;
+        --secondary-500: #1fe052;
+        --secondary-600: #4be775;
+        --secondary-700: #78ed97;
+        --secondary-800: #a5f3ba;
+        --secondary-900: #d2f9dc;
+        --secondary-950: #e9fcee;
+
+        --accent-50: #011907;
+        --accent-100: #02310e;
+        --accent-200: #03631d;
+        --accent-300: #05942b;
+        --accent-400: #06c639;
+        --accent-500: #08f748;
+        --accent-600: #39f96c;
+        --accent-700: #6bfa91;
+        --accent-800: #9cfcb6;
+        --accent-900: #cefdda;
+        --accent-950: #e6feed;
+    }
 }
 
 @layer components {
-    .dot-grid {
-        background-image:
-            radial-gradient(rgba(0, 0, 0, 0.5) 3px, transparent 3px),
-            radial-gradient(rgba(0, 0, 0, 0.5) 3px, transparent 3px);
-        background-size: 49px 49px;
-        background-position:
-            0 0,
-            24.5px 24.5px;
-        background-color: #ffffff;
+    .no-ssr {
+        @apply sr-only;
+    }
+
+    .footer {
+        @apply flex lg:flex-row sm:flex-col gap-4 items-center justify-between;
+        @apply mx-5 my-2 p-4;
+        @apply bg-primary-100 text-text-900;
+        @apply dark:bg-primary-900 dark:text-text-50;
+        @apply rounded-2xl;
+    }
+
+    .link {
+        @apply font-bold;
+        @apply text-accent-800 hover:text-accent-900;
+        @apply dark:text-accent-300 dark:hover:text-accent-500;
+    }
+
+    #link {
+       @apply select-none;
+       @apply bg-background-300 text-text-900;
+       @apply dark:bg-background-800 dark:text-text-50;
+       @apply transition-shadow duration-300;
+       @apply rounded-lg;
+       @apply p-4;
+       @apply shadow-[0_0_0_2px_rgba(0,0,0,1)] shadow-accent-700;
+       @apply hover:shadow-[0_0_0_4px_rgba(0,0,0,1)] hover:shadow-accent-800;
+       @apply active:shadow-[0_0_0_2px_rgba(0,0,0,1)]; 
+       @apply data-[clipboard-state=true]:shadow-[0_0_0_4px_rgba(0,0,0,1)];
+       @apply data-[clipboard-state=true]:shadow-accent-900
+    }
+
+    .card {
+        @apply select-none;
+        @apply bg-background-200 text-text-900;
+        @apply dark:bg-background-800 dark:text-text-50;
+        @apply transition-shadow duration-300;
+        @apply rounded-lg; 
+        @apply p-4;
+        @apply shadow-[0_0_0_2px_rgba(0,0,0,1)] shadow-accent-800; 
+        @apply hover:shadow-[0_0_0_4px_rgba(0,0,0,1)] hover:shadow-accent-900;
+        @apply active:shadow-[0_0_0_2px_rgba(0,0,0,1)];
+    }
+
+    .section {
+        @apply mx-4 my-4 p-4;
+        @apply bg-background-100 text-text-900;
+        @apply dark:bg-background-900 dark:text-text-50;
+        @apply rounded-xl;
+    }
+    
+    .section > h1 {
+        @apply text-4xl font-bold;
+        @apply my-4;
+        @apply text-text-900;
+        @apply dark:text-text-50;
+    }
+
+    .intro {
+        @apply m-8; 
+        @apply flex flex-col;
+        @apply justify-center;
+    }
+
+    .intro > h1 {
+        @apply text-4xl;
+        @apply text-text-900;
+        @apply dark:text-text-50;
+        @apply font-bold;
+        @apply my-4;
+    }
+
+    .intro > p {
+        @apply text-lg;
+        @apply text-text-900;
+        @apply dark:text-text-50;
+        @apply font-general-sans;
+    }
+
+    .highlight {
+        @apply text-primary-700;
+        @apply dark:text-accent-300;
+        @apply font-bold;
+        @apply font-clash-display;
     }
 }

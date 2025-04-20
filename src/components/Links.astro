@@ -2,58 +2,67 @@
 import type { LinksType } from "../types";
 
 interface Props {
-    links: LinksType[];
+    link: LinksType;
 }
 
-const { links } = Astro.props;
+const { link } = Astro.props;
 ---
 
 <script>
-    const copiedStates = {};
+    import { stagger, animate, spring } from "motion";
+
+    animate(
+        "#link",
+        // @ts-ignore Typescript don't like it
+        {
+            opacity: [0, 1],
+            scale: [0, 1],
+        },
+        {
+            delay: stagger(0.3),
+            type: spring, 
+            bounce: .4, 
+        },
+    );
 
     document.addEventListener("DOMContentLoaded", () => {
-        document
-            .querySelectorAll("a[data-clipboard]")
-            .forEach((element, index) => {
-                element.addEventListener("click", (e) => {
-                    if (
-                        element instanceof HTMLElement &&
-                        element.dataset.clipboard
-                    ) {
-                        e.preventDefault();
-                        navigator.clipboard.writeText(
-                            element.dataset.clipboard,
-                        );
+        document.querySelectorAll("a[data-clipboard]").forEach((element) => {
+            element.addEventListener("click", (e) => {
+                if (
+                    element instanceof HTMLElement &&
+                    element.dataset.clipboard
+                ) {
+                    e.preventDefault();
+                    navigator.clipboard.writeText(element.dataset.clipboard);
 
-                        const span = element.querySelector("span");
-                        if (span) {
-                            const originalText = span.textContent;
-                            span.textContent = "Copied!";
-                            span.classList.add("text-green-700");
+                    const span = element.querySelector("span");
+                    if (span) {
+                        const originalText = span.textContent;
+                        span.textContent = "Copied!";
 
-                            setTimeout(() => {
-                                span.textContent = originalText;
-                                span.classList.remove("text-green-700");
-                            }, 2000);
-                        }
+                        // Set clipboard state to true
+                        element.dataset.clipboardState = "true";
+
+                        setTimeout(() => {
+                            span.textContent = originalText;
+                            // Reset clipboard state
+                            element.dataset.clipboardState = "false";
+                        }, 2000);
                     }
-                });
+                }
             });
+        });
     });
 </script>
 
-<div class="grid lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 gap-4">
-    {
-        links.map((link, index) => (
-            <a
-                class="text-center font-semibold text-2xl select-none bg-white border-2 transition-all rounded-lg p-4 shadow-[0_0_0_2px_rgba(0,0,0,1)] hover:shadow-[0_0_0_4px_rgba(0,0,0,1)] hover:border-blue-500 hover:shadow-blue-500 active:shadow-[0_0_0_2px_rgba(0,0,0,1)]"
-                href={link.url || null}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-clipboard={link.clipboard}
-            >
-                <span>{link.title}</span>
-            </a>
-        ))
-    }
-</div>
+<a
+    id="link"
+    href={link.url || "javascript:void(0)"}
+    target="_blank"
+    rel="noopener noreferrer"
+    data-clipboard={link.clipboard}
+    data-clipboard-state="false"
+>
+    <slot />
+    <span class="no-ssr">{link.title}</span>
+</a>

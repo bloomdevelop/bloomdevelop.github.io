@@ -1,0 +1,76 @@
+---
+// Imports icons from simple-icons-astro manually instead of importing all of them...
+// https://github.com/dzeiocom/simple-icons-astro/issues/5
+import Bluesky from "simple-icons-astro/Bluesky";
+import Discord from "simple-icons-astro/Discord";
+import Github from "simple-icons-astro/Github";
+import Revoltdotchat from "simple-icons-astro/Revoltdotchat";
+
+import type { LinksType } from "../types";
+import Links from "./Links.astro";
+
+const githubLink: LinksType = {
+    title: "GitHub",
+    url: "https://github.com/bloomdevelop",
+};
+
+const blueskyLink: LinksType = {
+    title: "Bluesky",
+    url: "https://bsky.app/profile/spring.furrest.online",
+};
+
+const revoltLink: LinksType = {
+    title: "Revolt",
+    clipboard: "spring#5321",
+};
+
+const discordLink: LinksType = {
+    title: "Discord",
+    clipboard: "spring.gay",
+};
+---
+<footer
+    class="footer"
+>
+    <div class="flex flex-col gap-2">
+        <p>Copyright © {new Date().getFullYear()} Bloom Perez</p>
+        <p>
+            Made with <a
+                class="link"
+                href="https://astro.build/"
+                target="_blank"
+                rel="noopener noreferrer">Astro</a
+            > and <a
+                class="link"
+                href="https://react.dev"
+                target="_blank"
+                rel="noopener noreferrer">React</a
+            >, and edited with <a
+                class="link"
+                href="https://zed.dev"
+                target="_blank"
+                rel="noopener noreferrer">Zed</a
+            > and <a
+                class="link"
+                href="https://code.visualstudio.com/"
+                target="_blank"
+                rel="noopener noreferrer">VSCode</a
+            >.
+        </p>
+    </div>
+    <div class="flex flex-row gap-4">
+        <Links link={githubLink}>
+            <Github />
+        </Links>
+
+        <Links link={blueskyLink}>
+            <Bluesky />
+        </Links>
+        <Links link={revoltLink}>
+            <Revoltdotchat />
+        </Links>
+        <Links link={discordLink}>
+            <Discord />
+        </Links>
+    </div>
+</footer>
