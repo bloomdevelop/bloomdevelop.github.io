@@ -6,11 +6,11 @@ interface ILinks {
   clipboard?: string;
 }
 
-const RepoSchema = v.object({
+const ProjectsSchema = v.object({
   title: v.string(),
   description: v.string(),
   link: v.optional(v.string()),
 });
 
 export type LinksType = ILinks;
-export type RepoType = v.InferInput<typeof RepoSchema>;
+export type ProjectsType = v.InferInput<typeof ProjectsSchema>;
