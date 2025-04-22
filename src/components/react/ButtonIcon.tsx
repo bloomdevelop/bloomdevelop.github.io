@@ -4,6 +4,7 @@ import { motion } from "motion/react";
 
 interface ButtonIcon {
     children: ReactNode | JSX.Element,
+    disabled?: boolean,
     tooltip: string,
     onClick?: () => void,
 }
@@ -11,8 +12,8 @@ interface ButtonIcon {
 export default function ButtonIcon(props: ButtonIcon) {
     return <Tooltip.Provider>
         <Tooltip.Root>
-            <Tooltip.Trigger>
-                <button onClick={props.onClick} className="button-icon">
+            <Tooltip.Trigger asChild>
+                <button disabled={props.disabled} onClick={props.onClick} className="button-icon">
                     {props.children}
                 </button>
             </Tooltip.Trigger>

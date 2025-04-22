@@ -11,9 +11,15 @@ importers:
       '@astrojs/react':
         specifier: ^4.2.4
         version: 4.2.4(@types/node@22.14.1)(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(jiti@2.4.2)(lightningcss@1.29.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@modular-forms/react':
+        specifier: ^0.11.1
+        version: 0.11.1(@preact/signals-react@3.0.1(react@19.1.0))(react@19.1.0)(typescript@5.8.3)
       '@motionone/dom':
         specifier: ^10.18.0
         version: 10.18.0
+      '@preact/signals-react':
+        specifier: ^3.0.1
+        version: 3.0.1(react@19.1.0)
       '@radix-ui/react-popover':
         specifier: ^1.1.11
         version: 1.1.11(@types/react-dom@19.1.2(@types/react@19.1.2))(@types/react@19.1.2)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -462,6 +468,12 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
+  '@modular-forms/react@0.11.1':
+    resolution: {integrity: sha512-B/ywtlhCn6sIfPBv1e8H+tkGUvHigf8q5ed1c26lXprHqc1+dcBjCYsY94OHGQN+SF7QmE7ONbJKr5x1KMmBfA==}
+    peerDependencies:
+      '@preact/signals-react': ^1.0.0
+      react: ^18.0.0
+
   '@motionone/animation@10.18.0':
     resolution: {integrity: sha512-9z2p5GFGCm0gBsZbi8rVMOAJCtw1WqBTIPw3ozk06gDvZInBPIsQcHgYogEJ4yuHJ+akuW8g1SEIOpTOvYs8hw==}
 
@@ -482,6 +494,14 @@ packages:
 
   '@oslojs/encoding@1.1.0':
     resolution: {integrity: sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ==}
+
+  '@preact/signals-core@1.8.0':
+    resolution: {integrity: sha512-OBvUsRZqNmjzCZXWLxkZfhcgT+Fk8DDcT/8vD6a1xhDemodyy87UJRJfASMuSD8FaAIeGgGm85ydXhm7lr4fyA==}
+
+  '@preact/signals-react@3.0.1':
+    resolution: {integrity: sha512-HkM5Q2IsETO1M0bUzy4JB0EPQCf99SMbWP9K6GYlYVHfOX1HLKJ6Dl9L1/1rQnmrQpUsTw0R+IJQDh6tYWar2g==}
+    peerDependencies:
+      react: ^16.14.0 || 17.x || 18.x || 19.x
 
   '@radix-ui/primitive@1.1.2':
     resolution: {integrity: sha512-XnbHrrprsNqZKQhStrSwgRUQzoCI1glLzdw79xiZPoofhGICeZRSQ3dIxAKH1gb3OHfNf4d6f+vAv3kil2eggA==}
@@ -2148,6 +2168,11 @@ packages:
       '@types/react':
         optional: true
 
+  use-sync-external-store@1.5.0:
+    resolution: {integrity: sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   valibot@1.0.0:
     resolution: {integrity: sha512-1Hc0ihzWxBar6NGeZv7fPLY0QuxFMyxwYR2sF1Blu7Wq7EnremwY2W02tit2ij2VJT8HcSkHAQqmFfl77f73Yw==}
     peerDependencies:
@@ -2668,6 +2693,14 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
+  '@modular-forms/react@0.11.1(@preact/signals-react@3.0.1(react@19.1.0))(react@19.1.0)(typescript@5.8.3)':
+    dependencies:
+      '@preact/signals-react': 3.0.1(react@19.1.0)
+      react: 19.1.0
+      valibot: 1.0.0(typescript@5.8.3)
+    transitivePeerDependencies:
+      - typescript
+
   '@motionone/animation@10.18.0':
     dependencies:
       '@motionone/easing': 10.18.0
@@ -2704,6 +2737,14 @@ snapshots:
       tslib: 2.8.1
 
   '@oslojs/encoding@1.1.0': {}
+
+  '@preact/signals-core@1.8.0': {}
+
+  '@preact/signals-react@3.0.1(react@19.1.0)':
+    dependencies:
+      '@preact/signals-core': 1.8.0
+      react: 19.1.0
+      use-sync-external-store: 1.5.0(react@19.1.0)
 
   '@radix-ui/primitive@1.1.2': {}
 
@@ -4600,6 +4641,10 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.1.2
+
+  use-sync-external-store@1.5.0(react@19.1.0):
+    dependencies:
+      react: 19.1.0
 
   valibot@1.0.0(typescript@5.8.3):
     optionalDependencies:
