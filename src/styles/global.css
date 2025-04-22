@@ -246,17 +246,21 @@
     }
 
     #link {
-       @apply select-none;
-       @apply bg-background-300 text-text-900;
-       @apply dark:bg-background-800 dark:text-text-50;
-       @apply transition-shadow duration-300;
-       @apply rounded-lg;
-       @apply p-4;
-       @apply shadow-[0_0_0_2px_rgba(0,0,0,1)] shadow-accent-700;
-       @apply hover:shadow-[0_0_0_4px_rgba(0,0,0,1)] hover:shadow-accent-800;
-       @apply active:shadow-[0_0_0_2px_rgba(0,0,0,1)]; 
-       @apply data-[clipboard-state=true]:shadow-[0_0_0_4px_rgba(0,0,0,1)];
-       @apply data-[clipboard-state=true]:shadow-accent-900
+        @apply select-none;
+        @apply bg-background-300 text-text-900;
+        @apply dark:bg-background-800 dark:text-text-50;
+        @apply transition-shadow duration-300;
+        @apply rounded-lg;
+        @apply p-4;
+        @apply shadow-[0_0_0_2px_rgba(0,0,0,1)] shadow-accent-700;
+        @apply hover:shadow-[0_0_0_4px_rgba(0,0,0,1)] hover:shadow-accent-800;
+        @apply active:shadow-[0_0_0_2px_rgba(0,0,0,1)];
+    }
+
+    #link[data-clipboard-state=true] {
+        @apply shadow-[0_0_0_4px_rgba(0,0,0,1)];
+        @apply shadow-accent-900;
+        @apply dark:shadow-accent-500;
     }
 
     .card {
@@ -264,9 +268,9 @@
         @apply bg-background-200 text-text-900;
         @apply dark:bg-background-800 dark:text-text-50;
         @apply transition-shadow duration-300;
-        @apply rounded-lg; 
+        @apply rounded-lg;
         @apply p-4;
-        @apply shadow-[0_0_0_2px_rgba(0,0,0,1)] shadow-accent-800; 
+        @apply shadow-[0_0_0_2px_rgba(0,0,0,1)] shadow-accent-800;
         @apply hover:shadow-[0_0_0_4px_rgba(0,0,0,1)] hover:shadow-accent-900;
         @apply active:shadow-[0_0_0_2px_rgba(0,0,0,1)];
     }
@@ -277,8 +281,8 @@
         @apply dark:bg-background-900 dark:text-text-50;
         @apply rounded-xl;
     }
-    
-    .section > h1 {
+
+    .section>h1 {
         @apply text-4xl font-bold;
         @apply my-4;
         @apply text-text-900;
@@ -286,12 +290,12 @@
     }
 
     .intro {
-        @apply m-8; 
+        @apply m-8;
         @apply flex flex-col;
         @apply justify-center;
     }
 
-    .intro > h1 {
+    .intro>h1 {
         @apply text-4xl;
         @apply text-text-900;
         @apply dark:text-text-50;
@@ -299,7 +303,7 @@
         @apply my-4;
     }
 
-    .intro > p {
+    .intro>p {
         @apply text-lg;
         @apply text-text-900;
         @apply dark:text-text-50;
@@ -311,5 +315,45 @@
         @apply dark:text-accent-300;
         @apply font-bold;
         @apply font-clash-display;
+    }
+
+    .toolbar {
+        @apply flex flex-row justify-center items-center gap-4;
+        @apply fixed bottom-0 left-1/2;
+        @apply flex justify-center items-center;
+        @apply p-2;
+        @apply bg-background-700;
+        @apply rounded-full;
+    }
+
+    .button-icon {
+        @apply select-none;
+        @apply bg-background-300 text-text-900;
+        @apply dark:bg-background-800 dark:text-text-50;
+        @apply transition-shadow duration-300;
+        @apply rounded-full;
+        @apply p-4;
+        @apply shadow-[0_0_0_2px_rgba(0,0,0,1)] shadow-accent-700;
+        @apply hover:shadow-[0_0_0_4px_rgba(0,0,0,1)] hover:shadow-accent-800;
+        @apply active:shadow-[0_0_0_2px_rgba(0,0,0,1)];
+        @apply z-10;
+    }
+
+    .tooltip {
+        @apply px-2 py-1;
+        @apply bg-background-300 dark:bg-background-700;
+        @apply text-text-900 dark:text-text-50;
+        @apply shadow-[0_0_0_2px_rgba(0,0,0,1)] shadow-primary-400;
+        @apply rounded-lg;
+    }
+
+    .comments_container {
+        @apply p-4;
+        @apply w-full h-full;
+        @apply bg-background-300 dark:bg-background-700;
+        @apply text-text-900 dark:text-text-50;
+        @apply shadow-[0_0_0_2px_rgba(0,0,0,1)] shadow-primary-400;
+        @apply rounded-lg;
+        @apply space-y-5;
     }
 }
