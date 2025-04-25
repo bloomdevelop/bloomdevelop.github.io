@@ -1,10 +1,10 @@
 import * as v from "valibot";
 
-const LinksSchema = v.object({
-  title: v.string(),
-  url: v.optional(v.string()),
-  clipboard: v.optional(v.string()),
-});
+interface ILinks {
+  title: string;
+  url?: string;
+  clipboard?: string;
+}
 
 const ProjectsSchema = v.object({
   title: v.string(),
@@ -12,5 +12,19 @@ const ProjectsSchema = v.object({
   link: v.optional(v.string()),
 });
 
-export type LinksType = v.InferInput<typeof LinksSchema>;
+const CommentsSchema = v.object({
+  id: v.optional(v.number()),
+  created_at: v.optional(v.date()),
+  username: v.string(),
+  content: v.string()
+})
+
+const AddCommentSchema = v.object({
+  username: v.string(),
+  content: v.string()
+})
+
+export type LinksType = ILinks;
 export type ProjectsType = v.InferInput<typeof ProjectsSchema>;
+export type CommentsType = v.InferInput<typeof CommentsSchema>;
+export type AddCommentType = v.InferInput<typeof AddCommentSchema>;

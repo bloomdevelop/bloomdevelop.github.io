@@ -1,5 +1,9 @@
 ---
+import Footer from "@/components/astro/Footer.astro";
+import Toolbar from "@/components/react/Toolbar";
 import "../styles/global.css";
+import Controller from "@/components/astro/controller/Controller.astro";
+import CursorController from "@/components/astro/controller/CursorController.astro";
 ---
 
 <!doctype html>
@@ -11,30 +15,11 @@ import "../styles/global.css";
         <meta name="generator" content={Astro.generator} />
         <title>My Site :3</title>
     </head>
-    <body class="dot-grid">
+    <body class="bg-background-50 dark:bg-background-950">
+        <CursorController />
+        <Controller />
+        <Toolbar client:only/>
         <slot />
+        <Footer />
     </body>
-    <footer
-        class="font-general-sans mx-4 my-4 bg-white rounded-lg border-2 border-black p-6 shadow-[0_4px_0_2px_rgba(0,0,0,1)]"
-    >
-        <p>Copyright © {new Date().getFullYear()} Bloom Perez</p>
-        <p>
-            Made with <a
-                class="text-blue-500 hover:text-blue-700"
-                href="https://astro.build/"
-                target="_blank"
-                rel="noopener noreferrer">Astro</a
-            > and <a
-                class="text-blue-500 hover:text-blue-700"
-                href="https://react.dev"
-                target="_blank"
-                rel="noopener noreferrer">React</a
-            >, and edited with <a
-                class="text-blue-500 hover:text-blue-700"
-                href="https://zed.dev"
-                target="_blank"
-                rel="noopener noreferrer">Zed</a
-            >
-        </p>
-    </footer>
 </html>

@@ -1,0 +1,23 @@
+---
+import { getYearsBetweenDates } from "@/utils";
+
+interface Props {
+    name: string;
+}
+
+const { name } = Astro.props;
+
+const startDate = new Date("2007-04-17");
+const endDate = new Date(Date.now());
+---
+
+<div class="intro">
+    <h1>Hello, I'm {name}. Welcome to <span class="highlight">my site</span></h1>
+    <p>
+        I'm {getYearsBetweenDates(startDate, endDate)} years old, yet a furry programmer
+        (I'm still a student), currently on last year of high school. I'm currently
+        learning web development with Astro, Solid, React and Tailwind CSS, also
+        a web designer. Also I'm learning mobile development with Kotlin and Compose,
+        thanks to on the recent contribution from Crescent repository on Github.
+    </p>
+</div>
