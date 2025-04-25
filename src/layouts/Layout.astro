@@ -1,7 +1,9 @@
 ---
-import Footer from "../components/Footer.astro";
-import Toolbar from "../components/react/Toolbar";
+import Footer from "@/components/astro/Footer.astro";
+import Toolbar from "@/components/react/Toolbar";
 import "../styles/global.css";
+import Controller from "@/components/astro/controller/Controller.astro";
+import CursorController from "@/components/astro/controller/CursorController.astro";
 ---
 
 <!doctype html>
@@ -14,6 +16,8 @@ import "../styles/global.css";
         <title>My Site :3</title>
     </head>
     <body class="bg-background-50 dark:bg-background-950">
+        <CursorController />
+        <Controller />
         <Toolbar client:only/>
         <slot />
         <Footer />

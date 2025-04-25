@@ -1,0 +1,123 @@
+---
+// This component renders a cursor for each connected controller, color-coded by controller index, and allows free movement (not tied to axis).
+---
+<script>
+  const controllerColors = [
+    '#ff5252', '#40c4ff', '#ffd740', '#69f0ae', '#b388ff', '#ff80ab', '#aeea00', '#ffab40',
+  ];
+
+  // Store state for each controller's cursor
+  const cursors = new Map(); // index -> {el, x, y}
+
+  // Cursor speed (pixels per frame at full stick deflection)
+  const CURSOR_SPEED = 10;
+  // Deadzone threshold to prevent joystick drift
+  const DEADZONE = 0.18;
+
+  function updateCursor(index, x, y) {
+    let cursorObj = cursors.get(index);
+    if (!cursorObj) {
+      // Create cursor element
+      const cursor = document.createElement('div');
+      cursor.className = 'controller-cursor';
+      cursor.style.position = 'fixed';
+      cursor.style.width = '32px';
+      cursor.style.height = '32px';
+      cursor.style.borderRadius = '50%';
+      cursor.style.pointerEvents = 'none';
+      cursor.style.zIndex = "1000";
+      cursor.style.background = controllerColors[index % controllerColors.length];
+      cursor.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+      cursor.style.display = 'flex';
+      cursor.style.alignItems = 'center';
+      cursor.style.justifyContent = 'center';
+      cursor.innerHTML = `<span style="color: #fff; font-size: 1rem; font-weight: bold;">${index + 1}</span>`;
+      document.body.appendChild(cursor);
+      // Bouncy pop-in animation
+      cursor.animate([
+        { transform: 'scale(0.7)', opacity: 0 },
+        { transform: 'scale(1.15)', opacity: 1, offset: 0.5 },
+        { transform: 'scale(0.95)', opacity: 1, offset: 0.8 },
+        { transform: 'scale(1)', opacity: 1 }
+      ], {
+        duration: 500,
+        easing: 'cubic-bezier(.68,-0.55,.27,1.55)'
+      });
+      cursorObj = { el: cursor, x, y };
+      cursors.set(index, cursorObj);
+    }
+    cursorObj.x = x;
+    cursorObj.y = y;
+    cursorObj.el.style.left = `${x - 16}px`;
+    cursorObj.el.style.top = `${y - 16}px`;
+  }
+
+  function removeCursor(index) {
+    const cursorObj = cursors.get(index);
+    if (cursorObj) {
+      // Bouncy pop-out animation
+      const anim = cursorObj.el.animate([
+        { transform: 'scale(1)', opacity: 1 },
+        { transform: 'scale(0.7)', opacity: 0 }
+      ], {
+        duration: 300,
+        easing: 'cubic-bezier(.68,-0.55,.27,1.55)'
+      });
+      anim.onfinish = () => {
+        cursorObj.el.remove();
+        cursors.delete(index);
+      };
+    }
+  }
+
+  // Gamepad polling loop with free movement
+  let animationFrameId;
+  function pollGamepads() {
+    const gamepads = navigator.getGamepads();
+    for (let i = 0; i < gamepads.length; i++) {
+      const gp = gamepads[i];
+      if (gp && gp.connected) {
+        // Get or initialize cursor position
+        let cursorObj = cursors.get(gp.index);
+        let x, y;
+        if (!cursorObj) {
+          // Start at center of screen
+          x = window.innerWidth / 2;
+          y = window.innerHeight / 2;
+        } else {
+          x = cursorObj.x;
+          y = cursorObj.y;
+        }
+        // Use left stick for movement
+        let rawX = gp.axes[0];
+        let rawY = gp.axes[1];
+        // Apply deadzone
+        const dx = Math.abs(rawX) > DEADZONE ? rawX * CURSOR_SPEED : 0;
+        const dy = Math.abs(rawY) > DEADZONE ? rawY * CURSOR_SPEED : 0;
+        // Update position, clamp to screen
+        x = Math.max(0, Math.min(window.innerWidth, x + dx));
+        y = Math.max(0, Math.min(window.innerHeight, y + dy));
+        updateCursor(gp.index, x, y);
+      } else {
+        removeCursor(i);
+      }
+    }
+    animationFrameId = requestAnimationFrame(pollGamepads);
+  }
+
+  window.addEventListener('gamepadconnected', () => {
+    pollGamepads();
+  });
+  window.addEventListener('gamepaddisconnected', (ev) => {
+    removeCursor(ev.gamepad.index);
+  });
+  window.addEventListener('DOMContentLoaded', () => {
+    pollGamepads();
+  });
+  window.addEventListener('beforeunload', () => {
+    cancelAnimationFrame(animationFrameId);
+    cursors.forEach((cursorObj) => cursorObj.el.remove());
+    cursors.clear();
+  });
+</script>
+<!-- This component does not render any HTML directly; cursors are managed via JS -->
