@@ -14,6 +14,89 @@
   // Deadzone threshold to prevent joystick drift
   const DEADZONE = 0.18;
 
+  function setCursorShape(cursor, shape) {
+    cursor.classList.remove('cursor-square', 'cursor-ibeam');
+    // Reset inline styles that may conflict
+    cursor.style.width = '';
+    cursor.style.height = '';
+    cursor.style.background = '';
+    cursor.style.border = '';
+    cursor.style.borderRadius = '30px'; // Always use pill/circle border radius
+    cursor.style.background = controllerColors[parseInt(cursor.dataset.controllerIndex) % controllerColors.length];
+    if (shape === 'square') {
+      cursor.classList.add('cursor-square');
+      cursor.style.width = '36px';
+      cursor.style.height = '36px';
+      cursor.style.background = controllerColors[parseInt(cursor.dataset.controllerIndex) % controllerColors.length];
+      cursor.style.border = '';
+      cursor.style.borderRadius = '16px';
+      // Show text
+      const span = cursor.querySelector('span');
+      if (span) span.style.display = '';
+    } else if (shape === 'ibeam') {
+      cursor.classList.add('cursor-ibeam');
+      cursor.style.width = '8px';
+      cursor.style.height = '32px';
+      cursor.style.background = '#fff';
+      cursor.style.border = '2px solid ' + controllerColors[parseInt(cursor.dataset.controllerIndex) % controllerColors.length];
+      cursor.style.borderRadius = '30px';
+      // Hide text
+      const span = cursor.querySelector('span');
+      if (span) span.style.display = 'none';
+    } else {
+      // Default circle
+      cursor.style.width = '32px';
+      cursor.style.height = '32px';
+      cursor.style.background = controllerColors[parseInt(cursor.dataset.controllerIndex) % controllerColors.length];
+      cursor.style.border = '';
+      cursor.style.borderRadius = '30px';
+      // Show text
+      const span = cursor.querySelector('span');
+      if (span) span.style.display = '';
+    }
+  }
+
+  function getCursorShapeForElement(el) {
+    if (!el) return 'circle';
+    const tag = el.tagName ? el.tagName.toUpperCase() : '';
+    if (
+      tag === 'A' ||
+      tag === 'BUTTON' ||
+      el.getAttribute('role') === 'button' ||
+      el.getAttribute('role') === 'link' ||
+      el.tabIndex >= 0
+    ) {
+      return 'square';
+    }
+    if (
+      tag === 'INPUT' ||
+      tag === 'TEXTAREA' ||
+      tag === 'P' ||
+      tag === 'H1' || 
+      tag === 'H2' ||
+      tag === 'H3' ||
+      tag === 'H4' ||
+      tag === 'H5' ||
+      tag === 'H6' ||
+      el.isContentEditable
+    ) {
+      return 'ibeam';
+    }
+    return 'circle';
+  }
+
+  function getElementLabel(el) {
+    if (!el) return '';
+    const tag = el.tagName ? el.tagName.toUpperCase() : '';
+    if (tag === 'A' || el.getAttribute('role') === 'link') return 'Link';
+    if (tag === 'BUTTON' || el.getAttribute('role') === 'button') return 'Button';
+    if (tag === 'INPUT') return 'Input';
+    if (tag === 'TEXTAREA') return 'Textarea';
+    if (tag === 'P') return 'Paragraph';
+    if (el.isContentEditable) return 'Editable';
+    return tag.charAt(0) + tag.slice(1).toLowerCase();
+  }
+
   function updateCursor(index, x, y) {
     let cursorObj = cursors.get(index);
     if (!cursorObj) {
@@ -21,9 +104,6 @@
       const cursor = document.createElement('div');
       cursor.className = 'controller-cursor';
       cursor.style.position = 'fixed';
-      cursor.style.width = '32px';
-      cursor.style.height = '32px';
-      cursor.style.borderRadius = '50%';
       cursor.style.pointerEvents = 'none';
       cursor.style.zIndex = "1000";
       cursor.style.background = controllerColors[index % controllerColors.length];
@@ -33,6 +113,9 @@
       cursor.style.justifyContent = 'center';
       cursor.innerHTML = `<span style="color: #fff; font-size: 1rem; font-weight: bold;">${index + 1}</span>`;
       document.body.appendChild(cursor);
+      // Add morphing CSS
+      cursor.style.transition = 'border-radius 0.2s cubic-bezier(.68,-0.55,.27,1.55), width 0.2s, height 0.2s, background 0.2s';
+      cursor.classList.add('controller-cursor');
       // Bouncy pop-in animation
       cursor.animate([
         { transform: 'scale(0.7)', opacity: 0 },
@@ -43,13 +126,43 @@
         duration: 500,
         easing: 'cubic-bezier(.68,-0.55,.27,1.55)'
       });
-      cursorObj = { el: cursor, x, y };
+      // Add label element
+      const label = document.createElement('div');
+      label.className = 'controller-cursor-label';
+      label.style.position = 'absolute';
+      label.style.top = '36px';
+      label.style.left = '50%';
+      label.style.transform = 'translateX(-50%)';
+      label.style.background = 'rgba(0,0,0,0.7)';
+      label.style.color = '#fff';
+      label.style.fontSize = '0.75rem';
+      label.style.padding = '2px 8px';
+      label.style.borderRadius = '6px';
+      label.style.pointerEvents = 'none';
+      label.style.whiteSpace = 'nowrap';
+      label.style.zIndex = '1001';
+      label.style.display = 'none';
+      cursor.appendChild(label);
+      cursorObj = { el: cursor, x, y, label };
       cursors.set(index, cursorObj);
+      cursor.dataset.controllerIndex = index;
     }
     cursorObj.x = x;
     cursorObj.y = y;
     cursorObj.el.style.left = `${x - 16}px`;
     cursorObj.el.style.top = `${y - 16}px`;
+    // Detect element under cursor and morph shape
+    const el = document.elementFromPoint(x, y);
+    const shape = getCursorShapeForElement(el);
+    setCursorShape(cursorObj.el, shape);
+    // Update label
+    const labelText = getElementLabel(el);
+    if (labelText) {
+      cursorObj.label.textContent = labelText;
+      cursorObj.label.style.display = 'block';
+    } else {
+      cursorObj.label.style.display = 'none';
+    }
   }
 
   function removeCursor(index) {
@@ -120,4 +233,31 @@
     cursors.clear();
   });
 </script>
+<style>
+.controller-cursor {
+  transition: border-radius 0.2s cubic-bezier(.68,-0.55,.27,1.55), width 0.2s, height 0.2s, background 0.2s;
+}
+.controller-cursor.cursor-square {
+  border-radius: 16px;
+}
+.controller-cursor.cursor-ibeam {
+  border-radius: 6px;
+  background: #fff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.controller-cursor.cursor-ibeam span {
+  display: none;
+}
+.controller-cursor-label {
+  user-select: none;
+  pointer-events: none;
+  font-family: inherit;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+</style>
 <!-- This component does not render any HTML directly; cursors are managed via JS -->

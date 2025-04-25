@@ -1,7 +1,3 @@
----
-import { Icon } from "astro-icon/components";
----
-
 <script>
   import { animate, spring } from "motion";
 
@@ -38,7 +34,7 @@ import { Icon } from "astro-icon/components";
     // Animate in (bouncy)
     animate(
       container,
-      { opacity: [0, 1], scale: [0.7, 1.15, 0.95, 1], translateX: [500, 0] },
+      { opacity: [0, 1], scale: [0.7, 1], transform: ["translateX(500px)", "translateX(0px)"] },
       { type: spring, bounce: 0.45, duration: 0.7 }
     ).then(() => {
       setTimeout(() => {
@@ -52,7 +48,7 @@ import { Icon } from "astro-icon/components";
     if (!container) return;
     animate(
       container,
-      { opacity: [1, 0], translateX: [0, 500] },
+      { opacity: [1, 0], scale: [1, 0.7], transform: ["translateX(0px)", "translateX(500px)"] },
       { type: spring, bounce: 0.2 }
     ).then(() => {
       container.remove();
