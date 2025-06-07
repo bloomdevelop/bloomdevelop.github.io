@@ -29,10 +29,11 @@
         font-feature-settings: "calt", "liga", "zero", "cv01", "ss03", "ss07", "ss08", "ss09", "ss10", "ss11";
         background-color: var(--bg);
         color: var(--fg);
+        height: auto;
     }
 
     main {
-        flex: 1 1 auto;
+        flex-grow: 1;
         padding: .5rem;
     }
 
