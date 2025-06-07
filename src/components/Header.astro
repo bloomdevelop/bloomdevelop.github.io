@@ -1,29 +1,40 @@
 ---
-import { SITE_NAME } from "../const";
+import { AUTHOR_NAME } from "../const";
 import HeaderLink from "./HeaderLink.astro";
 ---
 
 <nav>
-    <h1>{SITE_NAME}</h1>
+    <h1>{AUTHOR_NAME}&apos;s Site</h1>
     <div>
         <HeaderLink href="/">Home</HeaderLink>
         <HeaderLink href="/posts">Posts</HeaderLink>
+        <HeaderLink href="/about">About</HeaderLink>
     </div>
 </nav>
 
 <style>
     nav {
+        top: 0;
+        position: sticky;
         z-index: 9999;
+
+        overflow: hidden;
+        
+        margin: 0;
+        padding: 0.5rem 1rem;
+        
         display: flex;
         flex-direction: row;
-        align-items: flex-end;
         gap: 2rem;
-        padding: 0.5rem 1rem;
-        margin: 0;
+        align-items: flex-end;
+        
         border-bottom: solid 2px var(--border);
+        background-color: rgba(var(--bg-rgb), 0.5);
+        backdrop-filter: blur(20px);
     }
 
     h1 {
+        font-size: xx-large;
         padding: 0;
         line-height: 1em;
         margin: 0;
@@ -33,5 +44,12 @@ import HeaderLink from "./HeaderLink.astro";
         display: flex;
         flex-direction: row;
         gap: 1rem;
+    }
+
+    @media (prefers-reduced-transparency) {
+        nav {
+            background-color: var(--bg);
+            backdrop-filter: none;
+        }
     }
 </style>

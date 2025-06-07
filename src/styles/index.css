@@ -1,13 +1,17 @@
 @import url("/fonts/maple-mono.css");
 
 :root {
-    --bg: #101B28;
+    --bg: #101b28;
+    --bg-rgb: 16, 27, 40;
     --fg: #D8DEE6;
     --accent-bg: #A77EFA;
     --accent-fg: #000000;
+    --surface-bg: #000D18;
     --hover-bg: #16283C;
+    --bold-fg: #FFD28D;
+    --comment-fg: #7E8C9E;
     --border: #313C4D;
-    --border-radius: 7px; 
+    --border-radius: 7px;
 }
 
 @layer base {
@@ -19,13 +23,119 @@
 
     html,
     body {
+        display: flex;
+        flex-direction: column;
         font-family: "Maple Mono";
+        font-feature-settings: "calt", "liga", "zero", "cv01", "ss03", "ss07", "ss08", "ss09", "ss10", "ss11";
         background-color: var(--bg);
         color: var(--fg);
     }
 
     main {
+        flex: 1 1 auto;
         padding: .5rem;
+    }
+
+    a {
+        color: var(--accent-bg);
+        text-decoration: none;
+    }
+
+    a:hover {
+        color: var(--accent-bg);
+        text-decoration: underline;
+    }
+
+    ul {
+        list-style-type: disc;
+        padding-left: 2em;
+    }
+
+    b {
+        font-weight: 700;
+        color: var(--bold-fg);
+    }
+
+    pre {
+        font-family: "Maple Mono";
+        white-space: pre-wrap;
+    }
+}
+
+@layer typography {
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        margin: 0 0 0.5rem 0;
+        line-height: 1.2;
+    }
+
+    h1 {
+        font-size: 3.052em;
+    }
+
+    h2 {
+        font-size: 2.441em;
+    }
+
+    h3 {
+        font-size: 1.953em;
+    }
+
+    h4 {
+        font-size: 1.563em;
+    }
+
+    h5 {
+        font-size: 1.25em;
+    }
+
+    strong,
+    b {
+        font-weight: 700;
+    }
+
+    p {
+        margin-bottom: 1em;
+    }
+
+    .prose p {
+        margin-bottom: 2em;
+    }
+
+    textarea {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    input {
+        font-size: 16px;
+    }
+
+    table {
+        width: 100%;
+    }
+
+    img {
+        max-width: 100%;
+        height: auto;
+        border-radius: var(--border-radius);
+    }
+
+    blockquote {
+        border-left: 4px solid var(--accent);
+        padding: 0 0 0 20px;
+        margin: 0px;
+        font-size: 1.333em;
+    }
+
+    hr {
+        border: none;
+        border-top: 1px solid var(--border);
     }
 }
 

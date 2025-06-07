@@ -5,6 +5,7 @@ interface Props {
     id: string;
     name: string;
     pubDate: Date;
+    tags: string[] | undefined
 }
 
 const props = Astro.props;
@@ -15,21 +16,45 @@ const props = Astro.props;
         {props.name}
     </h1>
     <FormattedDate date={props.pubDate} />
+    {props.tags && <div class="tags-list">
+        {props.tags.map((tag) => <span>{tag}</span>)}
+    </div>}
+    
 </a>
 
 <style>
     a {
         transition: background 100ms;
-        padding: 2rem;
+        padding: 1rem;
         display: flex;
         flex-direction: column;
         text-decoration: unset;
         border: 2px solid var(--border);
         color: var(--fg);
         border-radius: var(--border-radius);
+
+        &:hover {
+            background-color: var(--hover-bg);
+        }
+
+        h1 {
+            font-size: 2em;
+        }
     }
 
-    a:hover {
-        background-color: var(--hover-bg);
+    .tags-list {
+        margin-top: .5rem;
+        display: flex;
+        flex-direction: row;
+        gap: .5rem;
+
+        span  {
+            padding: 0.2rem 0.5rem;
+            
+            background-color: var(--accent-bg);
+            color: var(--accent-fg);
+            
+            border-radius: var(--border-radius);
+        }
     }
 </style>

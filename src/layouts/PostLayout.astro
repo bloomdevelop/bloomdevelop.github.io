@@ -3,12 +3,13 @@ import type { CollectionEntry } from "astro:content";
 import BaseHead from "../components/BaseHead.astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
 
 interface ExtraProps {
     readingTime: string;
 }
 
-type Props = CollectionEntry<"posts">['data'] & ExtraProps;
+type Props = CollectionEntry<"posts">["data"] & ExtraProps;
 
 const props = Astro.props;
 ---
@@ -33,11 +34,21 @@ const props = Astro.props;
                 </div>
             </article>
         </main>
+        <Footer />
     </body>
 </html>
 
 <!-- Workaround for this strange css issue with markdown generation -->
 <style is:global>
+    body {
+        display: unset !important;
+    }
+    main {
+        flex: unset !important;
+        margin-inline: auto;
+        max-width: calc(100vw - 50%);
+    }
+
     div#post-info {
         border: 2px solid var(--border);
         padding: 1rem;
@@ -45,13 +56,19 @@ const props = Astro.props;
         margin-bottom: 1rem;
 
         hr {
-            margin: .3rem 0;
+            margin: 0.3rem 0;
             border: none;
             border-top: 1px solid var(--border);
         }
     }
 
     div#post-content {
+        display: block;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: auto;
+        -moz-osx-font-smoothing: auto;
+        unicode-bidi: isolate;
+
         h1,
         h2,
         h3,
@@ -81,12 +98,7 @@ const props = Astro.props;
         strong,
         b {
             font-weight: 700;
-        }
-        a {
-            color: var(--accent);
-        }
-        a:hover {
-            color: var(--accent);
+            color: var(--bold-fg)
         }
         p {
             margin-bottom: 1em;
@@ -108,6 +120,7 @@ const props = Astro.props;
             max-width: 100%;
             height: auto;
             border-radius: var(--border-radius);
+            border: 2px solid var(--border);
         }
         blockquote {
             border-left: 4px solid var(--accent);
@@ -118,6 +131,14 @@ const props = Astro.props;
         hr {
             border: none;
             border-top: 1px solid var(--border);
+        }
+
+        code {
+            display: inline-block;
+            border: 2px solid var(--border);
+            border-radius: var(--border-radius);
+            padding: .1rem .3rem;
+            font-family: "Maple Mono";
         }
     }
 </style>

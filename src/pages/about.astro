@@ -1,0 +1,70 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import fs from "node:fs";
+const license = fs.readFileSync(
+    new URL("../../LICENSE", import.meta.url),
+    "utf-8",
+);
+---
+
+<BaseLayout>
+    <h2>Frameworks/Libraries used to build this site</h2>
+    <ul>
+        <li>
+            <a href="https://astro.build" target="_blank" rel="external"
+                >Astro</a
+            >
+        </li>
+        <li>
+            <a href="https://react.dev" target="_blank" rel="external">React</a>
+            (Used for Comments)
+        </li>
+        <li>
+            <a href="https://giscus.app/" target="_blank" rel="external"
+                >Giscus</a
+            > (Used for Comments by using Github's Discussions)
+        </li>
+    </ul>
+    <h2>Colorscheme and Fonts</h2>
+    <ul>
+        <li>
+            <a
+                href="https://marketplace.visualstudio.com/items?itemName=keksiqc.idx-monospace-theme"
+                target="_blank"
+                rel="external"
+                >Monospace Theme (Based on Google IDX/Firebase Studio's default
+                theme)</a
+            >
+        </li>
+        <li>
+            <a
+                href="https://github.com/subframe7536/Maple-font"
+                target="_blank"
+                rel="external">Maple Mono by Subframe7536</a
+            >
+        </li>
+    </ul>
+    <h2>License</h2>
+    <p>
+        This site was licensed under <span class="color-me">AGPLv3</span>, You
+        should read it first:
+    </p>
+    <div class="license-reader">
+        <pre>
+                {license}
+            </pre>
+    </div>
+</BaseLayout>
+
+<style>
+    .license-reader {
+        margin-top: 1rem;
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        border: 2px solid var(--border);
+        width: fit-content;
+        max-height: 40vh;
+        overflow: auto;
+        background: var(--surface-bg);
+    }
+</style>

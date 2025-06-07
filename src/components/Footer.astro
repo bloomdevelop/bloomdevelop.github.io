@@ -1,0 +1,58 @@
+---
+import { AUTHOR_NAME, LINKS } from "../const";
+
+const today = new Date();
+---
+
+<footer>
+    <div class="info">
+        <h1>
+            Created with <span class="color-me">Astro</span> and <span
+                class="color-me">Visual Studio Code</span
+            >
+        </h1>
+        <p>
+            &copy;
+            {today.getFullYear()}
+            {AUTHOR_NAME}. All rights reserved.
+        </p>
+    </div>
+    <div class="links">
+        {
+            LINKS.map((link) => (
+                <a href={link.href} target="_blank" rel="external">
+                    {link.name}
+                </a>
+            ))
+        }
+    </div>
+</footer>
+
+<style>
+    footer {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background-color: var(--surface-bg);
+        border-top: 2px solid var(--border);
+
+        .info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 0.5rem;
+
+            h1 {
+                font-size: x-large;
+            }
+        }
+
+        .links {
+            display: flex;
+            flex-direction: row;
+            gap: 1rem;
+        }
+    }
+</style>

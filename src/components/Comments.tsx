@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Giscus from '@giscus/react';
+import { CATEGORY, REPO, REPO_ID } from '../const';
 
 const id = 'inject-comments';
 
@@ -15,14 +16,15 @@ const Comments = () => {
       {mounted ? (
         <Giscus
           id={id}
-          repo="[ENTER REPO HERE]"
-          repoId="[ENTER REPO ID HERE]"
-          category="[ENTER CATEGORY HERE]"
-          categoryId="[ENTER CATEGORY ID HERE]"
-          mapping="pathname"
+          repo={REPO}
+          repoId={REPO_ID}
+          category={CATEGORY}
+          categoryId="DIC_kwDOO3eB3M4CrJL8"
+          mapping="og:title"
           reactionsEnabled="1"
-          emitMetadata="0"
+          emitMetadata="1"
           inputPosition="top"
+          theme="preferred_color_scheme"
           lang="en"
           loading="lazy"
         />

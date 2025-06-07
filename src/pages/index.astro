@@ -1,10 +1,42 @@
 ---
-import Pride from "../components/Pride.astro";
+import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
 
-
+const posts = (await getCollection("posts")).sort(
+	(a, b) =>
+		new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime(),
+);
+const latestPosts = posts.slice(0, 3);
 ---
 
 <BaseLayout>
-	<h1 class="hero">Hello <span class="color-me">World</span></h1>
+	<section>
+		<h1>Latest Posts</h1>
+		{
+			latestPosts.length > 0 ? (
+				<div class="posts-list">
+					{latestPosts.map((post) => (
+						<PostCard
+							id={post.id}
+							name={post.data.title}
+							pubDate={post.data.pubDate}
+							tags={post.data.tags}
+						/>
+					))}
+				</div>
+			) : (
+				<p>No posts found. Please check back later!</p>
+			)
+		}
+	</section>
 </BaseLayout>
+
+<style>
+	.posts-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		margin-top: 1.5rem;
+	}
+</style>
