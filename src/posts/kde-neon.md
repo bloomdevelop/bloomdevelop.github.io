@@ -4,8 +4,6 @@ tags: ["Linux"]
 pubDate: 6/7/25
 ---
 
-import CustomImage from '../components/CustomImage.astro';
-
 ## Quick introduction
 
 Alright so, I'm back into writing some articles since I don't have anything to do. Before, I was using Ubuntu (obviously was very fine for my ThinkPad P43s), but I realized that there was some issue while I was using this distribution.
@@ -36,8 +34,17 @@ I wanted to have KDE Plasma without additional software (e.g. App Center, unnece
 
 While I was using Roblox Studio via [Vinegar](https://github.com/vinegarhq/vinegar), I realized something went very wrong with the application on the second monitor, it looked very much fucked up, and I have a screenshot why:
 
-<CustomImage src="/images/Screenshot_20250605_153525.png" width={1000} height={300} caption="Screenshot I took while having a strange graphical glitches" />
+![Screenshot I took while having a strange graphical glitch](/images/Screenshot_20250605_153525.png)
+<figcaption>
+
+Screenshot I took while having a strange graphical glitch
+
+</figcaption>
 
 Looks like a literal glitched mess to me, I still had no clue why it happened to me. This was until I proceeded to restart my laptop, then open Vesktop again, and now it's fixed. Very strange.
 
+## Closing
 
+Since it's only one graphical glitches so far during my usage, I'd say confidently I'm going to continue using this system for now, unless there problems that prevents from using it.
+
+I'd say it been for a while since I never wrote an article like this, but, this is first time I've done a review on this distribution. I don't think if I feel after writing this. Anyway, I'm unsure what's the next article is going to be, like I wanted to keep posting new articles and not being lazy at all, but for now, I'd keep moving.
