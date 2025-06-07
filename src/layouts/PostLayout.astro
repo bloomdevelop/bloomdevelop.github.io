@@ -1,0 +1,123 @@
+---
+import type { CollectionEntry } from "astro:content";
+import BaseHead from "../components/BaseHead.astro";
+import FormattedDate from "../components/FormattedDate.astro";
+import Header from "../components/Header.astro";
+
+interface ExtraProps {
+    readingTime: string;
+}
+
+type Props = CollectionEntry<"posts">['data'] & ExtraProps;
+
+const props = Astro.props;
+---
+
+<html lang="en">
+    <head>
+        <BaseHead title={props.title} />
+    </head>
+
+    <body>
+        <Header />
+        <main>
+            <article>
+                <div id="post-info">
+                    <h1>{props.title}</h1>
+                    <FormattedDate date={props.pubDate} />
+                    <hr />
+                    <p>{props.readingTime}</p>
+                </div>
+                <div id="post-content">
+                    <slot />
+                </div>
+            </article>
+        </main>
+    </body>
+</html>
+
+<!-- Workaround for this strange css issue with markdown generation -->
+<style is:global>
+    div#post-info {
+        border: 2px solid var(--border);
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        margin-bottom: 1rem;
+
+        hr {
+            margin: .3rem 0;
+            border: none;
+            border-top: 1px solid var(--border);
+        }
+    }
+
+    div#post-content {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            margin: 0 0 0.5rem 0;
+            line-height: 1.2;
+        }
+        h1 {
+            font-size: 3.052em;
+            border-bottom: 2px solid var(--border);
+        }
+        h2 {
+            font-size: 2.441em;
+            border-bottom: 2px solid var(--border);
+        }
+        h3 {
+            font-size: 1.953em;
+        }
+        h4 {
+            font-size: 1.563em;
+        }
+        h5 {
+            font-size: 1.25em;
+        }
+        strong,
+        b {
+            font-weight: 700;
+        }
+        a {
+            color: var(--accent);
+        }
+        a:hover {
+            color: var(--accent);
+        }
+        p {
+            margin-bottom: 1em;
+        }
+        .prose p {
+            margin-bottom: 2em;
+        }
+        textarea {
+            width: 100%;
+            font-size: 16px;
+        }
+        input {
+            font-size: 16px;
+        }
+        table {
+            width: 100%;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--border-radius);
+        }
+        blockquote {
+            border-left: 4px solid var(--accent);
+            padding: 0 0 0 20px;
+            margin: 0px;
+            font-size: 1.333em;
+        }
+        hr {
+            border: none;
+            border-top: 1px solid var(--border);
+        }
+    }
+</style>

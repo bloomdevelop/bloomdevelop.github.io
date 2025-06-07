@@ -1,0 +1,58 @@
+---
+const date = Date.now()
+const isPrideMonth = new Date(date).getMonth() === 5
+---
+
+{isPrideMonth && 
+    <div class="pride-border">
+        Happy Pride Month!
+    </div>
+}
+
+<style>
+    .pride-border {
+        --glow-gradient: red, yellow, green, blue, purple, red;
+        --glow-size: 3rem;
+        --glow-intensity: .2;
+        --border-width: 3px;
+
+        z-index: 0;
+        margin: 1.5rem;
+        padding: 1rem;
+
+        font-size: 1.6em;
+        text-align: center;
+
+        border-radius: var(--border-radius);
+
+        border: var(--border-width, 3px) solid transparent;
+        background: linear-gradient(var(--bg), var(--bg)) padding-box,
+            conic-gradient(var(--glow-gradient)) border-box;
+        position: relative;
+        isolation: isolate;
+
+        &::before,
+        &::after {
+            content: '';
+            position: absolute;
+            border-radius: inherit;
+        }
+
+        &::before {
+            z-index: -1;
+            background: var(--bg, canvas);
+            inset: 3rem;
+            scale: 1.2 1;
+            transform-origin: center;
+            filter: blur(1rem);
+        }
+
+        &::after {
+            z-index: -2;
+            inset: -1.5rem;
+            background: conic-gradient(var(--glow-gradient));
+            filter: blur(var(--glow-size, 1rem));
+            opacity: var(--glow-intensity, 0.25);
+        }
+    }
+</style>

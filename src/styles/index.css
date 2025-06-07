@@ -1,0 +1,61 @@
+@import url("/fonts/maple-mono.css");
+
+:root {
+    --bg: #101B28;
+    --fg: #D8DEE6;
+    --accent-bg: #A77EFA;
+    --accent-fg: #000000;
+    --hover-bg: #16283C;
+    --border: #313C4D;
+    --border-radius: 7px; 
+}
+
+@layer base {
+    * {
+        inset: unset;
+        margin: 0;
+        padding: 0;
+    }
+
+    html,
+    body {
+        font-family: "Maple Mono";
+        background-color: var(--bg);
+        color: var(--fg);
+    }
+
+    main {
+        padding: .5rem;
+    }
+}
+
+@layer astro-components {
+    .astro-code {
+        padding: .5rem;
+        border: solid 1px var(--border);
+        border-radius: var(--border-radius);
+    }
+
+    @media (prefers-color-scheme: dark) {
+
+        .astro-code,
+        .astro-code span {
+            color: var(--shiki-dark) !important;
+            background-color: var(--shiki-dark-bg) !important;
+            font-family: "Maple Mono NF";
+            font-style: var(--shiki-dark-font-style) !important;
+            font-weight: var(--shiki-dark-font-weight) !important;
+            text-decoration: var(--shiki-dark-text-decoration) !important;
+        }
+    }
+}
+
+@layer components {
+    .hero {
+        font-size: 4em;
+    }
+
+    .color-me {
+        color: var(--accent-bg)
+    }
+}

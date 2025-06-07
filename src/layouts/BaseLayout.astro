@@ -1,0 +1,22 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Header from "../components/Header.astro";
+import Pride from "../components/Pride.astro";
+import { SITE_NAME } from "../const";
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <BaseHead title={SITE_NAME} />
+</head>
+<body>
+    <Header />
+    <Pride/>
+    <main>
+        <slot />
+    </main>
+</body>
+</html>

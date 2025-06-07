@@ -1,0 +1,145 @@
+/* maple-mono-bold */
+@font-face {
+	font-family: Maple Mono;
+	font-style: normal;
+	font-weight: 700;
+	font-stretch: 100%;
+	src: local("Maple Mono Bold"), local("MapleMono-Bold"), url(maple-mono-bold.woff2) format("woff2"), url(maple-mono-bold.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-bold-italic */
+@font-face {
+	font-family: Maple Mono;
+	font-style: italic;
+	font-weight: 700;
+	font-stretch: 100%;
+	src: local("Maple Mono Bold Italic"), local("MapleMono-BoldItalic"), url(maple-mono-bold-italic.woff2) format("woff2"), url(maple-mono-bold-italic.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-extrabold */
+@font-face {
+	font-family: Maple Mono;
+	font-style: normal;
+	font-weight: 800;
+	font-stretch: 100%;
+	src: local("Maple Mono ExtraBold"), local("MapleMono-ExtraBold"), url(maple-mono-extrabold.woff2) format("woff2"), url(maple-mono-extrabold.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-extrabold-italic */
+@font-face {
+	font-family: Maple Mono;
+	font-style: italic;
+	font-weight: 800;
+	font-stretch: 100%;
+	src: local("Maple Mono ExtraBold Italic"), local("MapleMono-ExtraBoldItalic"), url(maple-mono-extrabold-italic.woff2) format("woff2"), url(maple-mono-extrabold-italic.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-extralight */
+@font-face {
+	font-family: Maple Mono;
+	font-style: normal;
+	font-weight: 200;
+	font-stretch: 100%;
+	src: local("Maple Mono ExtraLight"), local("MapleMono-ExtraLight"), url(maple-mono-extralight.woff2) format("woff2"), url(maple-mono-extralight.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-extralight-italic */
+@font-face {
+	font-family: Maple Mono;
+	font-style: italic;
+	font-weight: 200;
+	font-stretch: 100%;
+	src: local("Maple Mono ExtraLight Italic"), local("MapleMono-ExtraLightItalic"), url(maple-mono-extralight-italic.woff2) format("woff2"), url(maple-mono-extralight-italic.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-italic */
+@font-face {
+	font-family: Maple Mono;
+	font-style: italic;
+	font-weight: 100 800;
+	font-stretch: 100%;
+	src: local("Maple Mono Italic"), local("MapleMono-Italic"), url(maple-mono-italic.woff2) format("woff2"), url(maple-mono-italic.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-light */
+@font-face {
+	font-family: Maple Mono;
+	font-style: normal;
+	font-weight: 300;
+	font-stretch: 100%;
+	src: local("Maple Mono Light"), local("MapleMono-Light"), url(maple-mono-light.woff2) format("woff2"), url(maple-mono-light.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-light-italic */
+@font-face {
+	font-family: Maple Mono;
+	font-style: italic;
+	font-weight: 300;
+	font-stretch: 100%;
+	src: local("Maple Mono Light Italic"), local("MapleMono-LightItalic"), url(maple-mono-light-italic.woff2) format("woff2"), url(maple-mono-light-italic.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-medium */
+@font-face {
+	font-family: Maple Mono;
+	font-style: normal;
+	font-weight: 500;
+	font-stretch: 100%;
+	src: local("Maple Mono Medium"), local("MapleMono-Medium"), url(maple-mono-medium.woff2) format("woff2"), url(maple-mono-medium.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-medium-italic */
+@font-face {
+	font-family: Maple Mono;
+	font-style: italic;
+	font-weight: 500;
+	font-stretch: 100%;
+	src: local("Maple Mono Medium Italic"), local("MapleMono-MediumItalic"), url(maple-mono-medium-italic.woff2) format("woff2"), url(maple-mono-medium-italic.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono */
+@font-face {
+	font-family: Maple Mono;
+	font-style: normal;
+	font-weight: 100 800;
+	font-stretch: 100%;
+	src: local("Maple Mono Regular"), local("MapleMono-Regular"), url(maple-mono.woff2) format("woff2"), url(maple-mono.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-semibold */
+@font-face {
+	font-family: Maple Mono;
+	font-style: normal;
+	font-weight: 600;
+	font-stretch: 100%;
+	src: local("Maple Mono SemiBold"), local("MapleMono-SemiBold"), url(maple-mono-semibold.woff2) format("woff2"), url(maple-mono-semibold.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-semibold-italic */
+@font-face {
+	font-family: Maple Mono;
+	font-style: italic;
+	font-weight: 600;
+	font-stretch: 100%;
+	src: local("Maple Mono SemiBold Italic"), local("MapleMono-SemiBoldItalic"), url(maple-mono-semibold-italic.woff2) format("woff2"), url(maple-mono-semibold-italic.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-thin */
+@font-face {
+	font-family: Maple Mono;
+	font-style: normal;
+	font-weight: 100;
+	font-stretch: 100%;
+	src: local("Maple Mono Thin"), local("MapleMono-Thin"), url(maple-mono-thin.woff2) format("woff2"), url(maple-mono-thin.woff) format("woff");
+	font-display: auto;
+}
+/* maple-mono-thin-italic */
+@font-face {
+	font-family: Maple Mono;
+	font-style: italic;
+	font-weight: 100;
+	font-stretch: 100%;
+	src: local("Maple Mono Thin Italic"), local("MapleMono-ThinItalic"), url(maple-mono-thin-italic.woff2) format("woff2"), url(maple-mono-thin-italic.woff) format("woff");
+	font-display: auto;
+}
+

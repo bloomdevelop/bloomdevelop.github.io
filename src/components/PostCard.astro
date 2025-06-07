@@ -1,0 +1,35 @@
+---
+import FormattedDate from "./FormattedDate.astro";
+
+interface Props {
+    id: string;
+    name: string;
+    pubDate: Date;
+}
+
+const props = Astro.props;
+---
+
+<a href={`/posts/${props.id}`}>
+    <h1>
+        {props.name}
+    </h1>
+    <FormattedDate date={props.pubDate} />
+</a>
+
+<style>
+    a {
+        transition: background 100ms;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        text-decoration: unset;
+        border: 2px solid var(--border);
+        color: var(--fg);
+        border-radius: var(--border-radius);
+    }
+
+    a:hover {
+        background-color: var(--hover-bg);
+    }
+</style>

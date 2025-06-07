@@ -1,0 +1,69 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+const postCollection = await getCollection("posts");
+
+type PostGroup = {
+    year: number;
+    month: string;
+    posts: Array<(typeof postCollection)[number]>;
+};
+
+function groupPostsByMonth(posts: typeof postCollection) {
+    const groups: Record<string, PostGroup> = {};
+    posts.forEach((post) => {
+        const date = new Date(post.data.pubDate);
+        const year = date.getFullYear();
+        const month = date.toLocaleString("default", { month: "long" });
+        const key = `${year}-${month}`;
+        if (!groups[key]) {
+            groups[key] = { year, month, posts: [] };
+        }
+        groups[key].posts.push(post);
+    });
+    // Sort groups by year and month descending
+    return Object.values(groups).sort((a, b) => {
+        if (a.year !== b.year) return b.year - a.year;
+        const monthA = new Date(`${a.month} 1, 2000`).getMonth();
+        const monthB = new Date(`${b.month} 1, 2000`).getMonth();
+        return monthB - monthA;
+    });
+}
+
+const groupedPosts = groupPostsByMonth(postCollection);
+---
+
+<BaseLayout>
+    {
+        groupedPosts.map((group) => (
+            <section>
+                <h2>
+                    {group.month} {group.year}
+                </h2>
+                <div class="posts-list">
+                    {group.posts.map((post) => (
+                        <PostCard
+                            name={post.data.title}
+                            pubDate={post.data.pubDate}
+                            {...post}
+                        />
+                    ))}
+                </div>
+            </section>
+        ))
+    }
+</BaseLayout>
+
+<style>
+    h2 {
+        font-size: 2.3em;
+        margin: .4rem 0;
+    }
+
+    .posts-list {
+        display: flex;
+        flex-direction: column;
+        gap: .5rem;
+    }
+</style>
