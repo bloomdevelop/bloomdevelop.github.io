@@ -1,26 +1,28 @@
 {
-  "name": "bloomdevelop.github.io",
-  "type": "module",
-  "version": "0.0.1",
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
-  },
-  "dependencies": {
-    "@astrojs/mdx": "^4.3.0",
-    "@astrojs/react": "^4.3.0",
-    "@giscus/react": "^3.1.0",
-    "@types/react": "^19.1.6",
-    "@types/react-dom": "^19.1.6",
-    "astro": "^5.9.0",
-    "mdast-util-to-string": "^4.0.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
-    "reading-time": "^1.5.0"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4"
-  }
+	"name": "bloomdevelop.github.io",
+	"type": "module",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "astro dev",
+		"build": "astro build",
+		"preview": "astro preview",
+		"astro": "astro",
+		"biome:lint": "biome lint --fix",
+		"biome:fmt": "biome format --fix"
+	},
+	"dependencies": {
+		"@astrojs/mdx": "^4.3.0",
+		"@astrojs/react": "^4.3.0",
+		"@giscus/react": "^3.1.0",
+		"@types/react": "^19.1.6",
+		"@types/react-dom": "^19.1.6",
+		"astro": "^5.9.0",
+		"mdast-util-to-string": "^4.0.0",
+		"react": "^19.1.0",
+		"react-dom": "^19.1.0",
+		"reading-time": "^1.5.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4"
+	}
 }

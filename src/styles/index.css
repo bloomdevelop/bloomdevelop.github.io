@@ -1,172 +1,171 @@
 @import url("/fonts/maple-mono.css");
 
 :root {
-    --bg: #101b28;
-    --bg-rgb: 16, 27, 40;
-    --fg: #D8DEE6;
-    --accent-bg: #A77EFA;
-    --accent-fg: #000000;
-    --surface-bg: #000D18;
-    --hover-bg: #16283C;
-    --bold-fg: #FFD28D;
-    --comment-fg: #7E8C9E;
-    --border: #313C4D;
-    --border-radius: 7px;
+	--bg: #101b28;
+	--bg-rgb: 16, 27, 40;
+	--fg: #d8dee6;
+	--accent-bg: #a77efa;
+	--accent-fg: #000000;
+	--surface-bg: #000d18;
+	--hover-bg: #16283c;
+	--bold-fg: #ffd28d;
+	--comment-fg: #7e8c9e;
+	--border: #313c4d;
+	--border-radius: 7px;
 }
 
 @layer base {
-    * {
-        inset: unset;
-        margin: 0;
-        padding: 0;
-    }
+	* {
+		inset: unset;
+		margin: 0;
+		padding: 0;
+	}
 
-    html,
-    body {
-        display: flex;
-        flex-direction: column;
-        font-family: "Maple Mono";
-        font-feature-settings: "calt", "liga", "zero", "cv01", "ss03", "ss07", "ss08", "ss09", "ss10", "ss11";
-        background-color: var(--bg);
-        color: var(--fg);
-        height: auto;
-    }
+	html,
+	body {
+		display: flex;
+		flex-direction: column;
+		font-family: "Maple Mono", monospace;
+		font-feature-settings: "calt", "liga", "zero", "cv01", "ss03", "ss07",
+			"ss08", "ss09", "ss10", "ss11";
+		background-color: var(--bg);
+		color: var(--fg);
+		height: auto;
+	}
 
-    main {
-        flex-grow: 1;
-        padding: .5rem;
-    }
+	main {
+		flex-grow: 1;
+		padding: .5rem;
+	}
 
-    a {
-        color: var(--accent-bg);
-        text-decoration: none;
-    }
+	a {
+		color: var(--accent-bg);
+		text-decoration: none;
+	}
 
-    a:hover {
-        color: var(--accent-bg);
-        text-decoration: underline;
-    }
+	a:hover {
+		color: var(--accent-bg);
+		text-decoration: underline;
+	}
 
-    ul {
-        list-style-type: disc;
-        padding-left: 2em;
-    }
+	ul {
+		list-style-type: disc;
+		padding-left: 2em;
+	}
 
-    b {
-        font-weight: 700;
-        color: var(--bold-fg);
-    }
+	b {
+		font-weight: 700;
+		color: var(--bold-fg);
+	}
 
-    pre {
-        font-family: "Maple Mono";
-        white-space: pre-wrap;
-    }
+	pre {
+		font-family: "Maple Mono", monospace;
+		white-space: pre-wrap;
+	}
 }
 
 @layer typography {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		margin: 0 0 0.5rem 0;
+		line-height: 1.2;
+	}
 
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        margin: 0 0 0.5rem 0;
-        line-height: 1.2;
-    }
+	h1 {
+		font-size: 3.052em;
+	}
 
-    h1 {
-        font-size: 3.052em;
-    }
+	h2 {
+		font-size: 2.441em;
+	}
 
-    h2 {
-        font-size: 2.441em;
-    }
+	h3 {
+		font-size: 1.953em;
+	}
 
-    h3 {
-        font-size: 1.953em;
-    }
+	h4 {
+		font-size: 1.563em;
+	}
 
-    h4 {
-        font-size: 1.563em;
-    }
+	h5 {
+		font-size: 1.25em;
+	}
 
-    h5 {
-        font-size: 1.25em;
-    }
+	strong,
+	b {
+		font-weight: 700;
+	}
 
-    strong,
-    b {
-        font-weight: 700;
-    }
+	p {
+		margin-bottom: 1em;
+	}
 
-    p {
-        margin-bottom: 1em;
-    }
+	.prose p {
+		margin-bottom: 2em;
+	}
 
-    .prose p {
-        margin-bottom: 2em;
-    }
+	textarea {
+		width: 100%;
+		font-size: 16px;
+	}
 
-    textarea {
-        width: 100%;
-        font-size: 16px;
-    }
+	input {
+		font-size: 16px;
+	}
 
-    input {
-        font-size: 16px;
-    }
+	table {
+		width: 100%;
+	}
 
-    table {
-        width: 100%;
-    }
+	img {
+		max-width: 100%;
+		height: auto;
+		border-radius: var(--border-radius);
+	}
 
-    img {
-        max-width: 100%;
-        height: auto;
-        border-radius: var(--border-radius);
-    }
+	blockquote {
+		border-left: 4px solid var(--accent);
+		padding: 0 0 0 20px;
+		margin: 0px;
+		font-size: 1.333em;
+	}
 
-    blockquote {
-        border-left: 4px solid var(--accent);
-        padding: 0 0 0 20px;
-        margin: 0px;
-        font-size: 1.333em;
-    }
-
-    hr {
-        border: none;
-        border-top: 1px solid var(--border);
-    }
+	hr {
+		border: none;
+		border-top: 1px solid var(--border);
+	}
 }
 
 @layer astro-components {
-    .astro-code {
-        padding: .5rem;
-        border: solid 1px var(--border);
-        border-radius: var(--border-radius);
-    }
+	.astro-code {
+		padding: .5rem;
+		border: solid 1px var(--border);
+		border-radius: var(--border-radius);
+	}
 
-    @media (prefers-color-scheme: dark) {
-
-        .astro-code,
-        .astro-code span {
-            color: var(--shiki-dark) !important;
-            background-color: var(--shiki-dark-bg) !important;
-            font-family: "Maple Mono NF";
-            font-style: var(--shiki-dark-font-style) !important;
-            font-weight: var(--shiki-dark-font-weight) !important;
-            text-decoration: var(--shiki-dark-text-decoration) !important;
-        }
-    }
+	@media (prefers-color-scheme: dark) {
+		.astro-code,
+		.astro-code span {
+			color: var(--shiki-dark) !important;
+			background-color: var(--shiki-dark-bg) !important;
+			font-family: "Maple Mono NF", monospace;
+			font-style: var(--shiki-dark-font-style) !important;
+			font-weight: var(--shiki-dark-font-weight) !important;
+			text-decoration: var(--shiki-dark-text-decoration) !important;
+		}
+	}
 }
 
 @layer components {
-    .hero {
-        font-size: 4em;
-    }
+	.hero {
+		font-size: 4em;
+	}
 
-    .color-me {
-        color: var(--accent-bg)
-    }
+	.color-me {
+		color: var(--accent-bg);
+	}
 }

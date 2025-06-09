@@ -5,30 +5,32 @@ import PostCard from "../../components/PostCard.astro";
 const postCollection = (await getCollection("posts")).reverse();
 
 type PostGroup = {
-    year: number;
-    month: string;
-    posts: Array<(typeof postCollection)[number]>;
+	year: number;
+	month: string;
+	posts: Array<(typeof postCollection)[number]>;
 };
 
 function groupPostsByMonth(posts: typeof postCollection) {
-    const groups: Record<string, PostGroup> = {};
-    posts.forEach((post) => {
-        const date = new Date(post.data.pubDate);
-        const year = date.getFullYear();
-        const month = date.toLocaleString("default", { month: "long" });
-        const key = `${year}-${month}`;
-        if (!groups[key]) {
-            groups[key] = { year, month, posts: [] };
-        }
-        groups[key].posts.push(post);
-    });
-    // Sort groups by year and month descending
-    return Object.values(groups).sort((a, b) => {
-        if (a.year !== b.year) return b.year - a.year;
-        const monthA = new Date(`${a.month} 1, 2000`).getMonth();
-        const monthB = new Date(`${b.month} 1, 2000`).getMonth();
-        return monthB - monthA;
-    });
+	const groups: Record<string, PostGroup> = {};
+
+	for (const post of posts) {
+		const date = new Date(post.data.pubDate);
+		const year = date.getFullYear();
+		const month = date.toLocaleString("default", { month: "long" });
+		const key = `${year}-${month}`;
+		if (!groups[key]) {
+			groups[key] = { year, month, posts: [] };
+		}
+		groups[key].posts.push(post);
+	}
+
+	// Sort groups by year and month descending
+	return Object.values(groups).sort((a, b) => {
+		if (a.year !== b.year) return b.year - a.year;
+		const monthA = new Date(`${a.month} 1, 2000`).getMonth();
+		const monthB = new Date(`${b.month} 1, 2000`).getMonth();
+		return monthB - monthA;
+	});
 }
 
 const groupedPosts = groupPostsByMonth(postCollection);
