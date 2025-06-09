@@ -4,7 +4,7 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 
 // Custom Remark plugin
-import { remarkReadingTime } from './remark-reading-time.mjs';
+import { remarkReadingTime } from './plugins/remark-reading-time.mjs';
 
 import react from '@astrojs/react';
 
