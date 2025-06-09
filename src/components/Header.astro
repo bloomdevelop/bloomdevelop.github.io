@@ -1,14 +1,18 @@
 ---
 import { AUTHOR_NAME } from "../const";
 import HeaderLink from "./HeaderLink.astro";
+import pkg from "../../package.json";
 ---
 
 <nav>
-    <h1>{AUTHOR_NAME}&apos;s Site</h1>
     <div>
+        <h1>{AUTHOR_NAME}&apos;s Site</h1>
         <HeaderLink href="/">Home</HeaderLink>
         <HeaderLink href="/posts">Posts</HeaderLink>
         <HeaderLink href="/about">About</HeaderLink>
+    </div>
+    <div class="end fadeout">
+        v{pkg.version}
     </div>
 </nav>
 
@@ -26,6 +30,7 @@ import HeaderLink from "./HeaderLink.astro";
         display: flex;
         flex-direction: row;
         gap: 2rem;
+        justify-content: space-between;
         align-items: flex-end;
         
         border-bottom: solid 2px var(--border);
@@ -44,6 +49,10 @@ import HeaderLink from "./HeaderLink.astro";
         display: flex;
         flex-direction: row;
         gap: 1rem;
+    }
+
+    .fadeout {
+        color: var(--comment-fg)
     }
 
     @media (prefers-reduced-transparency) {
