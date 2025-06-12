@@ -1,6 +1,6 @@
 import * as React from "react";
 import Giscus from "@giscus/react";
-import { CATEGORY, REPO, REPO_ID } from "../const";
+import { CATEGORY, REPO, REPO_ID } from "../../const";
 
 const id = "inject-comments";
 

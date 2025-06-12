@@ -2,15 +2,18 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostCard from "../../components/PostCard.astro";
-const postCollection = (await getCollection("posts")).reverse();
+import PostFilters from "../../components/react/PostFilters";
 
-type PostGroup = {
+// Get all posts and reverse to show newest first
+const allPosts = (await getCollection("posts")).reverse();
+
+interface PostGroup {
 	year: number;
 	month: string;
-	posts: Array<(typeof postCollection)[number]>;
-};
+	posts: typeof allPosts;
+}
 
-function groupPostsByMonth(posts: typeof postCollection) {
+function groupPostsByMonth(posts: typeof allPosts): PostGroup[] {
 	const groups: Record<string, PostGroup> = {};
 
 	for (const post of posts) {
@@ -33,36 +36,17 @@ function groupPostsByMonth(posts: typeof postCollection) {
 	});
 }
 
-const groupedPosts = groupPostsByMonth(postCollection);
+const groupedPosts = groupPostsByMonth(allPosts);
 ---
 
 <BaseLayout>
-    {
-        groupedPosts.map((group) => (
-            <section>
-                <h1>
-                    {group.month} {group.year}
-                </h1>
-                <div class="posts-list">
-                    {group.posts.map((post) => (
-                        <PostCard
-                            name={post.data.title}
-                            pubDate={post.data.pubDate}
-                            tags={post.data.tags}
-                            {...post}
-                        />
-                    ))}
-                </div>
-            </section>
-        ))
-    }
+    <PostFilters 
+        client:load 
+        allPosts={groupedPosts} 
+        initialPosts={groupedPosts}
+    />
 </BaseLayout>
 
 <style>
-
-    .posts-list {
-        display: flex;
-        flex-direction: column;
-        gap: .5rem;
-    }
+    /* Styles are now in the React component */
 </style>
