@@ -1,0 +1,40 @@
+---
+interface Props {
+    direction?: "row" | "column";
+    gap?: number;
+    position: "sticky" | "fixed" | "relative" | "absolute" | "static";
+    top?: number;
+    left?: number;
+    right?: number;
+    bottom?: number;
+    zIndex?: number;
+}
+
+const { 
+    direction = "column",
+    gap,
+    position = "relative",
+    top,
+    left,
+    right,
+    bottom,
+    zIndex
+} = Astro.props;
+
+const style = `
+    display: flex;
+    flex-direction: ${direction};
+    ${gap ? `gap: ${gap}rem;` : ''}
+    position: ${position};
+    ${top !== undefined ? `top: ${top}px;` : ''}
+    ${left !== undefined ? `left: ${left}px;` : ''}
+    ${right !== undefined ? `right: ${right}px;` : ''}
+    ${bottom !== undefined ? `bottom: ${bottom}px;` : ''}
+    ${zIndex !== undefined ? `z-index: ${zIndex};` : ''}
+    width: 100%;
+`;
+---
+
+<div style={style}>
+    <slot />
+</div>

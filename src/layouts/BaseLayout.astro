@@ -1,8 +1,10 @@
 ---
 import BaseHead from "../components/BaseHead.astro";
+import DevWarn from "../components/DevWarn.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import Pride from "../components/Pride.astro";
+import Stack from "../components/Stack.astro";
 import { AUTHOR_NAME } from "../const";
 ---
 
@@ -14,7 +16,10 @@ import { AUTHOR_NAME } from "../const";
     <BaseHead title={`${AUTHOR_NAME}'s Site`} />
 </head>
 <body>
-    <Header />
+    <Stack position="sticky" top={0}>
+        <DevWarn />
+        <Header />
+    </Stack>
     <Pride/>
     <main>
         <slot />

@@ -1,0 +1,28 @@
+---
+const isDev = import.meta.env.DEV;
+---
+
+{isDev && (
+    <div 
+        class="banner" 
+        role="alert" 
+        aria-live="polite"
+    >
+        <p>Dev Mode: You're working in this site.</p>
+    </div>
+)}
+
+<style>
+    .banner {
+        background-color: var(--accent-bg);
+        color: var(--accent-fg);
+        width: 100%;
+        padding: 0.5rem 1rem;
+        box-sizing: border-box;
+        text-align: center;
+    }
+    
+    .banner p {
+        margin: 0;
+    }
+</style>
