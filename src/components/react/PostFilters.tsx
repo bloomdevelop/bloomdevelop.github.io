@@ -25,11 +25,13 @@ export default function PostFilters({ allPosts, initialPosts }: PostFiltersProps
   // Extract all unique tags from posts
   useEffect(() => {
     const tags = new Set<string>();
-    allPosts.forEach(group => {
-      group.posts.forEach(post => {
-        post.data.tags?.forEach(tag => tags.add(tag));
-      });
-    });
+    for (const group of allPosts) {
+      for (const post of group.posts) {
+        for (const tag of post.data.tags || []) {
+          tags.add(tag);
+        }
+      }
+    }
     setAvailableTags(tags);
   }, [allPosts]);
 
