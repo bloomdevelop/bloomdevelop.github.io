@@ -1,0 +1,12 @@
+---
+interface Props {
+  /** URL of the audio file */
+  src: string;
+  /** Whether the audio should loop */
+  loop?: boolean;
+}
+const { src, loop = true } = Astro.props;
+---
+
+<audio src={src} autoplay loop={loop} transition:persist="media-player">
+</audio>

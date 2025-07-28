@@ -1,0 +1,51 @@
+---
+import Picture from "astro/components/Picture.astro";
+import type { CollectionEntry } from "astro:content";
+import Layout from "./Layout.astro";
+import Icon from "astro-iconify";
+
+type Props = CollectionEntry<"posts">["data"];
+
+const { title, description, pubDate, updatedDate, hero } = Astro.props;
+---
+
+<Layout>
+  <article class="container max-w-xl mx-auto">
+    <div class="flex flex-col gap-4 mb-4">
+      <Picture
+        src={hero || ""}
+        alt={`Background of ${title}`}
+        width={1000}
+        height={500}
+        class="rounded-box shadow-md bg-base-300"
+        loading="eager"
+      />
+      <h1 class="text-4xl font-semibold">{title}</h1>
+      <p>{description}</p>
+      <div class="rounded-box bg-base-200 p-2 flex flex-col gap-2">
+        <span class="flex flex-row gap-2"
+          ><Icon
+            class="size-[1.2em]"
+            pack="material-symbols"
+            name="calendar-clock-rounded"
+          /> Published on {pubDate.toLocaleDateString()}</span
+        >
+        {
+          updatedDate && (
+            <span class="flex flex-row gap-2">
+              <Icon
+                class="size-[1.2em]"
+                pack="material-symbols"
+                name="calendar-clock-rounded"
+              />
+              Updated on {updatedDate?.toLocaleDateString()}
+            </span>
+          )
+        }
+      </div>
+    </div>
+    <main class="prose dark:prose-invert">
+      <slot />
+    </main>
+  </article>
+</Layout>

@@ -1,0 +1,48 @@
+---
+import { getCollection } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { Image } from "astro:assets";
+import { Picture } from "astro:assets";
+import Icon from "astro-iconify";
+
+const posts = (await getCollection("posts")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<Layout>
+  <h1 class="text-4xl font-semibold">All Posts</h1>
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-8"
+  >
+    {
+      posts.map((post) => (
+        <div class="card bg-base-200 w-96 shadow-sm">
+          <figure class="bg-base-300">
+            <Image
+              src={post.data.hero || ""}
+              alt={`Background from "${post.data.title}"`}
+              width={400}
+              loading="eager"
+              height={300}
+            />
+          </figure>
+          <div class="card-body">
+            <h2 class="card-title">{post.data.title}</h2>
+            <p>{post.data.description || "No Description was provided"}</p>
+            <div class="card-actions justify-end">
+              <a class="btn btn-primary" href={`/posts/${post.id}`}>
+                <Icon
+                  class="size-[1.2em]"
+                  pack="material-symbols"
+                  name="visibility-rounded"
+                />
+                View Post
+              </a>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</Layout>
