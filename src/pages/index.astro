@@ -3,13 +3,35 @@ import Icon from "astro-iconify";
 import { AUTHOR_NAME } from "../constant";
 import Layout from "../layouts/Layout.astro";
 import { Picture } from "astro:assets";
+import type { RepositoryType } from "../lib/types";
+import Repositories from "../components/Repositories.astro";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const repositories: RepositoryType = [
+  {
+    name: "spring-testing-place",
+    description: "This is the codebase for my testing place.",
+    url: "https://github.com/bloomdevelop/spring-testing-place"
+  },
+  {
+    name: "crescent",
+    description: "DM-focused mobile app for Upryzing, built with Kotlin and Jetpack Compose ",
+    url: "https://github.com/upryzing/crescent"
+  },
+  {
+    name: "june",
+    description: "Multi-purpose bot for Revolt.chat",
+    url: "https://github.com/bloomdevelop/june"
+  },
+  {
+    name: "github-search",
+    description: "A search application that uses Github API",
+    url: "https://github.com/bloomdevelop/github-search"
+  }
+]
 ---
 
 <Layout>
-  <div class="container mx-auto w-full p-4 lg:p-8">
+  <div class="container mx-auto flex flex-col gap-8 w-full p-4 lg:p-8">
     <div class="flex flex-col lg:flex-row gap-4">
       <div class="flex-none flex flex-col justify-center items-center gap-6">
         <Picture
@@ -85,7 +107,7 @@ import { Picture } from "astro:assets";
               </li>
               <li class="list-row">
                 <div>
-                  <h2 class="text-2xl">Student, Not Employed Yet</h2>
+                  <h2 class="text-2xl">Job: Student, Not Employed Yet</h2>
                   <div class="text-xs font-semibold opacity-60">
                     Or they will employ me?
                   </div>
@@ -94,6 +116,12 @@ import { Picture } from "astro:assets";
             </ul>
           </div>
         </div>
+      </div>
+    </div>
+    <div class="flex flex-col gap-4">
+      <h1 class="text-4xl font-bold">My Projects (And Contributions)</h1>
+      <div class="flex flex-col lg:flex-row gap-4">
+        <Repositories repositories={repositories} />
       </div>
     </div>
   </div>

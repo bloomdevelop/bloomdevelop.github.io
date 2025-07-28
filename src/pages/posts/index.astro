@@ -13,7 +13,7 @@ const posts = (await getCollection("posts")).sort(
 <Layout>
   <h1 class="text-4xl font-semibold">All Posts</h1>
   <div
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 my-8"
+    class="my-8 flex flex-col justify-center items-center lg:justify-start lg:items-start lg:flex-row gap-4"
   >
     {
       posts.map((post) => (
