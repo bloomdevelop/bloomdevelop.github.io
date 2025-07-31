@@ -2,7 +2,7 @@
 hero: "/images/posts/linux_adventure_kde_neon.png"
 title: "Linux Adventure: KDE Neon"
 description: "Probably contains mildly graphical glitches at all."
-tags: ["Linux"]
+tags: ["Linux", "Review"]
 pubDate: 7/6/25
 ---
 
