@@ -3,7 +3,7 @@ hero: "/images/posts/linux_adventure_kde_neon.png"
 title: "Linux Adventure: KDE Neon"
 description: "Probably contains mildly graphical glitches at all."
 tags: ["Linux"]
-pubDate: 6/7/25
+pubDate: 7/6/25
 ---
 
 ## Quick introduction
@@ -16,7 +16,7 @@ There's some issue I have listed during my usage before I moved to something els
 
 ### Per monitor settings
 
-Some of the issue I had was changing wallpaper, fractional scaling (or scaling, whatever the hell this is) only works on all monitor, not specific monitor, since I'm on Ubuntu (not different flavors), there's something on the session is called "Ubuntu Desktop" (it's a modification of GNOME Desktop with Extensions), it is obviously running on GNOME, which means there are some limitations which *might* be annoying when I wanted to avoid peoples questioning about the wallpaper (I mean, the fact I am furry, that's why I wanted to have a furry wallpapers in my desktop) I put here.
+Some of the issue I had was changing wallpaper, fractional scaling (or scaling, whatever the hell this is) only works on all monitor, not specific monitor, since I'm on Ubuntu (not different flavors), there's something on the session is called "Ubuntu Desktop" (it's a modification of GNOME Desktop with Extensions), it is obviously running on GNOME, which means there are some limitations which *might* be annoying when I wanted to avoid peoples questioning about the wallpaper (I mean, the fact I am furry, that's why I wanted to have a furry wallpaper in my desktop) I put here.
 
 Another thing about the scaling on the desktop itself, I wanted to have different scaling for each monitor, so I don't have to suffer having almost no spaces while moving a window to another monitor (more like claustrophobia *but on monitor*), when I was trying to fix this issue, there was no solution since only it lets me scale (between 100% to 150%?), all it does it apply to all monitor, which I don't like it.
 
