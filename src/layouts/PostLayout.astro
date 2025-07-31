@@ -6,46 +6,60 @@ import Icon from "astro-iconify";
 
 type Props = CollectionEntry<"posts">["data"];
 
-const { title, description, pubDate, updatedDate, hero } = Astro.props;
+const { title, description, pubDate, updatedDate, hero, tags } = Astro.props;
 ---
 
-<Layout>
-  <article class="container max-w-xl mx-auto">
-    <div class="flex flex-col gap-4 mb-4">
-      <Picture
-        src={hero || ""}
-        alt={`Background of ${title}`}
-        width={1000}
-        height={500}
-        class="rounded-box shadow-md bg-base-300"
-        loading="eager"
-      />
-      <h1 class="text-4xl font-semibold">{title}</h1>
-      <p>{description}</p>
-      <div class="rounded-box bg-base-200 p-2 flex flex-col gap-2">
-        <span class="flex flex-row gap-2"
-          ><Icon
-            class="size-[1.2em]"
-            pack="material-symbols"
-            name="calendar-clock-rounded"
-          /> Published on {pubDate.toLocaleDateString()}</span
+<Layout disablePadding disableMargin>
+    <article class="mb-10">
+        <div
+            class="hero bg-base-200 min-h-screen min-w-screen"
+            style={`background-image: url(${hero || ""});`}
         >
-        {
-          updatedDate && (
-            <span class="flex flex-row gap-2">
-              <Icon
-                class="size-[1.2em]"
-                pack="material-symbols"
-                name="calendar-clock-rounded"
-              />
-              Updated on {updatedDate?.toLocaleDateString()}
-            </span>
-          )
-        }
-      </div>
-    </div>
-    <main class="prose dark:prose-invert">
-      <slot />
-    </main>
-  </article>
+            <div class="hero-overlay"></div>
+            <div class="hero-content text-center text-neutral-content">
+                <div class="max-w-md">
+                    <h1 class="mb-5 text-5xl leading-14 font-bold">{title}</h1>
+                    <p class="mb-5 font-semibold">{description}</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-10 container max-w-xl mx-auto flex flex-col gap-4 mb-4">
+            <div class="rounded-box bg-base-200 p-2 flex flex-col gap-2">
+                <span class="flex flex-row gap-2"
+                    ><Icon
+                        class="size-[1.2em]"
+                        pack="material-symbols"
+                        name="calendar-clock-rounded"
+                    /> Published on {pubDate.toLocaleDateString()}</span
+                >
+                {
+                    updatedDate && (
+                        <span class="flex flex-row gap-2">
+                            <Icon
+                                class="size-[1.2em]"
+                                pack="material-symbols"
+                                name="calendar-clock-rounded"
+                            />
+                            Updated on {updatedDate?.toLocaleDateString()}
+                        </span>
+                    )
+                }
+                {
+                    tags && tags.length > 0 && (
+                        <div class="flex flex-row gap-2">
+                            <span>Tags: </span>
+                            <div class="flex flex-row flex-warp gap-2">
+                                {tags.map((tag) => (
+                                    <div class="badge badge-info">{tag}</div>
+                                ))}
+                            </div>
+                        </div>
+                    )
+                }
+            </div>
+        </div>
+        <main class="container max-w-xl mx-auto prose dark:prose-invert">
+            <slot />
+        </main>
+    </article>
 </Layout>

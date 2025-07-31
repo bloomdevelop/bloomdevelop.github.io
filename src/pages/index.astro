@@ -7,122 +7,138 @@ import type { RepositoryType } from "../lib/types";
 import Repositories from "../components/Repositories.astro";
 
 const repositories: RepositoryType = [
-  {
-    name: "spring-testing-place",
-    description: "This is the codebase for my testing place.",
-    url: "https://github.com/bloomdevelop/spring-testing-place"
-  },
-  {
-    name: "crescent",
-    description: "DM-focused mobile app for Upryzing, built with Kotlin and Jetpack Compose ",
-    url: "https://github.com/upryzing/crescent"
-  },
-  {
-    name: "june",
-    description: "Multi-purpose bot for Revolt.chat",
-    url: "https://github.com/bloomdevelop/june"
-  },
-  {
-    name: "github-search",
-    description: "A search application that uses Github API",
-    url: "https://github.com/bloomdevelop/github-search"
-  }
-]
+    {
+        name: "spring-testing-place",
+        description: "This is the codebase for my testing place.",
+        url: "https://github.com/bloomdevelop/spring-testing-place",
+    },
+    {
+        name: "crescent",
+        description:
+            "DM-focused mobile app for Upryzing, built with Kotlin and Jetpack Compose ",
+        url: "https://github.com/upryzing/crescent",
+    },
+    {
+        name: "june",
+        description: "Multi-purpose bot for Revolt.chat",
+        url: "https://github.com/bloomdevelop/june",
+    },
+    {
+        name: "github-search",
+        description: "A search application that uses Github API",
+        url: "https://github.com/bloomdevelop/github-search",
+    },
+];
 ---
 
 <Layout>
-  <div class="container mx-auto flex flex-col gap-8 w-full p-4 lg:p-8">
-    <div class="flex flex-col lg:flex-row gap-4">
-      <div class="flex-none flex flex-col justify-center items-center gap-6">
-        <Picture
-          src="/images/pfp/bafkreig74nuglms6u52yqs2vs66zwewhn4pthj5szuybmkfulnz4bg2634-cropped.jpg"
-          alt="Spring's Profile Image"
-          width={300}
-          height={300}
-          class="rounded-4xl shadow-md"
-          loading="eager"
-        />
-        <p>
-          Picture from <a
-            class="text-primary hover:underline"
-            href="https://bsky.app/profile/wiillowthecat.bsky.social"
-            target="_blank"
-            rel="noopener noreferrer">Willow The Cat on Bluesky</a
-          >
-        </p>
-      </div>
-      <div class="flex-1 flex flex-col gap-4">
-        <h1 class="text-5xl font-semibold">Hello, I'm {AUTHOR_NAME}!</h1>
-        <div class="card bg-base-200 shadow-lg">
-          <div class="card-body">
-            <ul class="list">
-              <li class="list-row">
-                <h2 class="text-2xl">Age: 18 Years Old</h2>
-              </li>
-              <li class="list-row">
-                <h2 class="text-2xl">Pronous: He/Him</h2>
-              </li>
-              <li class="list-row">
-                <div>
-                  <h2 class="text-2xl">
-                    Language: Spanish and <span
-                      class="tooltip"
-                      data-tip="Secondary Language, I don't talk on voice chat"
-                      >English</span
+    <div class="container mx-auto flex flex-col gap-8 w-full p-4 lg:p-8">
+        <div class="flex flex-col lg:flex-row gap-4">
+            <div
+                class="flex-none flex flex-col justify-center items-center gap-6"
+            >
+                <Picture
+                    src="/images/pfp/bafkreig74nuglms6u52yqs2vs66zwewhn4pthj5szuybmkfulnz4bg2634-cropped.jpg"
+                    alt="Spring's Profile Image"
+                    width={300}
+                    height={300}
+                    class="rounded-box shadow-md"
+                    loading="eager"
+                />
+                <p>
+                    Picture from <a
+                        class="text-primary hover:underline"
+                        href="https://bsky.app/profile/wiillowthecat.bsky.social"
+                        target="_blank"
+                        rel="noopener noreferrer">Willow The Cat on Bluesky</a
                     >
-                  </h2>
-                  <div class="text-xs font-semibold opacity-60">
-                    Can we don't talk about the Spanish or English joke
-                  </div>
+                </p>
+            </div>
+            <div class="flex-1 flex flex-col gap-4">
+                <h1 class="text-5xl font-semibold text-center lg:text-left">
+                    Hello, I'm {AUTHOR_NAME}!
+                </h1>
+                <div class="card bg-base-200 shadow-sm">
+                    <div class="card-body">
+                        <ul class="list">
+                            <li class="list-row">
+                                <h2 class="text-2xl">Age: 18 Years Old</h2>
+                            </li>
+                            <li class="list-row">
+                                <h2 class="text-2xl">Pronous: He/Him</h2>
+                            </li>
+                            <li class="list-row">
+                                <div>
+                                    <h2 class="text-2xl">
+                                        Language: Spanish and <span
+                                            class="tooltip"
+                                            data-tip="Secondary Language, I don't talk on voice chat"
+                                            >English</span
+                                        >
+                                    </h2>
+                                    <div
+                                        class="text-xs font-semibold opacity-60"
+                                    >
+                                        Can we don't talk about the Spanish or
+                                        English joke
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-row">
+                                <div class="flex flex-row gap-2 text-2xl">
+                                    Programming Languages:
+                                    <div class="tooltip" data-tip="JavaScript">
+                                        <Icon
+                                            class="size-[1.2em]"
+                                            pack="logos"
+                                            name="javascript"
+                                        />
+                                    </div>
+                                    <div class="tooltip" data-tip="TypeScript">
+                                        <Icon
+                                            class="size-[1.2em]"
+                                            pack="logos"
+                                            name="typescript-icon"
+                                        />
+                                    </div>
+                                    <div class="tooltip" data-tip="Kotlin">
+                                        <Icon
+                                            class="size-[1.2em]"
+                                            pack="logos"
+                                            name="kotlin-icon"
+                                        />
+                                    </div>
+                                    <div class="tooltip" data-tip="Luau">
+                                        <Icon
+                                            class="size-[1.2em]"
+                                            pack="vscode-icons"
+                                            name="file-type-luau"
+                                        />
+                                    </div>
+                                </div>
+                            </li>
+                            <li class="list-row">
+                                <div>
+                                    <h2 class="text-2xl">
+                                        Job: Student, Not Employed Yet
+                                    </h2>
+                                    <div
+                                        class="text-xs font-semibold opacity-60"
+                                    >
+                                        Or they will employ me?
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-              </li>
-              <li class="list-row">
-                <div class="flex flex-row gap-2 text-2xl">
-                  Programming Languages:
-                  <div class="tooltip" data-tip="JavaScript">
-                    <Icon class="size-[1.2em]" pack="logos" name="javascript" />
-                  </div>
-                  <div class="tooltip" data-tip="TypeScript">
-                    <Icon
-                      class="size-[1.2em]"
-                      pack="logos"
-                      name="typescript-icon"
-                    />
-                  </div>
-                  <div class="tooltip" data-tip="Kotlin">
-                    <Icon
-                      class="size-[1.2em]"
-                      pack="logos"
-                      name="kotlin-icon"
-                    />
-                  </div>
-                  <div class="tooltip" data-tip="Luau">
-                    <Icon
-                      class="size-[1.2em]"
-                      pack="vscode-icons"
-                      name="file-type-luau"
-                    />
-                  </div>
-                </div>
-              </li>
-              <li class="list-row">
-                <div>
-                  <h2 class="text-2xl">Job: Student, Not Employed Yet</h2>
-                  <div class="text-xs font-semibold opacity-60">
-                    Or they will employ me?
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
+            </div>
         </div>
-      </div>
+        <div class="flex flex-col gap-4">
+            <h1 class="text-4xl font-bold">My Projects (And Contributions)</h1>
+            <div class="flex flex-col lg:flex-row gap-4">
+                <Repositories repositories={repositories} />
+            </div>
+        </div>
     </div>
-    <div class="flex flex-col gap-4">
-      <h1 class="text-4xl font-bold">My Projects (And Contributions)</h1>
-      <div class="flex flex-col lg:flex-row gap-4">
-        <Repositories repositories={repositories} />
-      </div>
-    </div>
-  </div>
 </Layout>

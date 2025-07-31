@@ -3,31 +3,110 @@ import NavLabel from "./components/NavLabel.astro";
 import DockLabel from "./components/DockLabel.astro";
 import { AUTHOR_NAME } from "../../constant";
 import { customTransition } from "../../lib/animations";
+
+interface Props {
+    disablePadding?: boolean;
+    disableMargin?: boolean;
+}
+
+const { disablePadding = false, disableMargin = false } = Astro.props;
 ---
 
-<nav class="z-999 navbar sticky top-0 bg-base-300 shadow-sm hidden lg:flex">
-  <div class="flex-1">
-    <a href="/" class="btn btn-ghost text-xl">{AUTHOR_NAME}'s Blog </a>
-  </div>
-  <div class="flex-none flex flex-row gap-2">
-    <NavLabel icon="home-rounded" href="/">Home</NavLabel>
-    <NavLabel icon="file-copy-rounded" href="/posts">Posts</NavLabel>
-    <div
-      class="tooltip tooltip-left"
-      data-tip="Note: Transition is disabled here since I'm unable to fix the audio not being able to play after navigation back and forth"
-    >
-      <NavLabel icon="info-rounded" href="/about" disableClientNavigation
-        >About</NavLabel
-      >
+<nav
+    class="z-999 navbar sticky top-0 bg-base-300 shadow-sm hidden lg:flex gap-2"
+>
+    <div class="flex-none">
+        <a href="/" class="btn btn-ghost text-xl">{AUTHOR_NAME}'s Blog </a>
     </div>
-  </div>
+    <div class="flex-none flex flex-row gap-2">
+        <NavLabel icon="home-rounded" href="/">Home</NavLabel>
+        <NavLabel icon="file-copy-rounded" href="/posts">Posts</NavLabel>
+        <NavLabel icon="info-rounded" href="/about">About</NavLabel>
+    </div>
+    <div class="flex-1 flex flex-row justify-end pr-4 gap-2">
+        Dark Mode:
+        <input
+            type="checkbox"
+            value="dark"
+            class="toggle theme-controller"
+            transition:persist
+        />
+    </div>
 </nav>
-<!-- TODO)) Disable navigation for playstation -->
-<div class="container mx-auto p-4 lg:p-8 z-0" transition:animate={customTransition}>
-  <slot />
+<div
+    class={`${disablePadding ? "" : "p-4 lg:p-8"} ${disableMargin ? "" : "container mx-auto mb-10"} z-0`}
+    transition:animate={customTransition}
+    id="main-container"
+>
+    <slot />
 </div>
 <div class="dock dock-sm md:dock-md lg:hidden">
-  <DockLabel icon="home-rounded" href="/">Home</DockLabel>
-  <DockLabel icon="file-copy-rounded" href="/posts">Posts</DockLabel>
-  <DockLabel icon="info-rounded" href="/about">About</DockLabel>
+    <DockLabel icon="home-rounded" href="/">Home</DockLabel>
+    <DockLabel icon="file-copy-rounded" href="/posts">Posts</DockLabel>
+    <DockLabel icon="info-rounded" href="/about">About</DockLabel>
 </div>
+
+<script>
+    // PlayStation detection and view transition disabling
+    function isPlayStation() {
+        if (typeof navigator === "undefined") {
+            return false;
+        }
+        const userAgent = navigator.userAgent.toLowerCase();
+        return (
+            userAgent.includes("playstation") ||
+            userAgent.includes("ps4") ||
+            userAgent.includes("ps5")
+        );
+    }
+
+    function disableViewTransitions() {
+        if (!isPlayStation()) return;
+
+        console.log("PlayStation detected, disabling view transitions");
+
+        // Remove transition attributes from main container
+        const mainContainer = document.getElementById("main-container");
+        if (mainContainer) {
+            mainContainer.removeAttribute("data-astro-transition-scope");
+            mainContainer.removeAttribute("data-astro-transition");
+        }
+
+        // Remove transition attributes from all elements with transitions
+        const elementsWithTransitions = document.querySelectorAll(
+            "[data-astro-transition-scope]",
+        );
+        elementsWithTransitions.forEach((element) => {
+            element.removeAttribute("data-astro-transition-scope");
+            element.removeAttribute("data-astro-transition");
+            element.removeAttribute("data-astro-transition-persist");
+        });
+
+        // Add CSS to disable all animations and transitions
+        if (!document.getElementById("playstation-no-transitions")) {
+            const style = document.createElement("style");
+            style.id = "playstation-no-transitions";
+            style.textContent = `
+      [data-astro-transition] {
+        animation: none !important;
+        transition: none !important;
+      }
+      * {
+        animation-duration: 0s !important;
+        transition-duration: 0s !important;
+      }
+    `;
+            document.head.appendChild(style);
+        }
+    }
+
+    // Run on initial load
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", disableViewTransitions);
+    } else {
+        disableViewTransitions();
+    }
+
+    // Run on Astro page navigation
+    document.addEventListener("astro:page-load", disableViewTransitions);
+</script>

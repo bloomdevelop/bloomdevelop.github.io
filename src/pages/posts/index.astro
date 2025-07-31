@@ -6,43 +6,57 @@ import { Picture } from "astro:assets";
 import Icon from "astro-iconify";
 
 const posts = (await getCollection("posts")).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 ---
 
 <Layout>
-  <h1 class="text-4xl font-semibold">All Posts</h1>
-  <div
-    class="my-8 flex flex-col justify-center items-center lg:justify-start lg:items-start lg:flex-row gap-4"
-  >
-    {
-      posts.map((post) => (
-        <div class="card bg-base-200 w-96 shadow-sm">
-          <figure class="bg-base-300">
-            <Image
-              src={post.data.hero || ""}
-              alt={`Background from "${post.data.title}"`}
-              width={400}
-              loading="eager"
-              height={300}
-            />
-          </figure>
-          <div class="card-body">
-            <h2 class="card-title">{post.data.title}</h2>
-            <p>{post.data.description || "No Description was provided"}</p>
-            <div class="card-actions justify-end">
-              <a class="btn btn-primary" href={`/posts/${post.id}`}>
-                <Icon
-                  class="size-[1.2em]"
-                  pack="material-symbols"
-                  name="visibility-rounded"
-                />
-                View Post
-              </a>
-            </div>
-          </div>
-        </div>
-      ))
-    }
-  </div>
+    <h1 class="text-4xl font-semibold">All Posts</h1>
+    <div
+        class="my-8 flex flex-col justify-center items-center lg:justify-start lg:items-start lg:flex-row gap-4"
+    >
+        {
+            posts.map((post) => (
+                <div class="card bg-base-200 w-96 shadow-sm">
+                    <figure class="bg-base-300">
+                        <Image
+                            src={post.data.hero || ""}
+                            alt={`Background from "${post.data.title}"`}
+                            width={400}
+                            loading="eager"
+                            height={300}
+                        />
+                    </figure>
+                    <div class="card-body">
+                        {post.data.tags && (
+                            <div class="flex flex-row flex-warp gap-2">
+                                {post.data.tags.map((tag) => (
+                                    <span class="badge badge-info">{tag}</span>
+                                ))}
+                            </div>
+                        )}
+
+                        <h2 class="card-title">{post.data.title}</h2>
+                        <p>
+                            {post.data.description ||
+                                "No Description was provided"}
+                        </p>
+                        <div class="card-actions justify-end">
+                            <a
+                                class="btn btn-primary"
+                                href={`/posts/${post.id}`}
+                            >
+                                <Icon
+                                    class="size-[1.2em]"
+                                    pack="material-symbols"
+                                    name="visibility-rounded"
+                                />
+                                View Post
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            ))
+        }
+    </div>
 </Layout>

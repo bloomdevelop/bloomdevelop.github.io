@@ -8,7 +8,7 @@ const animation = {
   },
   new: {
     name: "scale-in",
-    duration: "0.8s",
+    duration: "0.5s",
     easing: "cubic-bezier(0.165, 0.840, 0.440, 1.000)",
   },
 };
@@ -18,4 +18,4 @@ const customTransition = {
   backwards: animation,
 };
 
-export {customTransition}
+export { customTransition };

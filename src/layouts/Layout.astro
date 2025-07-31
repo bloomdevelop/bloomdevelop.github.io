@@ -3,48 +3,89 @@ import { ClientRouter } from "astro:transitions";
 import "../assets/global.css";
 import Navigator from "../components/navigation/Navigator.astro";
 import { AUTHOR_NAME } from "../constant";
+
+interface Props {
+    disablePadding?: boolean;
+    disableMargin?: boolean;
+}
+
+const { disablePadding = false, disableMargin = false } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<ClientRouter />
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{`${AUTHOR_NAME}'s Blog`}</title>
-	</head>
-	<body>
-		<Navigator>
-			<slot />
-		</Navigator>
-	</body>
+    <head>
+        <ClientRouter />
+        <script is:inline>
+            function setTheme() {
+                if (localStorage.getItem("theme") === null) {
+                    document.documentElement.setAttribute(
+                        "data-theme",
+                        "light",
+                    );
+                } else
+                    document.documentElement.setAttribute(
+                        "data-theme",
+                        localStorage.getItem("theme"),
+                    );
+            }
+
+            // Set theme initially
+            setTheme();
+
+            // Handle theme during view transitions
+            document.addEventListener("astro:page-load", () => {
+                setTheme();
+            });
+        </script>
+        <script>
+            import { themeChange } from "theme-change";
+
+            // Initialize theme change
+            themeChange();
+
+            // Handle theme change during view transitions
+            document.addEventListener("astro:page-load", () => {
+                themeChange();
+            });
+        </script>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width" />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{`${AUTHOR_NAME}'s Blog`}</title>
+    </head>
+    <body>
+        <Navigator
+            disablePadding={disablePadding}
+            disableMargin={disableMargin}
+        >
+            <slot />
+        </Navigator>
+    </body>
 </html>
 
 <style is:global>
-	@keyframes scale-in {
-		0% {
-			opacity: 0;
-			transform: scale(0.8);
-			filter: saturate(0.8) blur(1em);
-		}
-		100% {
-			opacity: 1;
-			transform: scale(1);
-			filter: saturate(1) blur(0);
-		}
-	}
-	@keyframes scale-out {
-		0% {
-			opacity: 1;
-			transform: scale(1);
-			filter: saturate(1) blur(0);
-		}
-		100% {
-			opacity: 0;
-			transform: scale(0.8);
-			filter: saturate(0.8) blur(1em);
-		}
-	}
+    @keyframes scale-in {
+        0% {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+            border-radius: 0px;
+        }
+    }
+    @keyframes scale-out {
+        0% {
+            opacity: 1;
+            transform: scale(1);
+            border-radius: 0px;
+        }
+        100% {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+    }
 </style>
