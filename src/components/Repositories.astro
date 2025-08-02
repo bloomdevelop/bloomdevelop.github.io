@@ -9,28 +9,30 @@ interface Props {
 const { repositories } = Astro.props;
 ---
 
-{
-  repositories.map((repo) => (
-    <div class="card bg-base-200 shadow-sm">
-      <div class="card-body">
-        <h2 class="card-title">{repo.name}</h2>
-        <p>{repo.description}</p>
-        <div class="card-actions justify-end">
-          <a
-            href={repo.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn btn-primary"
-          >
-            <Icon
-              class="size-[1.2em]"
-              pack="material-symbols"
-              name="open-in-new-rounded"
-            />
-            View Repository
-          </a>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+  {
+    repositories.map((repo) => (
+      <div class="card bg-base-200 w-full">
+        <div class="card-body">
+          <h2 class="card-title">{repo.name}</h2>
+          <p>{repo.description}</p>
+          <div class="card-actions justify-end">
+            <a
+              href={repo.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn btn-primary"
+            >
+              <Icon
+                class="size-[1.2em]"
+                pack="material-symbols"
+                name="open-in-new-rounded"
+              />
+              View Repository
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-  ))
-}
+    ))
+  }
+</div>

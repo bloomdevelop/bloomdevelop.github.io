@@ -17,7 +17,7 @@ const posts = (await getCollection("posts")).sort(
     >
         {
             posts.map((post) => (
-                <div class="card bg-base-200 w-96 shadow-sm">
+                <div class="card bg-base-200 w-96">
                     <figure class="bg-base-300">
                         <Image
                             src={post.data.hero || ""}
