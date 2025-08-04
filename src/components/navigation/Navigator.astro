@@ -40,7 +40,7 @@ const { disablePadding = false, disableMargin = false } = Astro.props;
 >
     <slot />
 </div>
-<div class="dock dock-sm md:dock-md lg:hidden">
+<div class="dock sticky bottom-0 dock-sm md:dock-md lg:hidden">
     <DockLabel icon="home-rounded" href="/">Home</DockLabel>
     <DockLabel icon="file-copy-rounded" href="/posts">Posts</DockLabel>
     <DockLabel icon="info-rounded" href="/about">About</DockLabel>
