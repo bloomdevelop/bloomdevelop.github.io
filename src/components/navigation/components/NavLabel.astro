@@ -7,9 +7,20 @@ const subpath = pathname.match(/[^\/]+/g);
 const isActive = href === pathname || href === "/" + (subpath?.[0] || "");
 ---
 
-<a href={href} class={`btn ${isActive ? 'btn-primary' : 'btn-ghost'}`} data-astro-reload={disableClientNavigation} {...props}>
-  <Icon class="size-[1.2em]" pack="material-symbols" name={icon} {...props} />
-  <span>
-    <slot />
-  </span>
+<a
+    href={href}
+    class={`btn ${isActive ? "btn-primary" : "btn-ghost"}`}
+    data-astro-reload={disableClientNavigation}
+    {...props}
+>
+    <Icon
+        class="size-[1.2em]"
+        pack="material-symbols"
+        name={icon}
+        alt={icon}
+        {...props}
+    />
+    <span>
+        <slot />
+    </span>
 </a>

@@ -7,9 +7,9 @@ const subpath = pathname.match(/[^\/]+/g);
 const isActive = href === pathname || href === "/" + (subpath?.[0] || "");
 ---
 
-<a href={href} class={isActive ? "dock-active" : ''} {...props}>
-  <Icon class="size-[1.2em]" pack="material-symbols" name={icon} />
-  <span class="dock-label">
-    <slot />
-  </span>
+<a href={href} class={isActive ? "dock-active" : ""} {...props}>
+    <Icon class="size-[1.2em]" pack="material-symbols" alt={icon} name={icon} />
+    <span class="dock-label">
+        <slot />
+    </span>
 </a>
