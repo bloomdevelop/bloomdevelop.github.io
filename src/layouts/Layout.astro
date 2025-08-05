@@ -17,6 +17,7 @@ const { disablePadding = false, disableMargin = false } = Astro.props;
     <head>
         <ClientRouter />
         <script is:inline>
+            // Function for a workaround for astro
             function setTheme() {
                 if (localStorage.getItem("theme") === null) {
                     document.documentElement.setAttribute(

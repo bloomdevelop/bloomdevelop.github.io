@@ -1,0 +1,70 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Icon } from "astro-iconify";
+import { roadmap_array } from "../constant";
+
+const completedPercent = Math.round(
+    (roadmap_array.filter((item) => item.done).length / roadmap_array.length) *
+        100,
+);
+---
+
+<Layout>
+    <div class="space-y-4">
+        <div class="flex flex-col gap-2">
+            <h1 class="text-xl xs:text-xl sm:text-2xl md:text-4xl font-bold">
+                Spring's Testing Place
+            </h1>
+            <span>
+                This is cutting-edge for a upcoming game, written in
+                <div class="inline-block tooltip" data-tip="Luau">
+                    <Icon
+                        class="size-[1.2em]"
+                        pack="vscode-icons"
+                        name="file-type-luau"
+                    />
+                </div>
+                and
+                <div class="inline-block tooltip" data-tip="TypeScript">
+                    <Icon
+                        class="size-[1.2em]"
+                        pack="logos"
+                        name="typescript-icon"
+                    />
+                </div>
+                combined. With usage of pure React for User Interface.
+            </span>
+            <p>There's no game conpects yet, but well will see later on.</p>
+        </div>
+        <div class="flex flex-col gap-2">
+            <h1 class="text-xl xs:text-2xl sm:text-2xl md:text-4xl font-bold">
+                Roadmap
+            </h1>
+            <span>{completedPercent}% Completed</span>
+            <ul role="listbox" aria-name="roadmap" class="flex flex-col gap-3">
+                {
+                    roadmap_array.map((task, index) => (
+                        <li
+                            class="flex flex-row gap-2"
+                            role="listitem"
+                            aria-checked={task.done}
+                        >
+                            <label>
+                                <input
+                                    tabindex="-1"
+                                    type="checkbox"
+                                    class="checkbox checkbox-primary"
+                                    style="pointer-events: none;"
+                                    value={task.done.toString()}
+                                    checked={task.done}
+                                    aria-label={`${task.description} - ${task.done ? "completed" : "not completed"}`}
+                                />{" "}
+                                {task.description}
+                            </label>
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+    </div>
+</Layout>
