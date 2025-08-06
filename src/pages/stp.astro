@@ -49,12 +49,11 @@ const completedPercent = Math.round(
                             role="listitem"
                             aria-checked={task.done}
                         >
-                            <label>
+                            <label style="pointer-events: none;">
                                 <input
                                     tabindex="-1"
                                     type="checkbox"
                                     class="checkbox checkbox-primary"
-                                    style="pointer-events: none;"
                                     value={task.done.toString()}
                                     checked={task.done}
                                     aria-label={`${task.description} - ${task.done ? "completed" : "not completed"}`}
