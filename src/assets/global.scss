@@ -1,0 +1,22 @@
+@use "./modules/variables";
+@use "./modules/components";
+@use "./modules/base";
+@use "./modules/prose";
+
+:root {
+    @include variables.theme($theme: "Light")
+}
+
+body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-family);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-normal);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        @include variables.theme($theme: Dark);
+    }
+}

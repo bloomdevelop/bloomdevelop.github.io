@@ -1,6 +1,5 @@
 ---
 import NavLabel from "./components/NavLabel.astro";
-import DockLabel from "./components/DockLabel.astro";
 import { AUTHOR_NAME } from "../../constant";
 import { customTransition } from "../../lib/animations";
 
@@ -12,38 +11,22 @@ interface Props {
 const { disablePadding = false, disableMargin = false } = Astro.props;
 ---
 
-<nav
-    class="z-999 navbar sticky top-0 bg-base-300 shadow-none hidden lg:flex gap-2"
->
-    <div class="flex-none">
-        <a href="/" class="btn btn-ghost text-xl">{AUTHOR_NAME}'s Blog </a>
+<div class="nav">
+    <div class="header">
+        <a class="title" href="/" class="btn btn-ghost text-xl"
+                >{AUTHOR_NAME}'s Blog
+        </a>
     </div>
-    <div class="flex-none flex flex-row gap-2">
-        <NavLabel icon="home-rounded" href="/">Home</NavLabel>
-        <NavLabel icon="file-copy-rounded" href="/posts">Posts</NavLabel>
-        <NavLabel icon="info-rounded" href="/about">About</NavLabel>
+    <div class="nav-content">
+        <nav>
+            <NavLabel icon="home-rounded" href="/">Home</NavLabel>
+            <NavLabel icon="file-copy-rounded" href="/posts">Posts</NavLabel>
+            <NavLabel icon="info-rounded" href="/about">About</NavLabel>
+        </nav>
+        <main transition:animate={customTransition} id="main-container">
+            <slot />
+        </main>
     </div>
-    <div class="flex-1 flex flex-row justify-end pr-4 gap-2">
-        Dark Mode:
-        <input
-            type="checkbox"
-            value="dark"
-            class="toggle theme-controller"
-            transition:persist
-        />
-    </div>
-</nav>
-<div
-    class={`${disablePadding ? "" : "p-4 lg:p-8"} ${disableMargin ? "" : "container mx-auto mb-10"} z-0 mb-10`}
-    transition:animate={customTransition}
-    id="main-container"
->
-    <slot />
-</div>
-<div class="dock dock-sm md:dock-md lg:hidden">
-    <DockLabel icon="home-rounded" href="/">Home</DockLabel>
-    <DockLabel icon="file-copy-rounded" href="/posts">Posts</DockLabel>
-    <DockLabel icon="info-rounded" href="/about">About</DockLabel>
 </div>
 
 <script>

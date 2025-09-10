@@ -2,7 +2,6 @@
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { Image } from "astro:assets";
-import Icon from "astro-iconify";
 
 const posts = (await getCollection("posts"))
     .filter((post) => !post.data.draft)
@@ -10,14 +9,12 @@ const posts = (await getCollection("posts"))
 ---
 
 <Layout>
-    <h1 class="text-4xl font-semibold">All Posts</h1>
-    <div
-        class="my-8 flex flex-col justify-center items-center lg:justify-start lg:items-start lg:flex-row gap-4"
-    >
+    <h1>All Posts</h1>
+    <div class="posts">
         {
             posts.map((post) => (
-                <div class="card bg-base-200 w-96">
-                    <figure class="bg-base-300">
+                <a href={`/posts/${post.id}`}>
+                    <figure>
                         <Image
                             src={post.data.hero || ""}
                             alt={`Background from "${post.data.title}"`}
@@ -28,33 +25,20 @@ const posts = (await getCollection("posts"))
                     </figure>
                     <div class="card-body">
                         {post.data.tags && (
-                            <div class="flex flex-row flex-warp gap-2">
+                            <div class="tags">
                                 {post.data.tags.map((tag) => (
-                                    <span class="badge badge-info">{tag}</span>
+                                    <span>{tag}</span>
                                 ))}
                             </div>
                         )}
 
-                        <h2 class="card-title">{post.data.title}</h2>
+                        <h2>{post.data.title}</h2>
                         <p>
                             {post.data.description ||
                                 "No Description was provided"}
                         </p>
-                        <div class="card-actions justify-end">
-                            <a
-                                class="btn btn-primary"
-                                href={`/posts/${post.id}`}
-                            >
-                                <Icon
-                                    class="size-[1.2em]"
-                                    pack="material-symbols"
-                                    name="visibility-rounded"
-                                />
-                                View Post
-                            </a>
-                        </div>
                     </div>
-                </div>
+                </a>
             ))
         }
     </div>

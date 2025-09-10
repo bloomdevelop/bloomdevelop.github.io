@@ -1,0 +1,146 @@
+@use "./variables.scss";
+
+.prose {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  color: var(--color-text);
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: bold;
+    margin-top: 3em;
+    margin-bottom: 1em;
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: var(--font-size-h1);
+  }
+
+  h2 {
+    font-size: var(--font-size-h2);
+  }
+
+  h3 {
+    font-size: var(--font-size-h3);
+  }
+
+  h4 {
+    font-size: var(--font-size-h4);
+  }
+
+  h5 {
+    font-size: var(--font-size-h5);
+  }
+
+  h6 {
+    font-size: var(--font-size-h6);
+  }
+
+  p {
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+  }
+
+  ul, ol {
+    padding-left: 1.5em;
+    margin-top: 1.25em;
+    margin-bottom: 1.25em;
+  }
+
+  li {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+
+  blockquote {
+    position: relative;
+    margin: 1.5em 0;
+    padding: 1em 1em 1em 3em;
+    font-style: italic;
+    background: color-mix(in srgb, var(--color-secondary), transparent 90%);
+    border-radius: var(--border-radius-md);
+    border: none;
+
+    &::before {
+      content: ">";
+      position: absolute;
+      left: 0.5em;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2em;
+      font-weight: bold;
+      color: var(--color-secondary);
+      line-height: 1;
+    }
+
+    p:first-of-type {
+      margin-top: 0;
+    }
+  }
+
+  code {
+    font-family: monospace;
+    background: color-mix(in srgb, var(--color-bg), black 10%);
+    padding: 0.125em 0.25em;
+    border-radius: var(--border-radius-sm);
+  }
+
+  pre {
+    background: color-mix(in srgb, var(--color-bg), black 10%);
+    padding: 1em;
+    border-radius: var(--border-radius-md);
+    overflow-x: auto;
+    code {
+      background: none;
+      padding: 0;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-md);
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+  }
+
+  th, td {
+    border: 1px solid var(--color-secondary);
+    padding: 0.5em;
+    text-align: left;
+  }
+
+  th {
+    background: color-mix(in srgb, var(--color-bg), black 5%);
+    font-weight: bold;
+  }
+
+  figcaption {
+    font-size: var(--font-size-sm);
+    color: var(--color-secondary);
+    margin-top: 0.5em;
+    text-align: center;
+  }
+
+  // Dark mode adjustments
+  @media (prefers-color-scheme: dark) {
+    color: var(--color-text);
+
+    code, pre {
+      background: color-mix(in srgb, var(--color-bg), white 10%);
+    }
+
+    th {
+      background: color-mix(in srgb, var(--color-bg), white 5%);
+    }
+  }
+}
