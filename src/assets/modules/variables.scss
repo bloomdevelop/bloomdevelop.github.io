@@ -2,109 +2,109 @@
 @use "sass:map";
 
 $light-colors: (
-  background: #ffffff,
-  text: #000000,
-  primary: #074d99,
-  secondary: #6c757d,
-  accent: #28a745
+    background: #ffffff,
+    text: #000000,
+    primary: #074d99,
+    secondary: #6c757d,
+    accent: #28a745,
 );
 
 $dark-colors: (
-  background: #121212,
-  text: #ffffff,
-  primary: #3982f0,
-  secondary: #adb5bd,
-  accent: #20c997
+    background: #121212,
+    text: #ffffff,
+    primary: #3982f0,
+    secondary: #adb5bd,
+    accent: #20c997,
 );
 
-$font-family: system-ui, -apple-system, sans-serif;
+$font-family: Helvetica, Arial, sans-serif;
 
 $font-sizes: (
-  base: 1rem,
-  h6: 1rem,
-  h5: 1.25rem,
-  h4: 1.5rem,
-  h3: 1.75rem,
-  h2: 2rem,
-  h1: 2.5rem
+    base: 1rem,
+    h6: 1rem,
+    h5: 1.25rem,
+    h4: 1.5rem,
+    h3: 1.75rem,
+    h2: 2rem,
+    h1: 2.5rem,
 );
 
 $line-heights: (
-  normal: 1.5,
-  tight: 1.25
+    normal: 1.5,
+    tight: 1.25,
 );
 
 $spacing-scale: (
-  xs: 0.25rem,
-  sm: 0.5rem,
-  md: 1rem,
-  lg: 2rem,
-  xl: 3rem
+    xs: 0.25rem,
+    sm: 0.5rem,
+    md: 1rem,
+    lg: 2rem,
+    xl: 3rem,
 );
 
 $border-radii: (
-  none: 0,
-  sm: 0.125rem,
-  md: 0.25rem,
-  lg: 0.5rem,
-  xl: 0.75rem
+    none: 0,
+    sm: 0.125rem,
+    md: 0.25rem,
+    lg: 0.5rem,
+    xl: 0.75rem,
 );
 
 $light-shadows: (
-  sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
-  md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-  lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1)
+    sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    md: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
 );
 
 $dark-shadows: (
-  sm: 0 1px 3px 0 rgba(255, 255, 255, 0.05),
-  md: 0 4px 6px -1px rgba(255, 255, 255, 0.05),
-  lg: 0 10px 15px -3px rgba(255, 255, 255, 0.05)
+    sm: 0 1px 3px 0 rgba(255, 255, 255, 0.05),
+    md: 0 4px 6px -1px rgba(255, 255, 255, 0.05),
+    lg: 0 10px 15px -3px rgba(255, 255, 255, 0.05),
 );
 
 @mixin theme($theme) {
-  // Colors
-  @if $theme == Light {
-    --color-bg: #{map.get($light-colors, background)};
-    --color-text: #{map.get($light-colors, text)};
-    --color-primary: #{map.get($light-colors, primary)};
-    --color-secondary: #{map.get($light-colors, secondary)};
-    --color-accent: #{map.get($light-colors, accent)};
-  } @else if $theme == Dark {
-    --color-bg: #{map.get($dark-colors, background)};
-    --color-text: #{map.get($dark-colors, text)};
-    --color-primary: #{map.get($dark-colors, primary)};
-    --color-secondary: #{map.get($dark-colors, secondary)};
-    --color-accent: #{map.get($dark-colors, accent)};
-  }
-
-  // Typography
-  --font-family: #{$font-family};
-  @each $name, $size in $font-sizes {
-    --font-size-#{$name}: #{$size};
-  }
-  @each $name, $height in $line-heights {
-    --line-height-#{$name}: #{$height};
-  }
-
-  // Spacing
-  @each $name, $size in $spacing-scale {
-    --spacing-#{$name}: #{$size};
-  }
-
-  // Border radius
-  @each $name, $radius in $border-radii {
-    --border-radius-#{$name}: #{$radius};
-  }
-
-  // Shadows
-  @if $theme == Light {
-    @each $name, $shadow in $light-shadows {
-      --shadow-#{$name}: #{$shadow};
+    // Colors
+    @if $theme == Light {
+        --color-bg: #{map.get($light-colors, background)};
+        --color-text: #{map.get($light-colors, text)};
+        --color-primary: #{map.get($light-colors, primary)};
+        --color-secondary: #{map.get($light-colors, secondary)};
+        --color-accent: #{map.get($light-colors, accent)};
+    } @else if $theme == Dark {
+        --color-bg: #{map.get($dark-colors, background)};
+        --color-text: #{map.get($dark-colors, text)};
+        --color-primary: #{map.get($dark-colors, primary)};
+        --color-secondary: #{map.get($dark-colors, secondary)};
+        --color-accent: #{map.get($dark-colors, accent)};
     }
-  } @else if $theme == Dark {
-    @each $name, $shadow in $dark-shadows {
-      --shadow-#{$name}: #{$shadow};
+
+    // Typography
+    --font-family: #{$font-family};
+    @each $name, $size in $font-sizes {
+        --font-size-#{$name}: #{$size};
     }
-  }
+    @each $name, $height in $line-heights {
+        --line-height-#{$name}: #{$height};
+    }
+
+    // Spacing
+    @each $name, $size in $spacing-scale {
+        --spacing-#{$name}: #{$size};
+    }
+
+    // Border radius
+    @each $name, $radius in $border-radii {
+        --border-radius-#{$name}: #{$radius};
+    }
+
+    // Shadows
+    @if $theme == Light {
+        @each $name, $shadow in $light-shadows {
+            --shadow-#{$name}: #{$shadow};
+        }
+    } @else if $theme == Dark {
+        @each $name, $shadow in $dark-shadows {
+            --shadow-#{$name}: #{$shadow};
+        }
+    }
 }

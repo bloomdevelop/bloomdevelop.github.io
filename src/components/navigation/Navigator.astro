@@ -11,22 +11,20 @@ interface Props {
 const { disablePadding = false, disableMargin = false } = Astro.props;
 ---
 
-<div class="nav">
-    <div class="header">
-        <a class="title" href="/" class="btn btn-ghost text-xl"
-                >{AUTHOR_NAME}'s Blog
-        </a>
-    </div>
-    <div class="nav-content">
-        <nav>
-            <NavLabel icon="home-rounded" href="/">Home</NavLabel>
-            <NavLabel icon="file-copy-rounded" href="/posts">Posts</NavLabel>
-            <NavLabel icon="info-rounded" href="/about">About</NavLabel>
-        </nav>
-        <main transition:animate={customTransition} id="main-container">
-            <slot />
-        </main>
-    </div>
+<div class="navigator">
+    <nav>
+        <h2>
+            {AUTHOR_NAME}'s Blog
+        </h2>
+        <div class="links">
+            <NavLabel href="/" icon="home"> Home </NavLabel>
+            <NavLabel href="/posts" icon="article"> Posts </NavLabel>
+            <NavLabel href="/about" icon="info"> About </NavLabel>
+        </div>
+    </nav>
+    <main>
+        <slot />
+    </main>
 </div>
 
 <script>

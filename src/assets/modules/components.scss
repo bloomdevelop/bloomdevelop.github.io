@@ -1,182 +1,169 @@
 @use "./variables.scss";
 
-$shadow: rgba(0, 0, 0, 0.1);
-$active-shadow: rgba(0, 0, 0, 0.2);
-
-$shadow-inset: rgba(0, 0, 0, 0.1);
-$active-shadow-inset: rgba(0, 0, 0, 0.5);
-
 svg {
-    width: var(--spacing-lg);
-    height: var(--spacing-lg);
+    width: 2em;
+    height: 2em;
 }
 
-.nav {
+main {
+    padding: 0.5em 1em;
+}
+
+.btn {
+    svg {
+        width: 1.5em;
+        height: 1.5em;
+    }
+}
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
     display: flex;
-    flex-direction: column;
-    height: 100%;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 8px 5px 6px 5px;
+
+    // Glossy metallic gradient
+    background: linear-gradient(
+        to bottom,
+        #b5c4d7 0%,
+        #98abc3 33%,
+        #7189a8 67%,
+        #577296 100%
+    );
+
+    box-shadow:
+        inset 0 1px 0 #5f748c,
+        inset 0 1.5px 0 rgba(255, 255, 255, 0.4),
+        inset 0 2px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+
+    position: relative;
     overflow: hidden;
 
-    background: linear-gradient(to bottom,
-            color-mix(in oklab, var(--color-primary), black 20%) 0,
-            color-mix(in oklab, var(--color-primary), white 50%) 100%);
+    h2 {
+        color: #fff;
+        text-shadow: 0 1px 0 rgba(0, 0, 0, 0.4);
 
-    .header {
-        flex-shrink: 0;
-        padding: var(--spacing-md);
+        margin-inline: 30px;
+        margin-block: 0;
 
-        a.title {
-            font-size: var(--font-size-h1);
-            font-weight: bold;
-            color: var(--color-bg);
-            text-decoration: none;
-        }
+        position: relative;
+        z-index: 1;
     }
 
-
-    .nav-content {
-        display: flex;
+    a,
+    button {
+        display: inline-flex;
         flex-direction: row;
-        flex: 1;
-        height: 100%;
-        min-height: 0;
-        overflow: hidden;
+        align-items: center;
+        gap: 5px;
 
-        nav {
-            flex: 0 0 200px;
+        font-weight: bold;
+        text-decoration: none;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+        color: #fff;
 
-            display: flex;
-            flex-direction: column;
+        padding: 10px 15px;
+        border-radius: 5px;
 
-            gap: var(--spacing-md);
+        box-shadow:
+            inset 0 0 1px rgb(0, 0, 0),
+            inset 0 1px 0.5px rgba(0, 0, 0, 0.4),
+            0 0.5px 0.5px rgba(255, 255, 255, 0.4);
 
-            padding: var(--spacing-md);
+        background: linear-gradient(
+            to bottom,
+            #a2b2c9 0%,
+            #798eac 33%,
+            #506d94 67%,
+            #405f8a 100%
+        );
 
-            a {
-                text-decoration: none;
-
-                background: var(--color-bg);
-                color: var(--color-text);
-                box-shadow: inset 0 0 5px 5px $shadow-inset, 0 0 5px 5px $shadow;
-
-                padding: var(--spacing-sm) var(--spacing-md);
-
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                gap: var(--spacing-sm);
-
-
-                border-radius: var(--border-radius-lg);
-
-                svg {
-                    width: var(--spacing-md);
-                    height: var(--spacing-md);
-                }
-            }
-
-            a:active {
-                box-shadow: inset 0 0 7px 3px $active-shadow-inset, 0 0 5px 7px $active-shadow;
-            }
+        svg {
+            width: 20px;
+            height: 20px;
+            align-self: center;
         }
 
-        main {
-            flex: 1 1 auto;
-            height: 100%;
-            min-height: 0;
-            background: var(--color-bg);
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-inline: var(--spacing-md);
-
-            box-shadow: 0 0 5px 5px $shadow;
+        span {
         }
     }
 }
 
-.posts {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    gap: var(--spacing-md);
+.card {
+    background: #f7f7f7;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
 
-    a {
-        display: flex;
-        flex-direction: column;
+    padding: 6px;
+    border-radius: 8px;
+    color: #000;
+}
 
-        text-decoration: none;
+.tag {
+    margin-inline: 0.1em;
+    padding: 0.5em 1em;
+    color: var(--color-bg);
 
-        gap: var(--spacing-md);
+    border-radius: 0.5em;
 
-        background: color-mix(in oklab, var(--color-text), var(--color-bg) 95%);
-        color: var(--color-text);
-        border-radius: var(--border-radius-xl);
-        padding: var(--spacing-md);
+    $shadow-inset:
+        inset 0 10px 5px color-mix(in srgb, var(--color-primary), white 20%),
+        inset 0 -2px 5px color-mix(in srgb, var(--color-primary), black 40%);
+    box-shadow: $shadow-inset;
 
-        box-shadow: 0 0 5px 5px $shadow, inset 0 0 5px 5px $shadow-inset;
-
-        figure {
-            flex: 1;
-
-            img {
-                width: 100%;
-                height: auto;
-
-                object-fit: cover;
-                aspect-ratio: 16 / 9;
-                border-radius: var(--border-radius-xl);
-            }
-        }
-
-        .card-body {
-            flex: 1;
-
-            .tags {
-                display: flex;
-                flex-wrap: wrap;
-                gap: var(--spacing-sm);
-
-                span {
-                    background: var(--color-primary);
-                    color: var(--color-bg);
-                    padding: var(--spacing-xs) var(--spacing-sm);
-                    border-radius: var(--border-radius-md);
-                }
-            }
-        }
-    }
+    background: linear-gradient(
+        to bottom,
+        (
+            color-mix(
+                in srgb,
+                var(--color-primary),
+                rgba(255, 255, 255, 0.5) 50%
+            )
+        ),
+        color-mix(in srgb, var(--color-primary), black 50%)
+    );
 }
 
 .post {
-    margin-top: var(--spacing-md);
+    margin-bottom: 1em;
 
+    $border: 1px solid
+        color-mix(in srgb, var(--color-bg), var(--color-text) 30%);
+    border: $border;
 
-    .info {
-        display: flex;
-        flex-direction: column;
-        gap: var(--spacing-sm);
+    $shadow: 0 2px 5px color-mix(in srgb, var(--color-bg), black 30%);
+    box-shadow: $shadow;
 
-        .flex-row {
-            display: inline-flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            align-items: center;
+    padding: 1em;
+}
 
-            gap: var(--spacing-sm);
+.tags {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
 
-            .tag {
-                background: var(--color-primary);
-                color: var(--color-bg);
-                padding: var(--spacing-xs) var(--spacing-sm);
-                border-radius: var(--border-radius-md);
-            }
+.navigator {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1em;
+}
+
+@media (max-width: 500px) {
+    .btn {
+        span {
+            display: none;
         }
-    }
-    .hero {
-        width: 100%;
-        max-height: 300px;
-
-        object-fit: cover;
-        aspect-ratio: 16 / 9;
-        border-radius: var(--border-radius-xl);
     }
 }

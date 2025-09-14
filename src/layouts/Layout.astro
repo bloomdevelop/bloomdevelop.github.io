@@ -15,7 +15,6 @@ const { disablePadding = false, disableMargin = false } = Astro.props;
 <!doctype html>
 <html lang="en">
     <head>
-        <ClientRouter />
         <script is:inline>
             // Function for a workaround for astro
             function setTheme() {
@@ -50,7 +49,10 @@ const { disablePadding = false, disableMargin = false } = Astro.props;
                 themeChange();
             });
         </script>
-        <script defer src="https://cloud.umami.is/script.js" data-website-id="32517f0f-d824-4a46-8eed-c7948403e966"></script>
+        <script
+            defer
+            src="https://cloud.umami.is/script.js"
+            data-website-id="32517f0f-d824-4a46-8eed-c7948403e966"></script>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width" />
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -66,28 +68,3 @@ const { disablePadding = false, disableMargin = false } = Astro.props;
         </Navigator>
     </body>
 </html>
-
-<style is:global>
-    @keyframes scale-in {
-        0% {
-            opacity: 0;
-            transform: scale(0.8);
-        }
-        100% {
-            opacity: 1;
-            transform: scale(1);
-            border-radius: 0px;
-        }
-    }
-    @keyframes scale-out {
-        0% {
-            opacity: 1;
-            transform: scale(1);
-            border-radius: 0px;
-        }
-        100% {
-            opacity: 0;
-            transform: scale(0.8);
-        }
-    }
-</style>

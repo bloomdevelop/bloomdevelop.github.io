@@ -11,13 +11,9 @@ const isActive = href === pathname || href === "/" + (subpath?.[0] || "");
     href={href}
     data-astro-reload={disableClientNavigation}
     {...props}
+    class="btn"
 >
-    <Icon
-        pack="material-symbols"
-        name={icon}
-        alt={icon}
-        {...props}
-    />
+    <Icon pack="material-symbols" name={icon} alt={icon} {...props} />
     <span>
         <slot />
     </span>

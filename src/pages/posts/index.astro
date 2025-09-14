@@ -2,44 +2,748 @@
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { Image } from "astro:assets";
+import { Icon } from "astro-iconify";
+import "../../assets/modules/popover.scss";
 
 const posts = (await getCollection("posts"))
     .filter((post) => !post.data.draft)
     .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Group posts by year and month
+const postsByYearMonth = posts.reduce(
+    (
+        acc: Record<
+            string,
+            { year: number; month: string; posts: typeof posts }
+        >,
+        post,
+    ) => {
+        const date = new Date(post.data.pubDate);
+        const year = date.getFullYear();
+        const month = date.toLocaleString("default", { month: "long" });
+        const key = `${year}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+
+        if (!acc[key]) {
+            acc[key] = {
+                year,
+                month,
+                posts: [],
+            };
+        }
+
+        acc[key].posts.push(post);
+        return acc;
+    },
+    {},
+);
+
+// Sort the groups by year and month (newest first)
+const sortedGroups = Object.entries(postsByYearMonth)
+    .sort(([a], [b]) => b.localeCompare(a))
+    .map(([_, group]) => group);
 ---
 
 <Layout>
-    <h1>All Posts</h1>
-    <div class="posts">
-        {
-            posts.map((post) => (
-                <a href={`/posts/${post.id}`}>
-                    <figure>
-                        <Image
-                            src={post.data.hero || ""}
-                            alt={`Background from "${post.data.title}"`}
-                            width={400}
-                            loading="eager"
-                            height={300}
-                        />
-                    </figure>
-                    <div class="card-body">
-                        {post.data.tags && (
-                            <div class="tags">
-                                {post.data.tags.map((tag) => (
-                                    <span>{tag}</span>
+    <div class="newsstand">
+        <div class="shelf-container">
+            {
+                sortedGroups.map((group) => (
+                    <div class="shelf">
+                        <div class="shelf-header">
+                            <h2>
+                                {group.month} {group.year}
+                            </h2>
+                        </div>
+                        <div class="shelf-content">
+                            <div class="posts-grid">
+                                {group.posts.map((post) => (
+                                    <div
+                                        class="post-item-wrapper"
+                                        data-post-id={post.id}
+                                        data-post-title={post.data.title}
+                                        data-post-description={
+                                            post.data.description || ""
+                                        }
+                                        data-post-date={post.data.pubDate.toLocaleDateString()}
+                                        data-post-tags={
+                                            post.data.tags?.join(", ") || ""
+                                        }
+                                        data-post-url={`/posts/${post.id}`}
+                                    >
+                                        <div class="post-item">
+                                            <div class="post-cover">
+                                                <Image
+                                                    src={post.data.hero || ""}
+                                                    alt={post.data.title}
+                                                    width={120}
+                                                    height={160}
+                                                    loading="eager"
+                                                />
+                                            </div>
+                                            <div class="post-title">
+                                                {post.data.title}
+                                            </div>
+                                        </div>
+                                    </div>
                                 ))}
                             </div>
-                        )}
-
-                        <h2>{post.data.title}</h2>
-                        <p>
-                            {post.data.description ||
-                                "No Description was provided"}
-                        </p>
+                        </div>
                     </div>
-                </a>
-            ))
-        }
+                ))
+            }
+        </div>
+    </div>
+
+    <!-- Popover template -->
+    <div id="post-popover" class="popover" style="display: none;">
+        <div class="popover-caret"></div>
+        <div class="popover-header">
+            <span id="popover-title"></span>
+        </div>
+        <div class="popover-body">
+            <div class="popover-content">
+                <div class="popover-date" id="popover-date"></div>
+                <div class="popover-description" id="popover-description"></div>
+                <div class="popover-tags" id="popover-tags"></div>
+                <div class="popover-actions">
+                    <a href="#" id="popover-read-more" class="read-more-btn">
+                        <span class="btn-icon">
+                            <Icon pack="material-symbols" name="arrow-right" />
+                        </span>
+                        <span>Read Full Post</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </Layout>
+
+<style is:global lang="scss">
+    body {
+        margin: 0;
+        padding: 0;
+    }
+
+    .shelf-container {
+        padding: 20px;
+    }
+
+    .shelf {
+        margin-bottom: 40px;
+        background: linear-gradient(
+            180deg,
+            #d4b896 0%,
+            #c4a373 50%,
+            #b8956a 100%
+        );
+        border-radius: 12px;
+        box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+        position: relative;
+        overflow: hidden;
+
+        // Wood grain texture overlay
+        &::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                repeating-linear-gradient(
+                    90deg,
+                    transparent 0px,
+                    rgba(0, 0, 0, 0.03) 1px,
+                    rgba(0, 0, 0, 0.03) 2px,
+                    transparent 3px,
+                    transparent 8px
+                ),
+                repeating-linear-gradient(
+                    0deg,
+                    transparent 0px,
+                    rgba(0, 0, 0, 0.02) 1px,
+                    rgba(0, 0, 0, 0.02) 2px,
+                    transparent 3px,
+                    transparent 12px
+                );
+            pointer-events: none;
+        }
+    }
+
+    .shelf-header {
+        padding: 15px 25px;
+        background: linear-gradient(180deg, #b8956a 0%, #a0824f 100%);
+        border-bottom: 2px solid #8b6f42;
+        position: relative;
+
+        h2 {
+            color: #2c1810;
+            font-size: 18px;
+            font-weight: 700;
+            margin: 0;
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        // Inner shadow for depth
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(
+                180deg,
+                rgba(0, 0, 0, 0.2),
+                transparent
+            );
+        }
+    }
+
+    .shelf-content {
+        padding: 25px;
+        position: relative;
+        z-index: 1;
+    }
+
+    .posts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 20px;
+        align-items: start;
+    }
+
+    .post-item-wrapper {
+        position: relative;
+    }
+
+    .post-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease,
+            opacity 0.15s ease;
+        cursor: pointer;
+        position: relative;
+
+        &:hover {
+            transform: translateY(-2px);
+
+            .post-cover {
+                box-shadow:
+                    0 8px 20px rgba(0, 0, 0, 0.4),
+                    0 2px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .post-title {
+                color: #1a0d07;
+            }
+        }
+
+        &:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        &.active {
+            .post-cover {
+                box-shadow:
+                    0 6px 16px rgba(0, 0, 0, 0.35),
+                    0 2px 6px rgba(0, 0, 0, 0.15),
+                    inset 0 0 0 2px rgba(74, 144, 226, 0.3);
+            }
+
+            .post-title {
+                color: #1a0d07;
+                font-weight: 600;
+            }
+        }
+    }
+
+    .post-cover {
+        width: 120px;
+        height: 160px;
+        overflow: hidden;
+        box-shadow:
+            0 4px 12px rgba(0, 0, 0, 0.3),
+            0 1px 4px rgba(0, 0, 0, 0.2),
+            inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        transition: box-shadow 0.2s ease;
+        position: relative;
+        background: #f8f8f8;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        // Glossy effect
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.15) 0%,
+                rgba(255, 255, 255, 0.05) 70%,
+                transparent 100%
+            );
+            pointer-events: none;
+        }
+    }
+
+    .post-title {
+        margin-top: 12px;
+        color: #2c1810;
+        font-size: 12px;
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.3;
+        max-width: 120px;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.3);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    // Responsive design
+    @media (max-width: 768px) {
+        .newsstand-header {
+            padding: 15px 20px;
+
+            h1 {
+                font-size: 20px;
+            }
+        }
+
+        .shelf-container {
+            padding: 15px;
+        }
+
+        .posts-grid {
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+        }
+
+        .post-cover {
+            width: 100px;
+            height: 130px;
+        }
+
+        .post-title {
+            font-size: 11px;
+            max-width: 100px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .posts-grid {
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px;
+        }
+
+        .post-cover {
+            width: 80px;
+            height: 105px;
+        }
+
+        .post-title {
+            font-size: 10px;
+            max-width: 80px;
+        }
+    }
+
+    // Popover specific styles
+    .popover {
+        z-index: 1000;
+
+        // When popover is above the target
+        &.popover-above {
+            .popover-caret {
+                top: auto;
+                bottom: -13px;
+                transform: translateX(-50%) rotate(225deg);
+            }
+        }
+    }
+
+    .popover-content {
+        padding: 16px 0;
+        color: #333;
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .popover-date {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .popover-description {
+        margin-bottom: 12px;
+        color: #444;
+    }
+
+    .popover-tags {
+        margin-bottom: 16px;
+        font-size: 12px;
+        color: #666;
+
+        &:before {
+            content: "Tags: ";
+            font-weight: 500;
+        }
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    .popover-actions {
+        text-align: center;
+    }
+
+    .read-more-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+
+        // iOS-style blue gradient
+        background: linear-gradient(
+            to bottom,
+            #5ba7f7 0%,
+            #4a96e8 15%,
+            #3d85d9 50%,
+            #2968a3 85%,
+            #1e5a94 100%
+        );
+
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+
+        // iOS-style shadows and borders
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        box-shadow:
+            0 1px 3px rgba(0, 0, 0, 0.3),
+            0 2px 6px rgba(0, 0, 0, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+
+        transition: all 0.15s ease;
+
+        // Glossy highlight overlay
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            right: 1px;
+            height: 50%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0.4) 0%,
+                rgba(255, 255, 255, 0.2) 50%,
+                rgba(255, 255, 255, 0.1) 100%
+            );
+            border-radius: 7px 7px 0 0;
+            pointer-events: none;
+        }
+
+        .btn-icon {
+            font-size: 16px;
+            font-weight: bold;
+            line-height: 1;
+
+            svg {
+                width: 1.5em;
+                height: 1.5em;
+                vertical-align: middle;
+            }
+        }
+
+        &:hover {
+            background: linear-gradient(
+                to bottom,
+                #6bb8f8 0%,
+                #5aa7e9 15%,
+                #4d96da 50%,
+                #3979b4 85%,
+                #2e6ba5 100%
+            );
+
+            box-shadow:
+                0 2px 4px rgba(0, 0, 0, 0.35),
+                0 3px 8px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        }
+
+        &:active {
+            background: linear-gradient(
+                to bottom,
+                #1e5a94 0%,
+                #2968a3 15%,
+                #3d85d9 50%,
+                #4a96e8 85%,
+                #5ba7f7 100%
+            );
+
+            box-shadow:
+                inset 0 1px 3px rgba(0, 0, 0, 0.4),
+                inset 0 2px 6px rgba(0, 0, 0, 0.2),
+                0 1px 2px rgba(0, 0, 0, 0.2);
+
+            transform: translateY(0);
+
+            &::before {
+                background: linear-gradient(
+                    to bottom,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    rgba(255, 255, 255, 0.05) 50%,
+                    rgba(255, 255, 255, 0.02) 100%
+                );
+            }
+        }
+    }
+
+    // Mobile responsiveness
+    @media (max-width: 768px) {
+        .popover {
+            width: calc(100vw - 40px);
+            max-width: 334px;
+            font-size: 13px;
+        }
+
+        .popover-content {
+            padding: 12px 0;
+        }
+
+        .popover-header {
+            font-size: 18px;
+            height: 30px;
+            line-height: 30px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .popover {
+            width: calc(100vw - 20px);
+            font-size: 12px;
+        }
+
+        .popover-header {
+            font-size: 16px;
+            height: 28px;
+            line-height: 28px;
+        }
+
+        .read-more-btn {
+            padding: 8px 12px;
+            font-size: 11px;
+            gap: 6px;
+
+            .btn-icon {
+                font-size: 14px;
+            }
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const popover = document.getElementById(
+            "post-popover",
+        ) as HTMLElement | null;
+        const popoverTitle = document.getElementById(
+            "popover-title",
+        ) as HTMLElement | null;
+        const popoverDate = document.getElementById(
+            "popover-date",
+        ) as HTMLElement | null;
+        const popoverDescription = document.getElementById(
+            "popover-description",
+        ) as HTMLElement | null;
+        const popoverTags = document.getElementById(
+            "popover-tags",
+        ) as HTMLElement | null;
+        const popoverReadMore = document.getElementById(
+            "popover-read-more",
+        ) as HTMLAnchorElement | null;
+        let currentPopoverTarget: HTMLElement | null = null;
+
+        // Add click listeners to post items
+        document.querySelectorAll(".post-item").forEach((item) => {
+            item.addEventListener(
+                "click",
+                function (this: HTMLElement, e: Event) {
+                    e.preventDefault();
+                    const wrapper = this.closest(
+                        ".post-item-wrapper",
+                    ) as HTMLElement | null;
+
+                    if (!wrapper) return;
+
+                    // If clicking the same item, hide popover
+                    if (currentPopoverTarget === wrapper) {
+                        hidePopover();
+                        return;
+                    }
+
+                    // Get post data
+                    const title = wrapper.dataset.postTitle || "";
+                    const description = wrapper.dataset.postDescription || "";
+                    const date = wrapper.dataset.postDate || "";
+                    const tags = wrapper.dataset.postTags || "";
+                    const url = wrapper.dataset.postUrl || "";
+
+                    // Update popover content
+                    if (popoverTitle) popoverTitle.textContent = title;
+                    if (popoverDate)
+                        popoverDate.textContent = `Published: ${date}`;
+                    if (popoverDescription) {
+                        popoverDescription.textContent =
+                            description || "No description available.";
+                    }
+                    if (popoverTags) popoverTags.textContent = tags;
+                    if (popoverReadMore) popoverReadMore.href = url;
+
+                    // Position and show popover
+                    showPopover(wrapper);
+                    currentPopoverTarget = wrapper;
+
+                    // Add active class to current item
+                    document.querySelectorAll(".post-item").forEach((item) => {
+                        item.classList.remove("active");
+                    });
+                    this.classList.add("active");
+                },
+            );
+        });
+
+        // Hide popover when clicking outside
+        document.addEventListener("click", function (e: Event) {
+            const target = e.target as HTMLElement | null;
+            if (
+                target &&
+                popover &&
+                !popover.contains(target) &&
+                !target.closest(".post-item")
+            ) {
+                hidePopover();
+            }
+        });
+
+        function showPopover(targetElement: HTMLElement) {
+            if (!popover) return;
+
+            const rect = targetElement.getBoundingClientRect();
+            const scrollTop =
+                window.pageYOffset || document.documentElement.scrollTop;
+            const scrollLeft =
+                window.pageXOffset || document.documentElement.scrollLeft;
+
+            // Get popover dimensions
+            popover.style.display = "block";
+            popover.style.visibility = "hidden";
+            const popoverWidth = popover.offsetWidth;
+            const popoverHeight = popover.offsetHeight;
+            popover.style.visibility = "";
+
+            // Calculate target center position
+            const targetCenterX = rect.left + scrollLeft + rect.width / 2;
+
+            // Calculate initial position (centered below target)
+            let left = targetCenterX - popoverWidth / 2;
+            let top = rect.bottom + scrollTop + 10;
+
+            // Store original centered position for arrow calculation
+            const originalLeft = left;
+
+            // Horizontal boundary checks
+            const margin = 20;
+            if (left < margin) {
+                left = margin;
+            } else if (left + popoverWidth > window.innerWidth - margin) {
+                left = window.innerWidth - popoverWidth - margin;
+            }
+
+            // Vertical boundary checks - show above if not enough space below
+            if (top + popoverHeight > window.innerHeight + scrollTop - margin) {
+                top = rect.top + scrollTop - popoverHeight - 10;
+                // Add class to flip caret if showing above
+                popover.classList.add("popover-above");
+            } else {
+                popover.classList.remove("popover-above");
+            }
+
+            // Calculate arrow offset based on how much we adjusted the position
+            const caretElement = popover.querySelector(
+                ".popover-caret",
+            ) as HTMLElement;
+            if (caretElement) {
+                // Calculate the offset from the original centered position
+                const offset = originalLeft - left;
+                // Position the caret so it points to the target center
+                caretElement.style.left = `calc(50% + ${offset}px)`;
+            }
+
+            // Apply position
+            popover.style.left = `${left}px`;
+            popover.style.top = `${top}px`;
+            popover.style.opacity = "0";
+
+            // Fade in animation
+            setTimeout(() => {
+                if (popover) {
+                    popover.style.transition = "opacity 0.2s ease";
+                    popover.style.opacity = "1";
+                }
+            }, 10);
+        }
+
+        function hidePopover() {
+            if (!popover) return;
+
+            popover.style.transition = "opacity 0.2s ease";
+            popover.style.opacity = "0";
+
+            // Remove active class from all post items
+            document.querySelectorAll(".post-item").forEach((item) => {
+                item.classList.remove("active");
+            });
+
+            setTimeout(() => {
+                if (popover) {
+                    popover.style.display = "none";
+                    currentPopoverTarget = null;
+
+                    // Reset caret position for next show
+                    const caretElement = popover.querySelector(
+                        ".popover-caret",
+                    ) as HTMLElement;
+                    if (caretElement) {
+                        caretElement.style.left = "calc(50% + ${offset}px)";
+                    }
+                }
+            }, 200);
+        }
+    });
+</script>

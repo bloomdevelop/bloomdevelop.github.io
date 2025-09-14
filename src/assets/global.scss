@@ -4,11 +4,18 @@
 @use "./modules/prose";
 
 :root {
-    @include variables.theme($theme: "Light")
+    @include variables.theme($theme: "Light");
 }
 
 body {
-    background: var(--color-bg);
+    background: linear-gradient(
+        to left,
+        #ccd0db,
+        #ccd0db 50%,
+        #cfd3dc 50%,
+        #cfd3dc
+    );
+    background-size: 0.5% 5px;
     color: var(--color-text);
     font-family: var(--font-family);
     font-size: var(--font-size-base);
@@ -18,5 +25,16 @@ body {
 @media (prefers-color-scheme: dark) {
     :root {
         @include variables.theme($theme: Dark);
+    }
+
+    body {
+        background: linear-gradient(
+            to left,
+            #4d6077,
+            #4d6077 50%,
+            #4b5e74 50%,
+            #4b5e74
+        );
+        background-size: 0.5% 5px;
     }
 }
