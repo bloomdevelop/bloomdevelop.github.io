@@ -1,0 +1,115 @@
+/* ========================================================
+  Mixins
+ ======================================================== */
+@mixin linear-gradient($arg1, $arg2, $arg3, $arg4) {
+    background-image: -webkit-linear-gradient($arg1, $arg2, $arg3, $arg4);
+    background-image: -moz-linear-gradient($arg1, $arg2, $arg3, $arg4);
+    background-image: -o-linear-gradient($arg1, $arg2, $arg3, $arg4);
+    background-image: linear-gradient($arg1, $arg2, $arg3, $arg4);
+}
+@mixin box-shadow($args...) {
+    -webkit-box-shadow: $args;
+    -moz-box-shadow: $args;
+    box-shadow: $args;
+}
+@mixin transform($args) {
+    -webkit-transform: $args;
+    -moz-transform: $args;
+    -ms-transform: $args;
+    -o-transform: $args;
+    transform: $args;
+}
+
+/* ========================================================
+  Popover
+======================================================== */
+.popover {
+    $caretTopColor: rgb(165, 166, 173);
+    $shinyBottomColor: rgb(29, 40, 59);
+    $shinyTopColor: mix($caretTopColor, $shinyBottomColor, 57%);
+    $bgColor: rgb(3, 11, 25);
+    $caretHeight: 17px;
+
+    position: absolute;
+    width: 334px;
+    margin-top: 16px;
+    padding: 6px;
+    border: 1px solid #000;
+    border-radius: 11px;
+    box-sizing: border-box;
+    @include linear-gradient(
+        to bottom,
+        $shinyTopColor 0,
+        $shinyBottomColor 24px,
+        $bgColor 24px
+    );
+    @include box-shadow(
+        inset 0 1px rgba(255, 255, 255, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        0 10px 25px rgba(0, 0, 0, 0.5)
+    );
+
+    font-family: Helvetica, Arial, sans-serif;
+
+    // caret
+    &-caret {
+        $sqrt2: 1.4142;
+        $startFadeColor: mix($shinyBottomColor, $caretTopColor, 60%);
+        $endFadeColor: mix($shinyBottomColor, $caretTopColor, 65%);
+
+        position: absolute;
+        content: "";
+        left: 50%;
+        top: -13px;
+        height: 24px;
+        width: 24px;
+        border: 1px solid #000;
+        border-bottom-color: transparent;
+        border-right-color: transparent;
+
+        @include linear-gradient(
+            to bottom right,
+            $caretTopColor 0,
+            $startFadeColor 24px,
+            rgba($endFadeColor, 0) 26px
+        );
+        background-repeat: no-repeat; // Prevent the gradient from showing up under the transparent borders.
+        @include box-shadow(inset 1px 1px rgba(255, 255, 255, 0.2));
+        @include transform(translateX(-50%) rotate(45deg));
+    }
+
+    // the inset shadow
+    &:after {
+        position: absolute;
+        pointer-events: none;
+        content: "";
+        top: 42px + 6px;
+        bottom: 6px;
+        right: 6px;
+        left: 6px;
+        border-radius: 7px;
+        @include box-shadow(inset 0 2px 3px rgba(0, 0, 0, 0.4));
+    }
+
+    &-header {
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+        color: #fff;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.6);
+        height: 34px;
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 34px;
+        margin-bottom: 8px;
+    }
+
+    &-body {
+        position: relative;
+        overflow: hidden;
+        background: #f8f8f8;
+        box-sizing: border-box;
+        padding: 0 14px;
+        border-radius: 7px;
+    }
+}
