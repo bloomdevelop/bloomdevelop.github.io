@@ -1,0 +1,46 @@
+---
+import { AUTHOR_NAME } from "../constant";
+---
+
+<nav>
+    <h1>
+        {AUTHOR_NAME}' Site
+    </h1>
+    <div class="links">
+        <a href="/"> Home </a>
+        <a href="/posts"> Posts </a>
+        <a href="/about"> About </a>
+    </div>
+</nav>
+<main>
+    <slot />
+</main>
+
+<style lang="scss">
+    nav {
+        display: flex;
+        // IE9
+        -js-display: flex;
+        flex-direction: row;
+        align-items: center;
+        font-size: 11pt;
+        margin: 5pt 0pt;
+        padding: 0 10px;
+        background-color: var(--surface-primary);
+        border: 1px solid var(--surface-border);
+
+        // Force h1 to have same font size as nav.
+        h1 {
+            font-size: 11pt;
+        }
+
+        div.links {
+            display: flex;
+            -js-display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-left: auto;
+            gap: 5pt;
+        }
+    }
+</style>

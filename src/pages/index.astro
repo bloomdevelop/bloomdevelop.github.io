@@ -5,6 +5,7 @@ import Layout from "../layouts/Layout.astro";
 import { Picture } from "astro:assets";
 import type { RepositoryType } from "../lib/types";
 import Repositories from "../components/Repositories.astro";
+import { BIRTH_DATE } from "../constant";
 
 const repositories: RepositoryType = [
     {
@@ -29,108 +30,114 @@ const repositories: RepositoryType = [
         url: "https://github.com/bloomdevelop/github-search",
     },
 ];
+
+// Helper function for calculating the age
+function calculateAge(birthDateString: string) {
+    const birthDate = new Date(birthDateString);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDifference = today.getMonth() - birthDate.getMonth();
+
+    // If the birth month hasn't passed yet, or
+    // if the birth month is the current month but the birth day hasn't passed yet,
+    // then subtract one year from the age.
+    if (
+        monthDifference < 0 ||
+        (monthDifference === 0 && today.getDate() < birthDate.getDate())
+    ) {
+        age--;
+    }
+
+    return age;
+}
+
+const age = calculateAge(BIRTH_DATE);
 ---
 
 <Layout>
-    <div class="container mx-auto flex flex-col gap-8 w-full p-4 lg:p-8">
-        <div class="flex flex-col lg:flex-row gap-4">
-            <div
-                class="flex-none flex flex-col justify-center items-center gap-6"
-            >
+    <div>
+        <div class="warp">
+            <div>
                 <Picture
                     src="/images/pfp/bafkreig74nuglms6u52yqs2vs66zwewhn4pthj5szuybmkfulnz4bg2634-cropped.jpg"
                     alt="Spring's Profile Image"
                     width={300}
                     height={300}
-                    class="rounded-box"
                     loading="eager"
                 />
                 <p>
                     Picture from <a
-                        class="text-primary hover:underline"
                         href="https://bsky.app/profile/wiillowthecat.bsky.social"
                         target="_blank"
                         rel="noopener noreferrer">Willow The Cat on Bluesky</a
                     >
                 </p>
             </div>
-            <div class="flex-1 flex flex-col gap-4">
-                <h1 class="text-5xl font-semibold text-center lg:text-left">
+            <div class="card">
+                <h1>
                     Hello, I'm {AUTHOR_NAME}!
                 </h1>
-                <div class="card bg-base-200">
-                    <ul class="list">
-                        <li class="list-row">
-                            <h2>Age: 18 Years Old</h2>
-                        </li>
-                        <li class="list-row">
-                            <h2>Pronous: He/Him</h2>
-                        </li>
-                        <li class="list-row">
-                            <div>
-                                <h2>
-                                    Language: Spanish and <span
-                                        class="tooltip"
-                                        data-tip="Secondary Language, I don't talk on voice chat"
-                                        >English</span
-                                    >
-                                </h2>
-                                <div class="text-xs font-semibold opacity-60">
-                                    Can we don't talk about the Spanish or
-                                    English joke
-                                </div>
-                            </div>
-                        </li>
-                        <li class="list-row">
-                            <div class="flex flex-col lg:flex-row gap-2">
-                                Programming Languages:
-                                <div class="inline-flex flex-row gap-2">
-                                    <div class="tooltip" data-tip="JavaScript">
-                                        <Icon
-                                            class="size-[1.2em]"
-                                            pack="logos"
-                                            name="javascript"
-                                        />
-                                    </div>
-                                    <div class="tooltip" data-tip="TypeScript">
-                                        <Icon
-                                            class="size-[1.2em]"
-                                            pack="logos"
-                                            name="typescript-icon"
-                                        />
-                                    </div>
-                                    <div class="tooltip" data-tip="Kotlin">
-                                        <Icon
-                                            class="size-[1.2em]"
-                                            pack="logos"
-                                            name="kotlin-icon"
-                                        />
-                                    </div>
-                                    <div class="tooltip" data-tip="Luau">
-                                        <Icon
-                                            class="size-[1.2em]"
-                                            pack="vscode-icons"
-                                            name="file-type-luau"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="list-row">
-                            <div>
-                                <h2>Job: Student, Not Employed Yet</h2>
-                                <div class="text-xs font-semibold opacity-60">
-                                    Or they will employ me?
-                                </div>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                <ul>
+                    <li>Age: {age} Years Old</li>
+                    <li>Pronous: He/Him</li>
+                    <li>Language: Spanish and English</li>
+                    <li>
+                        Programming Languages:
+                        <ul>
+                            <li>
+                                <Icon pack="logos" name="javascript" />
+                                <Icon pack="logos" name="typescript-icon" />
+                                Javascript/Typescript
+                            </li>
+                            <li>
+                                <Icon pack="logos" name="kotlin-icon" />
+                                Kotlin
+                            </li>
+                            <li>
+                                <Icon
+                                    pack="vscode-icons"
+                                    name="file-type-luau"
+                                />
+                                Luau/Lua (Currently Learning)
+                            </li>
+                            <li>
+                                <Icon pack="logos" name="rust" />
+                                Rust (Currently learning)
+                            </li>
+                            <li>
+                                <Icon pack="logos" name="python" />
+                                Python (Currently learning)
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Job: Student, Not Employed Yet</li>
+                </ul>
             </div>
         </div>
-        <div class="flex flex-col gap-4">
-            <h1 class="text-4xl font-bold">My Projects (And Contributions)</h1>
-            <Repositories repositories={repositories} />
-        </div>
     </div>
+    <h1>My Projects (And Contributions)</h1>
+    <Repositories repositories={repositories} />
 </Layout>
+
+<style>
+    svg {
+        display: inline-block;
+        width: 12pt;
+        height: 12pt;
+    }
+
+    .warp {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        flex-wrap: wrap;
+        gap: 10pt;
+        grid-auto-flow: dense;
+    }
+
+    .card {
+        padding: 10pt 24pt;
+        border: 1px solid var(--surface-border);
+        background-color: var(--surface-secondary);
+    }
+</style>

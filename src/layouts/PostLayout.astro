@@ -1,67 +1,88 @@
 ---
-import Picture from "astro/components/Picture.astro";
+import "normalize.css";
+import "../assets/prose.css"
 import type { CollectionEntry } from "astro:content";
 import Layout from "./Layout.astro";
-import Icon from "astro-iconify";
 
 type Props = CollectionEntry<"posts">["data"];
 
 const { title, description, pubDate, updatedDate, hero, tags } = Astro.props;
 ---
 
-<Layout disablePadding disableMargin>
-    <article class="mb-10">
-        <div
-            class="hero bg-base-200 min-h-screen min-w-screen"
-            style={`background-image: url(${hero || ""});`}
-        >
-            <div class="hero-overlay"></div>
-            <div class="hero-content text-center text-neutral-content">
-                <div class="max-w-md">
-                    <h1 class="mb-5 text-5xl leading-14 font-bold">{title}</h1>
-                    <p class="mb-5 font-semibold">{description}</p>
+<Layout>
+    <article>
+        <div class="image-with-info">
+            <img
+                src={hero || ""}
+                alt={`Background from "${title}"`}
+                loading="lazy"
+            />
+            <div class="info">
+                <div>
+                    <h1>{title}</h1>
+                    <p>{description}</p>
                 </div>
-            </div>
-        </div>
-        <div
-            class="mt-10 container max-w-2xl mx-auto flex flex-col gap-4 mb-4 px-2"
-        >
-            <div class="rounded-box bg-base-200 p-2 flex flex-col gap-2">
-                <span class="flex flex-row gap-2"
-                    ><Icon
-                        class="size-[1.2em]"
-                        pack="material-symbols"
-                        name="calendar-clock-rounded"
-                    /> Published on {pubDate.toLocaleDateString()}</span
-                >
-                {
-                    updatedDate && (
-                        <span class="flex flex-row gap-2">
-                            <Icon
-                                class="size-[1.2em]"
-                                pack="material-symbols"
-                                name="calendar-clock-rounded"
-                            />
-                            Updated on {updatedDate?.toLocaleDateString()}
-                        </span>
-                    )
-                }
                 {
                     tags && tags.length > 0 && (
-                        <div class="flex flex-row gap-2">
-                            <span>Tags: </span>
-                            <div class="flex flex-row flex-warp gap-2">
-                                {tags.map((tag) => (
-                                    <div class="badge badge-info">{tag}</div>
-                                ))}
-                            </div>
+                        <div class="tags">
+                            {tags.map((tag) => (
+                                <span>{tag}</span>
+                            ))}
                         </div>
                     )
                 }
+                <div>
+                    <span>Published on {pubDate.toLocaleDateString()}</span>
+                    {
+                        updatedDate && (
+                            <span>
+                                Updated on {updatedDate?.toLocaleDateString()}
+                            </span>
+                        )
+                    }
+                </div>
             </div>
         </div>
-        <main class="container max-w-2xl px-2 mx-auto prose dark:prose-invert">
+        <div class="prose">
             <slot />
-        </main>
+        </div>
     </article>
 </Layout>
+
+<style lang="scss">
+    .image-with-info {
+        display: flex;
+        -js-display: flex;
+        flex-direction: row;
+
+        img {
+            flex: 1;
+            aspect-ratio: 16 / 9;
+            height: 300px;
+        }
+
+        .info {
+            flex: 1;
+            display: flex;
+            -js-display: flex;
+            flex-direction: column;
+            gap: 10pt;
+            justify-content: space-between;
+            padding: 5pt 15pt;
+
+            .tags {
+                display: flex;
+                -js-display: flex;
+                align-items: center;
+                gap: 5pt;
+
+                span {
+                    background: var(--accent);
+                    border: 1px solid var(--accent-border);
+
+                    padding: 1pt 3pt;
+                }
+            }
+        }
+    }
+</style>

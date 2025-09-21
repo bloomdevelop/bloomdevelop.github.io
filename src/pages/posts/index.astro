@@ -1,8 +1,6 @@
 ---
 import { getCollection } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
-import { Image } from "astro:assets";
-import Icon from "astro-iconify";
 
 const posts = (await getCollection("posts"))
     .filter((post) => !post.data.draft)
@@ -10,52 +8,68 @@ const posts = (await getCollection("posts"))
 ---
 
 <Layout>
-    <h1 class="text-4xl font-semibold">All Posts</h1>
-    <div
-        class="my-8 flex flex-col justify-center items-center lg:justify-start lg:items-start lg:flex-row gap-4"
-    >
+    <h1>All Posts</h1>
+    <div class="post-list">
         {
             posts.map((post) => (
-                <div class="card bg-base-200 w-96">
-                    <figure class="bg-base-300">
-                        <Image
-                            src={post.data.hero || ""}
-                            alt={`Background from "${post.data.title}"`}
-                            width={400}
-                            loading="eager"
-                            height={300}
-                        />
-                    </figure>
-                    <div class="card-body">
+                <a href={`/posts/${post.id}`} class="post-item">
+                    <img
+                        src={post.data.hero || ""}
+                        alt={`Background from "${post.data.title}"`}
+                        loading="lazy"
+                    />
+                    <div>
                         {post.data.tags && (
-                            <div class="flex flex-row flex-warp gap-2">
+                            <div class="tags">
                                 {post.data.tags.map((tag) => (
-                                    <span class="badge badge-info">{tag}</span>
+                                    <span>{tag}</span>
                                 ))}
                             </div>
                         )}
 
-                        <h2 class="card-title">{post.data.title}</h2>
+                        <h2>{post.data.title}</h2>
                         <p>
                             {post.data.description ||
                                 "No Description was provided"}
                         </p>
-                        <div class="card-actions justify-end">
-                            <a
-                                class="btn btn-primary"
-                                href={`/posts/${post.id}`}
-                            >
-                                <Icon
-                                    class="size-[1.2em]"
-                                    pack="material-symbols"
-                                    name="visibility-rounded"
-                                />
-                                View Post
-                            </a>
-                        </div>
                     </div>
-                </div>
+                </a>
             ))
         }
     </div>
 </Layout>
+<style lang="scss">
+    .post-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+        flex-wrap: wrap;
+        gap: 10pt;
+
+        .post-item {
+            padding: 5pt;
+            background-color: var(--surface-secondary);
+            border: 1px solid var(--surface-border);
+            text-decoration: none;
+            color: var(--fg);
+
+            img {
+                width: 100%;
+                height: 300px;
+            }
+
+            .tags {
+                display: flex;
+                -js-display: flex;
+                align-items: center;
+                gap: 5pt;
+
+                span {
+                    background: var(--accent);
+                    border: 1px solid var(--accent-border);
+
+                    padding: 1pt 3pt
+                }
+            }
+        }
+    }
+</style>

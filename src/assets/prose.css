@@ -1,0 +1,21 @@
+.prose {
+    margin-top: 5pt;
+}
+
+.prose > p {
+    line-height: normal;
+}
+
+.prose > blockquote {
+    margin: 0;
+    padding: 5pt;
+    padding-left: 15pt;
+
+    border-left: 5pt solid var(--accent);
+    background-color: var(--surface-primary)
+}
+
+.prose > p > img {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}

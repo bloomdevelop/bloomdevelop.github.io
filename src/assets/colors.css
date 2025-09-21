@@ -1,0 +1,9 @@
+:root {
+    --bg: #fff;
+    --fg: #000;
+    --accent: hsl(30deg, 100%, 75%);
+    --accent-border: hsl(30deg, 100%, 45%);
+    --surface-primary: hsl(30deg, 50%, 90%);
+    --surface-secondary: hsl(45deg, 70%, 90%);
+    --surface-border: hsl(30deg, 50%, 60%);
+}

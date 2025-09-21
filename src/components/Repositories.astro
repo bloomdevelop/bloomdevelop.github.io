@@ -9,30 +9,69 @@ interface Props {
 const { repositories } = Astro.props;
 ---
 
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+<div class="grid">
   {
     repositories.map((repo) => (
-      <div class="card bg-base-200 w-full">
-        <div class="card-body">
-          <h2 class="card-title">{repo.name}</h2>
+      <div class="card">
+        <div>
+          <h2>{repo.name}</h2>
           <p>{repo.description}</p>
-          <div class="card-actions justify-end">
-            <a
-              href={repo.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="btn btn-primary"
-            >
-              <Icon
-                class="size-[1.2em]"
-                pack="material-symbols"
-                name="open-in-new-rounded"
-              />
-              View Repository
-            </a>
-          </div>
+        </div>
+        <div>
+          <a
+            class="btn"
+            href={repo.url}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Icon pack="material-symbols" name="open-in-new-rounded" />
+            View Repository
+          </a>
         </div>
       </div>
     ))
   }
 </div>
+<style lang="scss">
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    flex-wrap: wrap;
+    gap: 10pt;
+
+    svg {
+      display: inline-block;
+      width: 12pt;
+      height: 12pt;
+    }
+  }
+
+  .card {
+    display: flex;
+    -js-display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 10pt;
+    border: 1px solid var(--surface-border);
+    background-color: var(--surface-secondary);
+
+    h2 {
+      margin: 0 !important;
+    }
+  }
+
+  .btn {
+    display: flex;
+    -js-display: flex;
+    align-items: center;
+    gap: 5pt;
+
+    padding: 5pt;
+
+    width: max-content;
+    text-decoration: none;
+    color: var(--fg);
+    background-color: var(--accent);
+    border: 1px solid var(--accent-border);
+  }
+</style>
