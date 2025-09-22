@@ -14,5 +14,9 @@
     "astro-iconify": "^1.2.0",
     "normalize.css": "^8.0.1",
     "theme-change": "^2.5.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.5.2"
   }
 }

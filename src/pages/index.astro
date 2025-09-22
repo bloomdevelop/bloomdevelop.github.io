@@ -58,7 +58,7 @@ const age = calculateAge(BIRTH_DATE);
 <Layout>
     <div>
         <div class="warp">
-            <div>
+            <div class="pfp">
                 <Picture
                     src="/images/pfp/bafkreig74nuglms6u52yqs2vs66zwewhn4pthj5szuybmkfulnz4bg2634-cropped.jpg"
                     alt="Spring's Profile Image"
@@ -139,5 +139,13 @@ const age = calculateAge(BIRTH_DATE);
         padding: 10pt 24pt;
         border: 1px solid var(--surface-border);
         background-color: var(--surface-secondary);
+    }
+
+    .pfp {
+        display: flex;
+        -js-display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
     }
 </style>

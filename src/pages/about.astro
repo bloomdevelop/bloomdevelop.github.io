@@ -1,29 +1,18 @@
 ---
+import { AUTHOR_NAME } from "../constant";
 import Layout from "../layouts/Layout.astro";
-import { Icon } from "astro-iconify";
 ---
 
 <Layout>
     <h1>About Page</h1>
-    <div>
-        <div role="alert">
-            <Icon
-                pack="material-symbols"
-                name="chat-info-outline-rounded"
-            />
-            <span
-                >This site was created under MIT License. Please read more at <a
-                    href="https://choosealicense.com/licenses/mit/#"
-                    >Choose A License site</a
-                ></span
-            >
-        </div>
-        <div>
-            <h2>Tech Stack</h2>
-            <ul>
-                <li>Astro</li>
-                <li>TailwindCSS + DaisyUI</li>
-            </ul>
-        </div>
-    </div>
+    <p>This site was lincensed with MIT</p>
+    <p>Created by {AUTHOR_NAME}, built with:</p>
+    <ul>
+        <li>Astro</li>
+        <li>CSS</li>
+        <li>SASS/SCSS</li>
+    </ul>
+    <b>
+        <p>There's not alot of content in this page... Come back later!</p>
+    </b>
 </Layout>
