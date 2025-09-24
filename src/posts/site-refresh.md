@@ -28,7 +28,8 @@ You might notice that the window decoration is different, its is because I'm not
 
 Also, there's an interesting addition on this design, something called "View Transition", expect it use from Astro's own component to provide this feature, even on some browser that doesn't support it (ironically, it in fact does work on PlayStation 4 running on WebKit 605.1.11, but it is slightly shittier, that's why I put a logic to disable it). One of my favorite addition I implement so far, yet it looked like smooth as butter, scaling out and in from page to pages.
 
-> Important: There's no comment features sadly, but I'm not adding it anymore.
+> [!NOTE]
+> There's no comment features sadly, but I'm not adding it anymore.
 
 ## What's next?
 
