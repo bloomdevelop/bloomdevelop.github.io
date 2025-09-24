@@ -19,3 +19,45 @@
     width: 100%;
     aspect-ratio: 16 / 9;
 }
+
+.prose > .callout {
+    margin: 0;
+    background-color: var(--surface-primary);
+    border: 2pt solid hsl(30deg, 100%, 30%);
+    border-radius: 5pt;
+}
+
+.prose > .callout > .callout-title {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5pt;
+    padding: 10pt;
+    border-bottom: 2pt dashed hsl(30deg, 100%, 25%);
+}
+
+.prose > .callout > .callout-content {
+    padding: 5pt 15pt
+}
+
+.prose > .toc {
+    margin: 0;
+    padding: 5pt;
+    border: 2pt solid hsl(30deg, 100%, 30%);
+    border-radius: 5pt;
+    background-color: var(--surface-primary);
+    margin-bottom: 5pt;
+}
+
+.toc-level {
+    margin-bottom: 5pt;
+}
+
+
+.toc-item {
+    margin-bottom: 5pt;
+}
+
+.toc-item:nth-child(1) {
+    margin-top: 5pt;
+}

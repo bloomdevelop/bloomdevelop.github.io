@@ -7,6 +7,7 @@ pubDate: 8/4/25
 draft: true
 ---
 
+> [!NOTE]
 > Content not finished
 
 Unsure how do I make a introduction for this, okay so,

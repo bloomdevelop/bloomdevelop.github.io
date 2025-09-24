@@ -9,10 +9,16 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@jsdevtools/rehype-toc": "^3.0.2",
     "astro": "^5.12.3",
     "astro-better-image-service": "^2.1.8",
     "astro-iconify": "^1.2.0",
     "normalize.css": "^8.0.1",
+    "rehype-callouts": "^2.1.2",
+    "rehype-katex": "^7.0.1",
+    "rehype-katex-notranslate": "^1.1.4",
+    "rehype-slug": "^6.0.0",
+    "remark-toc": "^9.0.0",
     "theme-change": "^2.5.0"
   },
   "devDependencies": {
