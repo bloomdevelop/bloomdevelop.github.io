@@ -6,6 +6,7 @@ tags: ["Website", "Design", "Web Development"]
 pubDate: 7/31/25
 ---
 
+> [!WARNING]
 > Work in Progress, this content isn't finished yet.
 
 It has been days since I firstly published the first article on reviewing a Linux distribution, for what I've seen the current state from its own site, there was a mix between React and Astro, basically making the site looks "too complex" to work with this, I tried redesigning the site without overwriting the components (basically preserving the functionality), it didn't quite work very well, it had become very annoying to be able to fix this issue, even on some components that use React.
