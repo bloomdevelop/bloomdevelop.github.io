@@ -56,7 +56,6 @@ const { title, description, pubDate, updatedDate, hero, tags } = Astro.props;
         flex-direction: row;
 
         img {
-            flex: 1;
             aspect-ratio: 16 / 9;
             height: 300px;
         }
@@ -68,12 +67,13 @@ const { title, description, pubDate, updatedDate, hero, tags } = Astro.props;
             flex-direction: column;
             gap: 10pt;
             justify-content: space-between;
-            padding: 5pt 15pt;
+            margin: 5pt 15pt;
 
             .tags {
                 display: flex;
                 -js-display: flex;
                 align-items: center;
+                flex-wrap: wrap;
                 gap: 5pt;
 
                 span {
