@@ -68,7 +68,7 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-        working-directory: ${{ env.BUILD_PATH }}
+        working-directory: ${{ github.workspace }}
       - name: Build with Astro
         run: |
           pnpm astro build \
