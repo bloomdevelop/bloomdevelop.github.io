@@ -1,0 +1,47 @@
+---
+import BaseLayout from "../layouts/base-layout.astro";
+import NavMenu from "../components/nav-menu.vue";
+import Logs from "../components/logs.vue";
+---
+
+<BaseLayout>
+    <nav>
+        <h1>Spring's Website</h1>
+        <NavMenu client:only />
+    </nav>
+    <main id="main-content">
+        <section>
+            <h2>Links</h2>
+            <div data-component="social-links">
+                <a
+                    data-component="social-link"
+                    data-type="twitter"
+                    href="https://twitter.com/spring_meowmeow"
+                    target="_blank"
+                >
+                    Twitter
+                </a>
+                <a
+                    data-component="social-link"
+                    data-type="bluesky"
+                    href="https://bsky.app/profile/spring.furrest.net"
+                    target="_blank"
+                >
+                    Bluesky
+                </a>
+                <a
+                    data-component="social-link"
+                    data-type="github"
+                    href="https://github.com/bloomdevelop"
+                    target="_blank"
+                >
+                    GitHub
+                </a>
+            </div>
+        </section>
+        <section>
+            <h2>Logs</h2>
+            <Logs client:only />
+        </section>
+    </main>
+</BaseLayout>

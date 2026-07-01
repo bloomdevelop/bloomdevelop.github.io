@@ -1,0 +1,50 @@
+@layer colors {
+    :root {
+        /* Required for dark mode to function properly */
+        color-scheme: light dark;
+
+        --primary: light-dark(
+            oklch(0.7441 0.2142 48.7),
+            oklch(0.8147 0.2142 48.7)
+        );
+        --primary-contrast: contrast-color(var(--primary));
+        --secondary: light-dark(
+            oklch(0.6883 0.2142 26.31),
+            oklch(0.7264 0.2142 26.31)
+        );
+        --secondary-contrast: contrast-color(var(--secondary));
+        --warning: light-dark(
+            oklch(0.8206 0.1949 81.52),
+            oklch(0.8594 0.1396 81.52)
+        );
+        --warning-contrast: contrast-color(var(--warning));
+        --error: light-dark(
+            oklch(0.6174 0.2349 31.76),
+            oklch(0.7029 0.2381 29.64)
+        );
+        --error-contrast: contrast-color(var(--error));
+
+        --border-primary: light-dark(
+            color-mix(in oklch, var(--primary), black 10%),
+            color-mix(in oklch, var(--primary), white 10%)
+        );
+
+        --surface: light-dark(oklch(1 0 0), oklch(0 0 0));
+        --surface-contrast: contrast-color(var(--surface));
+
+        --surface-1: light-dark(oklch(0.8917 0 0), oklch(0.3 0 0));
+        --surface-1-contrast: contrast-color(var(--surface-1));
+
+        --surface-primary: light-dark(
+            color-mix(in oklch, var(--primary), transparent 90%),
+            color-mix(in oklch, var(--primary), transparent 90%)
+        );
+        --surface-primary-contrast: contrast-color(var(--surface-primary));
+
+        --surface-primary-2: light-dark(
+            color-mix(in oklch, var(--primary), transparent 80%),
+            color-mix(in oklch, var(--primary), transparent 80%)
+        );
+        --surface-primary-2-contrast: contrast-color(var(--surface-primary-2));
+    }
+}
