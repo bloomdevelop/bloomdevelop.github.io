@@ -9,10 +9,10 @@
         );
         --primary-contrast: contrast-color(var(--primary));
         --secondary: light-dark(
-            oklch(0.6883 0.2142 26.31),
-            oklch(0.7264 0.2142 26.31)
+            oklch(73.7% 0.189 146),
+            oklch(88.7% 0.161 136)
         );
-        --secondary-contrast: contrast-color(var(--secondary));
+        --secondary-contrast: contrast-color(var(--secondary)); /* Hardcoded due of poor contrast that "contrast-color" failed to do his job */
         --warning: light-dark(
             oklch(0.8206 0.1949 81.52),
             oklch(0.8594 0.1396 81.52)
@@ -22,7 +22,7 @@
             oklch(0.6174 0.2349 31.76),
             oklch(0.7029 0.2381 29.64)
         );
-        --error-contrast: contrast-color(var(--error));
+        --error-contrast: contrast-color(var(--error)); /* Hardcoded due of poor contrast that "contrast-color()" failed to do his job */
 
         --border-primary: light-dark(
             color-mix(in oklch, var(--primary), black 10%),

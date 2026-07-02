@@ -140,16 +140,6 @@ label {
     font-family: var(--body);
     font-size: 0.875rem;
     color: var(--surface-1-contrast);
-    outline: none;
-
-    & input[type="checkbox"] {
-        width: 1rem;
-        height: 1rem;
-
-        &:focus-visible {
-            outline: 3px dashed color-mix(in oklch, var(--primary), black 35%);
-        }
-    }
 
     & span {
         user-select: none;

@@ -84,7 +84,7 @@ function logout() {
         <header>
             <h1>Logout?</h1>
 
-            <button
+            <!-- <button
                 type="button"
                 data-variant="ghost"
                 data-size="icon"
@@ -92,18 +92,25 @@ function logout() {
                 command="close"
             >
                 <span class="md-symbols" aria-hidden="true">close</span>
-            </button>
+            </button> -->
         </header>
         <p>Are you sure you want to logout?</p>
-        <footer>
+        <div data-type="footer">
             <button
-                data-variant="secondary"
+                data-variant="primary"
                 commandFor="logout-confirmation"
                 command="close"
                 @click="logout"
             >
-                Logout
+                Yea
             </button>
-        </footer>
+            <button
+                data-variant="neutral"
+                commandFor="logout-confirmation"
+                command="close"
+            >
+                Naw
+            </button>
+        </div>
     </dialog>
 </template>
