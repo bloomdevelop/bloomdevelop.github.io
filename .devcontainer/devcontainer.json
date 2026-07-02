@@ -1,0 +1,30 @@
+{
+  "name": "bloomdevelop.github.io (Astro + Vue + pnpm)",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "astro-build.astro-vscode",
+        "Vue.volar",
+        "biomejs.biome",
+        "EditorConfig.EditorConfig"
+      ],
+      "settings": {
+        "editor.defaultFormatter": "biomejs.biome",
+        "editor.formatOnSave": true
+      }
+    }
+  },
+  "forwardPorts": [4321],
+  "portsAttributes": {
+    "4321": {
+      "label": "Astro Dev Server",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "postCreateCommand": "pnpm install",
+  "remoteUser": "node"
+}
