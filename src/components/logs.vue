@@ -71,6 +71,17 @@ onMounted(async () => {
             </div>
             <footer>
                 <span data-type="date">{{ formatDate(log.createdAt) }}</span>
+                <div
+                    v-if="log.blueskyPost"
+                    data-component="badge"
+                    data-variant="primary"
+                >
+                    <span class="md-symbols" aria-hidden="true"
+                        >call_split</span
+                    >
+                    Crossposted
+                </div>
+
                 <button data-variant="primary" @click="copyPermalink(log)">
                     <span aria-hidden="true" class="md-symbols"> link_2 </span>
                     <span aria-live="polite">
