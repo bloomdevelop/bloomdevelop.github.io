@@ -6,11 +6,11 @@
         --space-xl: 32px;
         --space-2xl: 64px;
 
-        --rounded-sm: 0.3rem;
-        --rounded-md: 0.5rem;
-        --rounded-lg: 0.8rem;
-        --rounded-xl: 1rem;
-        --rounded-2xl: 1.5rem;
+        --rounded-sm: 5px;
+        --rounded-md: 10px;
+        --rounded-lg: 15px;
+        --rounded-xl: 20px;
+        --rounded-2xl: 25px;
 
         --shadow-sm:
             0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
