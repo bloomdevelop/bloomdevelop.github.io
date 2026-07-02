@@ -24,6 +24,7 @@
         user-select: none;
         -moz-user-select: none;
         -webkit-user-select: none;
+        color: var(--surface-contrast);
 
         &:disabled {
             opacity: 0.5;
@@ -347,6 +348,11 @@
                 border-radius: calc(var (--rounded-size) / 2);
             }
 
+            & span[data-type="date"] {
+                font-variant-numeric: tabular-nums;
+                font-family: var(--maple-mono);
+            }
+
             @media (max-width: 425px) {
                 flex-direction: column;
                 gap: var(--space-lg);
@@ -360,11 +366,6 @@
                     font-size: 0.8em;
                 }
             }
-        }
-
-        & span[data-type="date"] {
-            font-variant-numeric: tabular-nums;
-            font-family: var(--maple-mono);
         }
     }
 
