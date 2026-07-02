@@ -24,6 +24,8 @@
         accent-color: var(--primary);
 
         --google-sans-flex: "Google Sans Flex Variable", sans-serif;
+
+        scrollbar-gutter: stable;
     }
 
     * {
