@@ -346,6 +346,7 @@
 
         & .card-content {
             padding: var(--space-md);
+            white-space: pre-wrap;
             overflow-wrap: break-word;
         }
 
