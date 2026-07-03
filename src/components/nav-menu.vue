@@ -41,11 +41,9 @@ function logout() {
             alt="Your profile image"
         />
 
-        <span aria-label="Profile" style="font-size: 20px" v-else
-            ><span class="md-symbols" aria-hidden="true"
-                >account_circle</span
-            ></span
-        >
+        <span aria-label="Profile" class="md-symbols" aria-hidden="true" v-else>
+            account_circle
+        </span>
     </button>
     <div id="menu" data-component="menu" popover>
         <div>
