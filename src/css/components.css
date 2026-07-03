@@ -81,15 +81,22 @@
         }
 
         &[data-size="icon"] {
-            --size: 2.5rem;
-            display: inline-flex;
+            --size: 34px;
+            display: grid;
+            place-content: center;
             align-items: center;
             justify-content: center;
             text-align: center;
-            width: var(--size);
-            height: var(--size);
+
+            font-size: 1.25rem;
+            min-width: var(--size);
+            min-height: var(--size);
             padding: var(--space-sm);
             border-radius: var(--rounded-sm);
+
+            & span {
+                margin-top: 1px;
+            }
         }
 
         &[popovertarget] {
