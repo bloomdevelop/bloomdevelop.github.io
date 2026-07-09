@@ -74,7 +74,7 @@ onMounted(async () => {
                 <div
                     v-if="log.blueskyPost"
                     data-component="badge"
-                    data-variant="primary"
+                    data-variant="secondary"
                 >
                     <span class="md-symbols" aria-hidden="true"
                         >call_split</span
