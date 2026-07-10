@@ -407,26 +407,30 @@
     }
 
     .logs {
-        overflow-x: scroll;
-        mask: linear-gradient(
-            to right,
-            #0000,
-            #ffff var(--left-fade) calc(100% - var(--right-fade)),
-            #0000
-        );
-        animation: scrollfade;
-        animation-timeline: --scrollfade;
-        scroll-timeline: --scrollfade x;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         gap: var(--space-lg);
 
-        & [data-component="card"] {
-            flex: 0 0 auto;
-            min-width: 300px;
+        @media (min-width: 768px) {
+            overflow-x: scroll;
+            mask: linear-gradient(
+                to right,
+                #0000,
+                #ffff var(--left-fade) calc(100% - var(--right-fade)),
+                #0000
+            );
+            animation: scrollfade;
+            animation-timeline: --scrollfade;
+            scroll-timeline: --scrollfade x;
+            flex-direction: row;
 
-            & .card-content {
-                flex: 1;
+            & [data-component="card"] {
+                flex: 0 0 auto;
+                min-width: 300px;
+
+                & .card-content {
+                    flex: 1;
+                }
             }
         }
     }
