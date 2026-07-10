@@ -1,4 +1,33 @@
 @layer components {
+    @property --left-fade {
+        syntax: "<length>";
+        inherits: false;
+        initial-value: 0;
+    }
+
+    @property --right-fade {
+        syntax: "<length>";
+        inherits: false;
+        initial-value: 0;
+    }
+
+    @keyframes scrollfade {
+        0% {
+            --left-fade: 0;
+        }
+        1%,
+        100% {
+            --left-fade: 3rem;
+        }
+        0%,
+        99% {
+            --right-fade: 3rem;
+        }
+        100% {
+            --right-fade: 0;
+        }
+    }
+
     nav {
         display: flex;
         align-items: center;
@@ -105,7 +134,7 @@
     }
 
     input {
-        --duration: 150ms;
+        --duration: var(--duration-quick);
 
         @media (prefers-reduced-motion: reduce) {
             --duration: 0ms;
@@ -113,7 +142,7 @@
 
         width: 100%;
         resize: vertical;
-        transition: border-color var(--duration) ease;
+        transition: border-color var(--duration) var(--ease-smooth-out);
         font-family: var(--body);
         font-size: 1rem;
         border: 2px solid var(--surface-primary-2);
@@ -121,12 +150,7 @@
         background: var(--surface-primary);
         color: var(--surface-contrast);
         padding: var(--space-md);
-        outline: none;
         box-sizing: border-box;
-
-        &:focus-visible {
-            border-color: var(--primary);
-        }
     }
 
     nav {
@@ -142,8 +166,9 @@
     }
 
     [data-component="dialog"] {
-        --duration: 250ms;
+        --duration: var(--duration-fast);
         --rounded-size: var(--rounded-xl);
+        --padding: var(--space-md);
 
         @media (prefers-reduced-motion: reduce) {
             --duration: 0ms;
@@ -163,8 +188,8 @@
         transform: translateY(-10px);
 
         transition:
-            opacity var(--duration),
-            transform var(--duration),
+            opacity var(--duration) var(--ease-smooth-out),
+            transform var(--duration) var(--ease-smooth-out),
             overlay var(--duration) allow-discrete,
             display var(--duration) allow-discrete;
 
@@ -172,6 +197,7 @@
             display: flex;
             gap: var(--space-md);
             justify-content: flex-end;
+            align-items: center;
         }
 
         & header {
@@ -195,13 +221,54 @@
                 height: var(--size);
                 font-size: calc(var(--size) / 2);
                 padding: 0;
-                border-radius: var(--rounded-md);
+                border-radius: max(
+                    0px,
+                    calc(var(--rounded-size) - var(--padding))
+                );
+            }
+        }
+
+        & [data-type="footer"] button {
+            border-radius: max(
+                0px,
+                calc(var(--rounded-size) - var(--padding))
+            );
+        }
+
+        & [data-type="footer"] p {
+            margin: 0;
+        }
+
+        & [data-type="footer"] a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 13px;
+            max-height: 32px;
+
+            padding: var(--space-md) var(--space-lg);
+            font-family: var(--body);
+            font-weight: 400;
+            border-radius: var(--rounded-md);
+
+            transition:
+                background-color var(--duration),
+                color var(--duration);
+            border: none;
+
+            text-decoration: none;
+            background-color: var(--surface-1);
+            color: var(--surface-1-contrast);
+
+            &:hover {
+                background-color: var(--surface-primary);
             }
         }
     }
 
     [data-component="dialog"]::backdrop {
-        --duration: 250ms;
+        --duration: var(--duration-fast);
 
         @media (prefers-reduced-motion: reduce) {
             --duration: 0ms;
@@ -211,7 +278,7 @@
         transition:
             display var(--duration) allow-discrete,
             overlay var(--duration) allow-discrete,
-            background-color var(--duration);
+            background-color var(--duration) var(--ease-smooth-out);
     }
 
     [data-component="dialog"]:open::backdrop {
@@ -239,7 +306,7 @@
     [data-component="menu"] {
         --rounded-size: var(--rounded-lg);
         --padding: var(--space-sm);
-        --duration: 150ms;
+        --duration: var(--duration-quick);
 
         @media (prefers-reduced-motion: reduce) {
             --duration: 0ms;
@@ -249,8 +316,8 @@
         transform: translateY(-10px);
 
         transition:
-            opacity var(--duration),
-            transform var(--duration),
+            opacity var(--duration) var(--ease-smooth-out),
+            transform var(--duration) var(--ease-smooth-out),
             overlay var(--duration) allow-discrete,
             display var(--duration) allow-discrete;
 
@@ -339,9 +406,41 @@
         }
     }
 
+    .logs {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-lg);
+
+        @media (min-width: 768px) {
+            overflow-x: scroll;
+            mask: linear-gradient(
+                to right,
+                #0000,
+                #ffff var(--left-fade) calc(100% - var(--right-fade)),
+                #0000
+            );
+            animation: scrollfade;
+            animation-timeline: --scrollfade;
+            scroll-timeline: --scrollfade x;
+            flex-direction: row;
+
+            & [data-component="card"] {
+                flex: 0 0 auto;
+                min-width: 300px;
+
+                & .card-content {
+                    flex: 1;
+                }
+            }
+        }
+    }
+
     [data-component="card"] {
         --rounded-size: var(--rounded-2xl);
         --padding: var(--space-md);
+
+        content-visibility: auto;
+        contain-intrinsic-size: 300px 200px;
 
         display: flex;
         flex-direction: column;
@@ -423,7 +522,7 @@
         }
     }
 
-    [data-component="social-links"] {
+    [data-component="links"] {
         display: grid;
         /* Automatically fits as many columns as possible, stretching them to fill the space */
         grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -435,7 +534,7 @@
         }
     }
 
-    [data-component="social-link"] {
+    [data-component="link"] {
         --duration: 250ms;
 
         @media (prefers-reduced-motion: reduce) {
@@ -483,6 +582,24 @@
 
             @supports (contrast-color(oklch(0.2957 0.0123 258.37))) {
                 color: contrast-color(oklch(0.2957 0.0123 258.37));
+            }
+        }
+
+        &[data-type="discord"] {
+            background-color: #5865f2;
+            color: white;
+
+            @supports (contrast-color(oklch(0.2957 0.0123 258.37))) {
+                color: contrast-color(#5865f2);
+            }
+        }
+
+        &[data-type="fluxer"] {
+            background-color: #4641D9;
+            color: white;
+
+            @supports (contrast-color(oklch(0.2957 0.0123 258.37))) {
+                color: contrast-color(#4641D9);
             }
         }
 

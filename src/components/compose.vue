@@ -63,6 +63,7 @@ async function submit() {
         </div>
         <div
             v-if="isCrosspostEnabled && content.trim().length > 300"
+            aria-live="polite"
             data-component="alert"
             data-variant="warning"
         >
@@ -113,12 +114,7 @@ async function submit() {
     background: var(--surface-primary);
     color: var(--surface-contrast);
     padding: var(--space-md);
-    outline: none;
     box-sizing: border-box;
-
-    &:focus-visible {
-        border-color: var(--primary);
-    }
 }
 
 .compose-footer {
@@ -131,6 +127,7 @@ async function submit() {
     font-size: 0.75rem;
     color: var(--surface-1-contrast);
     opacity: 0.6;
+    font-variant-numeric: tabular-nums;
 }
 
 label {

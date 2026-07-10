@@ -108,20 +108,3 @@ onMounted(async () => {
         </div>
     </div>
 </template>
-
-<style scoped>
-.logs {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-}
-
-[data-component="card"][data-active="true"] {
-    outline: 2px solid var(--color-accent, currentColor);
-    outline-offset: var(--space-sm);
-}
-
-[data-component="card"][data-active="true"] {
-    scroll-margin: var(--space-lg);
-}
-</style>

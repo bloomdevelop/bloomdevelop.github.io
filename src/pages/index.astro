@@ -12,35 +12,79 @@ import Logs from "../components/logs.vue";
     <main id="main-content">
         <section>
             <h2>Links</h2>
-            <div data-component="social-links">
+            <div data-component="links">
                 <a
-                    data-component="social-link"
+                    data-component="link"
                     data-type="twitter"
                     href="https://twitter.com/spring_meowmeow"
                     target="_blank"
+                    rel="noopener noreferrer"
                 >
                     Twitter
                 </a>
                 <a
-                    data-component="social-link"
+                    data-component="link"
                     data-type="bluesky"
                     href="https://bsky.app/profile/spring.furrest.net"
                     target="_blank"
+                    rel="noopener noreferrer"
                 >
                     Bluesky
                 </a>
                 <a
-                    data-component="social-link"
+                    data-component="link"
                     data-type="github"
                     href="https://github.com/bloomdevelop"
                     target="_blank"
+                    rel="noopener noreferrer"
                 >
                     GitHub
                 </a>
             </div>
         </section>
         <section>
-            <h2>Logs</h2>
+            <h2>Servers</h2>
+            <span style="margin-bottom: 12px">
+                <p>
+                    Since I moderate the server named "The Furrest". I would
+                    like to invite you to talk with each others here :)
+                </p>
+                <p>They're chill here, no worries btw.</p>
+            </span>
+            <div
+                style="margin-block: 12px"
+                data-component="alert"
+                data-variant="warning"
+            >
+                <p>Please follow the rules first when joining please...</p>
+            </div>
+            <div data-component="links">
+                <a
+                    data-component="link"
+                    data-type="discord"
+                    href="https://discord.gg/r6B9YDyCe6"
+                >
+                    Discord
+                </a>
+                <a
+                    data-component="link"
+                    data-type="fluxer"
+                    href="https://fluxer.gg/zhQgXWsq"
+                >
+                    Fluxer
+                </a>
+            </div>
+        </section>
+        <section>
+            <h2>Blog</h2>
+            <p>Coming Soon…</p>
+        </section>
+        <section>
+            <h2 style="display: flex; align-items: center; gap: 0.5rem;">
+                Logs <span data-component="badge" data-variant="primary"
+                    >Powered by ATProto</span
+                >
+            </h2>
             <Logs client:only />
         </section>
     </main>

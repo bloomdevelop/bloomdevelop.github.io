@@ -13,6 +13,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.9",
     "@astrojs/solid-js": "^7.0.0",
     "@astrojs/vue": "^7.0.0",
     "@atcute/tid": "^1.1.3",

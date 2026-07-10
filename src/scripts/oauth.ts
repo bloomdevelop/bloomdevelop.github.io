@@ -189,7 +189,7 @@ function generateEmbedForContent(
     $type: "app.bsky.embed.external#external",
     uri: `${window.location.href}?log=${generatedTID}`,
     title: "View in Spring's Website",
-    description: length > 63 ? `${content.substring(0, 60)}...` : "", // Skip description because otherwise it looks weird and repetitive
+    description: length > 63 ? `${content.substring(0, 60)}…` : "", // Skip description because otherwise it looks weird and repetitive
   };
 }
 
