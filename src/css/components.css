@@ -197,6 +197,7 @@
             display: flex;
             gap: var(--space-md);
             justify-content: flex-end;
+            align-items: center;
         }
 
         & header {
@@ -232,6 +233,37 @@
                 0px,
                 calc(var(--rounded-size) - var(--padding))
             );
+        }
+
+        & [data-type="footer"] p {
+            margin: 0;
+        }
+
+        & [data-type="footer"] a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 13px;
+            max-height: 32px;
+
+            padding: var(--space-md) var(--space-lg);
+            font-family: var(--body);
+            font-weight: 400;
+            border-radius: var(--rounded-md);
+
+            transition:
+                background-color var(--duration),
+                color var(--duration);
+            border: none;
+
+            text-decoration: none;
+            background-color: var(--surface-1);
+            color: var(--surface-1-contrast);
+
+            &:hover {
+                background-color: var(--surface-primary);
+            }
         }
     }
 
