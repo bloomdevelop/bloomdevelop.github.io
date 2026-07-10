@@ -105,7 +105,7 @@
     }
 
     input {
-        --duration: 150ms;
+        --duration: var(--duration-quick);
 
         @media (prefers-reduced-motion: reduce) {
             --duration: 0ms;
@@ -113,7 +113,7 @@
 
         width: 100%;
         resize: vertical;
-        transition: border-color var(--duration) ease;
+        transition: border-color var(--duration) var(--ease-smooth-out);
         font-family: var(--body);
         font-size: 1rem;
         border: 2px solid var(--surface-primary-2);
@@ -142,7 +142,7 @@
     }
 
     [data-component="dialog"] {
-        --duration: 250ms;
+        --duration: var(--duration-fast);
         --rounded-size: var(--rounded-xl);
 
         @media (prefers-reduced-motion: reduce) {
@@ -163,8 +163,8 @@
         transform: translateY(-10px);
 
         transition:
-            opacity var(--duration),
-            transform var(--duration),
+            opacity var(--duration) var(--ease-smooth-out),
+            transform var(--duration) var(--ease-smooth-out),
             overlay var(--duration) allow-discrete,
             display var(--duration) allow-discrete;
 
@@ -201,7 +201,7 @@
     }
 
     [data-component="dialog"]::backdrop {
-        --duration: 250ms;
+        --duration: var(--duration-fast);
 
         @media (prefers-reduced-motion: reduce) {
             --duration: 0ms;
@@ -211,7 +211,7 @@
         transition:
             display var(--duration) allow-discrete,
             overlay var(--duration) allow-discrete,
-            background-color var(--duration);
+            background-color var(--duration) var(--ease-smooth-out);
     }
 
     [data-component="dialog"]:open::backdrop {
@@ -239,7 +239,7 @@
     [data-component="menu"] {
         --rounded-size: var(--rounded-lg);
         --padding: var(--space-sm);
-        --duration: 150ms;
+        --duration: var(--duration-quick);
 
         @media (prefers-reduced-motion: reduce) {
             --duration: 0ms;
@@ -249,8 +249,8 @@
         transform: translateY(-10px);
 
         transition:
-            opacity var(--duration),
-            transform var(--duration),
+            opacity var(--duration) var(--ease-smooth-out),
+            transform var(--duration) var(--ease-smooth-out),
             overlay var(--duration) allow-discrete,
             display var(--duration) allow-discrete;
 
@@ -336,6 +336,69 @@
         & p {
             margin: 0;
             padding: 0;
+        }
+    }
+
+    .logs-viewport {
+        --edge-blur: var(--blur-large);
+        --edge-width: var(--space-2xl);
+
+        position: relative;
+
+        @media (prefers-reduced-motion: reduce) {
+            &::before,
+            &::after {
+                transition: none;
+            }
+        }
+
+        &::before,
+        &::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: var(--edge-width);
+            pointer-events: none;
+            z-index: 1;
+            backdrop-filter: blur(var(--edge-blur));
+            -webkit-backdrop-filter: blur(var(--edge-blur));
+            transition: opacity var(--duration-quick) var(--ease-smooth-out);
+        }
+
+        &[data-at-start]::before,
+        &[data-at-end]::after {
+            opacity: 0;
+        }
+
+        &::before {
+            left: 0;
+            background: linear-gradient(to right, var(--surface), transparent);
+            mask-image: linear-gradient(to right, black, transparent);
+            -webkit-mask-image: linear-gradient(to right, black, transparent);
+        }
+
+        &::after {
+            right: 0;
+            background: linear-gradient(to left, var(--surface), transparent);
+            mask-image: linear-gradient(to left, black, transparent);
+            -webkit-mask-image: linear-gradient(to left, black, transparent);
+        }
+    }
+
+    .logs {
+        display: flex;
+        flex-direction: row;
+        overflow-x: auto;
+        gap: var(--space-lg);
+
+        & [data-component="card"] {
+            flex: 0 0 auto;
+            min-width: 300px;
+
+            & .card-content {
+                flex: 1;
+            }
         }
     }
 
