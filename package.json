@@ -25,6 +25,7 @@
     "vue": "^3.5.39"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.9",
     "@biomejs/biome": "2.5.1",
     "typescript": "^6.0.3"
   },
