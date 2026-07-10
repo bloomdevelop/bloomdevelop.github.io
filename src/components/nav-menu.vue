@@ -37,6 +37,8 @@ function logout() {
     >
         <img
             v-if="isLoggedIn() && avatarUrl"
+            width="24"
+            height="24"
             :src="avatarUrl"
             alt="Your profile image"
         />
@@ -100,14 +102,14 @@ function logout() {
                 command="close"
                 @click="logout"
             >
-                Yea
+                Logout
             </button>
             <button
                 data-variant="neutral"
                 commandFor="logout-confirmation"
                 command="close"
             >
-                Naw
+                Cancel
             </button>
         </div>
     </dialog>

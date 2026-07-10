@@ -150,12 +150,7 @@
         background: var(--surface-primary);
         color: var(--surface-contrast);
         padding: var(--space-md);
-        outline: none;
         box-sizing: border-box;
-
-        &:focus-visible {
-            border-color: var(--primary);
-        }
     }
 
     nav {
