@@ -2,10 +2,12 @@
 import { constructApiUrl } from "../scripts/oauth";
 import { DEFAULT_PREVIEW_DID, DEFAULT_PREVIEW_PDS } from "../scripts/consts";
 import { extractRkeyFromPlainAtURI, formatDate } from "../scripts/utils";
-import { onMounted, ref, type Ref } from "vue";
+import { nextTick, onMounted, ref, type Ref } from "vue";
 import { logs } from "../scripts/logsStore";
 
 const copiedRkey: Ref<string | null> = ref(null);
+const activeRkey: Ref<string | null> = ref(null);
+const cardRefs: Record<string, HTMLElement | null> = {};
 let preview_cursor = "";
 
 async function fetchPostsFromPreviewDID(previous_cursor: string) {
@@ -42,8 +44,7 @@ async function fetchPostsFromPreviewDID(previous_cursor: string) {
 }
 
 function copyPermalink(log: any) {
-    //@ts-expect-error ??????????
-    const permalink = new URL(window.location);
+    const permalink = new URL(window.location.href);
     permalink.searchParams.set("rkey", log.rkey);
     navigator.clipboard.writeText(permalink.toString());
     copiedRkey.value = log.rkey;
@@ -57,6 +58,16 @@ onMounted(async () => {
     if (posts) {
         logs.value = posts;
     }
+
+    const rkey = new URL(window.location.href).searchParams.get("rkey");
+    if (rkey && logs.value.some((log) => log.rkey === rkey)) {
+        activeRkey.value = rkey;
+        await nextTick();
+        cardRefs[rkey]?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+        });
+    }
 });
 </script>
 
@@ -65,7 +76,12 @@ onMounted(async () => {
         <div data-component="error" v-if="logs.length === 0">
             There's no logs… yet. :(
         </div>
-        <div v-for="log in logs" data-component="card">
+        <div
+            v-for="log in logs"
+            data-component="card"
+            :ref="(el) => (cardRefs[log.rkey] = el as HTMLElement)"
+            :data-active="log.rkey === activeRkey"
+        >
             <div class="card-content">
                 <p>{{ log.content }}</p>
             </div>
@@ -98,5 +114,14 @@ onMounted(async () => {
     display: flex;
     flex-direction: column;
     gap: var(--space-lg);
+}
+
+[data-component="card"][data-active="true"] {
+    outline: 2px solid var(--color-accent, currentColor);
+    outline-offset: var(--space-sm);
+}
+
+[data-component="card"][data-active="true"] {
+    scroll-margin: var(--space-lg);
 }
 </style>
