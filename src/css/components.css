@@ -1,4 +1,33 @@
 @layer components {
+    @property --left-fade {
+        syntax: "<length>";
+        inherits: false;
+        initial-value: 0;
+    }
+
+    @property --right-fade {
+        syntax: "<length>";
+        inherits: false;
+        initial-value: 0;
+    }
+
+    @keyframes scrollfade {
+        0% {
+            --left-fade: 0;
+        }
+        1%,
+        100% {
+            --left-fade: 3rem;
+        }
+        0%,
+        99% {
+            --right-fade: 3rem;
+        }
+        100% {
+            --right-fade: 0;
+        }
+    }
+
     nav {
         display: flex;
         align-items: center;
@@ -339,57 +368,19 @@
         }
     }
 
-    .logs-viewport {
-        --edge-blur: var(--blur-large);
-        --edge-width: var(--space-2xl);
-
-        position: relative;
-
-        @media (prefers-reduced-motion: reduce) {
-            &::before,
-            &::after {
-                transition: none;
-            }
-        }
-
-        &::before,
-        &::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: var(--edge-width);
-            pointer-events: none;
-            z-index: 1;
-            backdrop-filter: blur(var(--edge-blur));
-            -webkit-backdrop-filter: blur(var(--edge-blur));
-            transition: opacity var(--duration-quick) var(--ease-smooth-out);
-        }
-
-        &[data-at-start]::before,
-        &[data-at-end]::after {
-            opacity: 0;
-        }
-
-        &::before {
-            left: 0;
-            background: linear-gradient(to right, var(--surface), transparent);
-            mask-image: linear-gradient(to right, black, transparent);
-            -webkit-mask-image: linear-gradient(to right, black, transparent);
-        }
-
-        &::after {
-            right: 0;
-            background: linear-gradient(to left, var(--surface), transparent);
-            mask-image: linear-gradient(to left, black, transparent);
-            -webkit-mask-image: linear-gradient(to left, black, transparent);
-        }
-    }
-
     .logs {
+        overflow-x: scroll;
+        mask: linear-gradient(
+            to right,
+            #0000,
+            #ffff var(--left-fade) calc(100% - var(--right-fade)),
+            #0000
+        );
+        animation: scrollfade;
+        animation-timeline: --scrollfade;
+        scroll-timeline: --scrollfade x;
         display: flex;
         flex-direction: row;
-        overflow-x: auto;
         gap: var(--space-lg);
 
         & [data-component="card"] {
