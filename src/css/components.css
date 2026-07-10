@@ -392,6 +392,9 @@
         --rounded-size: var(--rounded-2xl);
         --padding: var(--space-md);
 
+        content-visibility: auto;
+        contain-intrinsic-size: 300px 200px;
+
         display: flex;
         flex-direction: column;
         gap: var(--space-sm);

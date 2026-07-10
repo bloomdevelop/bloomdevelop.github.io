@@ -2,7 +2,7 @@
 import { constructApiUrl } from "../scripts/oauth";
 import { DEFAULT_PREVIEW_DID, DEFAULT_PREVIEW_PDS } from "../scripts/consts";
 import { extractRkeyFromPlainAtURI, formatDate } from "../scripts/utils";
-import { onMounted, onUnmounted, ref, watch, nextTick, type Ref } from "vue";
+import { onMounted, ref, type Ref } from "vue";
 import { logs } from "../scripts/logsStore";
 
 const copiedRkey: Ref<string | null> = ref(null);
