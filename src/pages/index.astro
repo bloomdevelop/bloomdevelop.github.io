@@ -12,9 +12,9 @@ import Logs from "../components/logs.vue";
     <main id="main-content">
         <section>
             <h2>Links</h2>
-            <div data-component="social-links">
+            <div data-component="links">
                 <a
-                    data-component="social-link"
+                    data-component="link"
                     data-type="twitter"
                     href="https://twitter.com/spring_meowmeow"
                     target="_blank"
@@ -23,7 +23,7 @@ import Logs from "../components/logs.vue";
                     Twitter
                 </a>
                 <a
-                    data-component="social-link"
+                    data-component="link"
                     data-type="bluesky"
                     href="https://bsky.app/profile/spring.furrest.net"
                     target="_blank"
@@ -32,7 +32,7 @@ import Logs from "../components/logs.vue";
                     Bluesky
                 </a>
                 <a
-                    data-component="social-link"
+                    data-component="link"
                     data-type="github"
                     href="https://github.com/bloomdevelop"
                     target="_blank"
@@ -42,9 +42,34 @@ import Logs from "../components/logs.vue";
                 </a>
             </div>
         </section>
-        <section>
+        <section style="display: flex; flex-direction: column; gap: 1rem">
             <h2>Servers</h2>
-            <p>Coming Soon…</p>
+            <span>
+                <p>
+                    Since I moderate the server named "The Furrest". I would
+                    like to invite you to talk with each others here :)
+                </p>
+                <p>They're chill here, no worries btw.</p>
+            </span>
+            <div data-component="alert" data-variant="warning">
+                <p>Please follow the rules first when joining please...</p>
+            </div>
+            <div data-component="links">
+                <a
+                    data-component="link"
+                    data-type="discord"
+                    href="https://discord.gg/r6B9YDyCe6"
+                >
+                    Discord
+                </a>
+                <a
+                    data-component="link"
+                    data-type="fluxer"
+                    href="https://fluxer.gg/zhQgXWsq"
+                >
+                    Fluxer
+                </a>
+            </div>
         </section>
         <section>
             <h2>Blog</h2>
