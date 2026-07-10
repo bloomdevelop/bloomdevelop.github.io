@@ -6,26 +6,7 @@ import { onMounted, onUnmounted, ref, watch, nextTick, type Ref } from "vue";
 import { logs } from "../scripts/logsStore";
 
 const copiedRkey: Ref<string | null> = ref(null);
-const logsEl = ref<HTMLElement | null>(null);
-const atStart = ref(true);
-const atEnd = ref(true);
 let preview_cursor = "";
-let resizeObserver: ResizeObserver | undefined;
-
-function updateScrollEdges() {
-    const el = logsEl.value;
-    if (!el) return;
-
-    const maxScroll = el.scrollWidth - el.clientWidth;
-    if (maxScroll <= 1) {
-        atStart.value = true;
-        atEnd.value = true;
-        return;
-    }
-
-    atStart.value = el.scrollLeft <= 1;
-    atEnd.value = el.scrollLeft >= maxScroll - 1;
-}
 
 async function fetchPostsFromPreviewDID(previous_cursor: string) {
     console.info(
@@ -76,72 +57,38 @@ onMounted(async () => {
     if (posts) {
         logs.value = posts;
     }
-
-    await nextTick();
-    updateScrollEdges();
-
-    const el = logsEl.value;
-    if (el) {
-        el.addEventListener("scroll", updateScrollEdges, { passive: true });
-        resizeObserver = new ResizeObserver(updateScrollEdges);
-        resizeObserver.observe(el);
-    }
 });
-
-onUnmounted(() => {
-    logsEl.value?.removeEventListener("scroll", updateScrollEdges);
-    resizeObserver?.disconnect();
-});
-
-watch(
-    logs,
-    async () => {
-        await nextTick();
-        updateScrollEdges();
-    },
-    { deep: true },
-);
 </script>
 
 <template>
-    <div
-        class="logs-viewport"
-        :data-at-start="atStart || undefined"
-        :data-at-end="atEnd || undefined"
-    >
-        <div class="logs" ref="logsEl">
-            <div data-component="error" v-if="logs.length === 0">
-                There's no logs… yet. :(
+    <div class="logs">
+        <div data-component="error" v-if="logs.length === 0">
+            There's no logs… yet. :(
+        </div>
+        <div v-for="log in logs" data-component="card">
+            <div class="card-content">
+                <p>{{ log.content }}</p>
             </div>
-            <div v-for="log in logs" data-component="card">
-                <div class="card-content">
-                    <p>{{ log.content }}</p>
-                </div>
-                <footer>
-                    <span data-type="date">{{ formatDate(log.createdAt) }}</span>
-                    <div
-                        v-if="log.blueskyPost"
-                        data-component="badge"
-                        data-variant="secondary"
+            <footer>
+                <span data-type="date">{{ formatDate(log.createdAt) }}</span>
+                <div
+                    v-if="log.blueskyPost"
+                    data-component="badge"
+                    data-variant="secondary"
+                >
+                    <span class="md-symbols" aria-hidden="true"
+                        >call_split</span
                     >
-                        <span class="md-symbols" aria-hidden="true"
-                            >call_split</span
-                        >
-                        Crossposted
-                    </div>
+                    Crossposted
+                </div>
 
-                    <button data-variant="primary" @click="copyPermalink(log)">
-                        <span aria-hidden="true" class="md-symbols">
-                            link_2
-                        </span>
-                        <span aria-live="polite">
-                            {{
-                                copiedRkey === log.rkey ? "Copied!" : "Permalink"
-                            }}
-                        </span>
-                    </button>
-                </footer>
-            </div>
+                <button data-variant="primary" @click="copyPermalink(log)">
+                    <span aria-hidden="true" class="md-symbols"> link_2 </span>
+                    <span aria-live="polite">
+                        {{ copiedRkey === log.rkey ? "Copied!" : "Permalink" }}
+                    </span>
+                </button>
+            </footer>
         </div>
     </div>
 </template>
