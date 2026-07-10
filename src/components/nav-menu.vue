@@ -5,6 +5,7 @@ import { isInitialized, agent, isDidAllowed } from "../scripts/agent";
 import { onMounted, ref } from "vue";
 import { revokeSession } from "../scripts/oauth";
 
+const isDev = import.meta.env.DEV;
 const avatarUrl = ref("");
 
 function isLoggedIn() {
@@ -140,7 +141,20 @@ function logout() {
                 margin-block: var(--space-md);
             "
         >
-            <img src="/favicon.svg" alt="Website Logo" width="96" height="96" />
+            <img
+                v-if="isDev"
+                src="/favicon-dev.svg"
+                alt="Website Logo"
+                width="96"
+                height="96"
+            />
+            <img
+                v-else
+                src="/favicon.svg"
+                alt="Website Logo"
+                width="96"
+                height="96"
+            />
             <div
                 style="
                     display: flex;
