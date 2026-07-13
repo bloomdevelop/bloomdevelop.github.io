@@ -93,6 +93,11 @@
             color: var(--surface-1-contrast);
         }
 
+        &[data-variant="error"] {
+            background-color: var(--error);
+            color: var(--error-contrast);
+        }
+
         &[data-variant="ghost"] {
             background-color: transparent;
 
@@ -626,7 +631,8 @@
         height: var(--size);
 
         &:focus-visible {
-            outline: 3px dashed color-mix(in oklch, var(--primary), black 35%);
+            outline: 3px dashed var(--info);
+            outline-offset: 3px;
         }
     }
 }

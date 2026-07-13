@@ -50,16 +50,18 @@ async function submit() {
             <span aria-hidden="true" class="md-symbols">close</span>
         </button>
     </header>
-    <form @submit.prevent="submit" class="compose">
+    <form style="margin-top: 5px;" @submit.prevent="submit" class="compose">
+        <label for="compose-textarea"> Content </label>
         <textarea
+            id="compose-textarea"
             v-model="content"
             class="compose-textarea"
             placeholder="Write anything…"
             rows="4"
-            aria-label="Content"
         ></textarea>
+
         <div class="compose-footer">
-            <span class="compose-counter">{{ count }}</span>
+            <span class="compose-counter">{{ count }} Characters</span>
         </div>
         <div
             v-if="isCrosspostEnabled && content.trim().length > 300"
@@ -70,7 +72,7 @@ async function submit() {
             <p>Looks like your content is over 300 characters…</p>
             <p>It will be truncated when submitted.</p>
         </div>
-        <div v-if="errorRef" data-component="alert" data-variant="error">
+        <div v-if="errorRef" role="alert" data-component="alert" data-variant="error">
             {{ errorRef.message }}
         </div>
 

@@ -7,6 +7,9 @@ import { logs } from "../scripts/logsStore";
 
 const copiedRkey: Ref<string | null> = ref(null);
 const activeRkey: Ref<string | null> = ref(null);
+const loading: Ref<boolean> = ref(false);
+const error: Ref<string | null> = ref(null);
+const clipboardErrorRkey: Ref<string | null> = ref(null);
 const cardRefs: Record<string, HTMLElement | null> = {};
 let preview_cursor = "";
 
@@ -29,9 +32,7 @@ async function fetchPostsFromPreviewDID(previous_cursor: string) {
     );
 
     if (!res.ok) {
-        console.error("[APP]", "failed to fetch latest logs:", res.statusText);
-
-        return;
+        throw new Error(`Could not load logs: ${res.statusText}`);
     }
 
     const { cursor, records } = await res.json();
@@ -43,20 +44,38 @@ async function fetchPostsFromPreviewDID(previous_cursor: string) {
     }));
 }
 
-function copyPermalink(log: any) {
-    const permalink = new URL(window.location.href);
-    permalink.searchParams.set("rkey", log.rkey);
-    navigator.clipboard.writeText(permalink.toString());
-    copiedRkey.value = log.rkey;
-    setTimeout(() => {
-        copiedRkey.value = null;
-    }, 2000);
+async function copyPermalink(log: any) {
+    copiedRkey.value = null;
+    clipboardErrorRkey.value = null;
+
+    try {
+        const permalink = new URL(window.location.href);
+        permalink.searchParams.set("rkey", log.rkey);
+        await navigator.clipboard.writeText(permalink.toString());
+        copiedRkey.value = log.rkey;
+        setTimeout(() => {
+            if (copiedRkey.value === log.rkey) {
+                copiedRkey.value = null;
+            }
+        }, 2000);
+    } catch (e) {
+        clipboardErrorRkey.value = log.rkey;
+        console.error("[APP]", "failed to copy permalink:", e);
+    }
 }
 
 onMounted(async () => {
-    const posts = await fetchPostsFromPreviewDID(preview_cursor);
-    if (posts) {
-        logs.value = posts;
+    loading.value = true;
+    try {
+        const posts = await fetchPostsFromPreviewDID(preview_cursor);
+        if (posts) {
+            logs.value = posts;
+        }
+    } catch (e) {
+        console.error("[APP]", "failed to fetch latest logs:", e);
+        error.value = e instanceof Error ? e.message : String(e);
+    } finally {
+        loading.value = false;
     }
 
     const rkey = new URL(window.location.href).searchParams.get("rkey");
@@ -64,7 +83,10 @@ onMounted(async () => {
         activeRkey.value = rkey;
         await nextTick();
         cardRefs[rkey]?.scrollIntoView({
-            behavior: "smooth",
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+                .matches
+                ? "auto"
+                : "smooth",
             block: "center",
         });
     }
@@ -73,7 +95,22 @@ onMounted(async () => {
 
 <template>
     <div class="logs">
-        <div data-component="error" v-if="logs.length === 0">
+        <p role="status" aria-atomic="true" class="visually-hidden">
+            {{
+                copiedRkey
+                    ? "Permalink copied."
+                    : clipboardErrorRkey
+                      ? "Unable to copy permalink."
+                      : ""
+            }}
+        </p>
+        <div v-if="loading" role="status" data-component="alert" data-variant="warning">
+            Loading logs…
+        </div>
+        <div v-else-if="error" role="alert" data-component="alert" data-variant="error">
+            {{ error }}
+        </div>
+        <div v-else-if="logs.length === 0" data-component="alert" data-variant="warning">
             There's no logs… yet. :(
         </div>
         <div
@@ -98,10 +135,19 @@ onMounted(async () => {
                     Crossposted
                 </div>
 
-                <button data-variant="primary" @click="copyPermalink(log)">
+                <button
+                    :data-variant="clipboardErrorRkey === log.rkey ? 'error' : 'primary'"
+                    @click="copyPermalink(log)"
+                >
                     <span aria-hidden="true" class="md-symbols"> link_2 </span>
-                    <span aria-live="polite">
-                        {{ copiedRkey === log.rkey ? "Copied!" : "Permalink" }}
+                    <span>
+                        {{
+                            copiedRkey === log.rkey
+                                ? "Copied!"
+                                : clipboardErrorRkey === log.rkey
+                                  ? "Unable to copy permalink"
+                                  : "Permalink"
+                        }}
                     </span>
                 </button>
             </footer>

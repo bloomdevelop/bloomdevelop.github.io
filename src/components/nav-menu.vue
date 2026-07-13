@@ -7,6 +7,10 @@ import { revokeSession } from "../scripts/oauth";
 
 const isDev = import.meta.env.DEV;
 const avatarUrl = ref("");
+const composeDialog = ref<HTMLDialogElement | null>(null);
+const oauthDialog = ref<HTMLDialogElement | null>(null);
+const logoutDialog = ref<HTMLDialogElement | null>(null);
+const aboutDialog = ref<HTMLDialogElement | null>(null);
 
 function isLoggedIn() {
     return isInitialized.value;
@@ -26,6 +30,14 @@ onMounted(async () => {
 
 function logout() {
     revokeSession();
+}
+
+function openDialog(dialog: HTMLDialogElement | null) {
+    dialog?.showModal();
+}
+
+function closeDialog(dialog: HTMLDialogElement | null) {
+    dialog?.close();
 }
 </script>
 
@@ -50,41 +62,38 @@ function logout() {
     </button>
     <div id="menu" data-component="menu" popover>
         <div>
-            <button commandFor="about" command="show-modal">
+            <button @click="openDialog(aboutDialog)">
                 <span class="md-symbols" aria-hidden="true">info</span> About
             </button>
             <button
                 v-if="isLoggedIn() && isDidAllowed"
-                commandFor="compose"
-                command="show-modal"
+                @click="openDialog(composeDialog)"
             >
                 <span class="md-symbols" aria-hidden="true">add</span> New Log
             </button>
 
             <button
                 v-if="isLoggedIn()"
-                commandFor="logout-confirmation"
-                command="show-modal"
+                @click="openDialog(logoutDialog)"
             >
                 <span class="md-symbols" aria-hidden="true">logout</span> Logout
             </button>
 
             <button
                 v-if="!isLoggedIn()"
-                commandFor="oauth"
-                command="show-modal"
+                @click="openDialog(oauthDialog)"
             >
                 <span class="md-symbols" aria-hidden="true">login</span> Login
             </button>
         </div>
     </div>
-    <dialog id="compose" data-component="dialog" popover>
+    <dialog ref="composeDialog" id="compose" data-component="dialog">
         <Compose />
     </dialog>
-    <dialog id="oauth" data-component="dialog" popover>
+    <dialog ref="oauthDialog" id="oauth" data-component="dialog">
         <OAuthDialog />
     </dialog>
-    <dialog id="logout-confirmation" data-component="dialog" popover>
+    <dialog ref="logoutDialog" id="logout-confirmation" data-component="dialog">
         <header>
             <h1>Logout?</h1>
 
@@ -102,30 +111,33 @@ function logout() {
         <div data-type="footer">
             <button
                 data-variant="primary"
-                commandFor="logout-confirmation"
-                command="close"
                 @click="logout"
             >
                 Logout
             </button>
             <button
                 data-variant="neutral"
-                commandFor="logout-confirmation"
-                command="close"
+                @click="closeDialog(logoutDialog)"
             >
                 Cancel
             </button>
         </div>
     </dialog>
-    <dialog style="max-width: 600px" id="about" data-component="dialog" popover>
+    <dialog
+        ref="aboutDialog"
+        aria-labelledby="about-title"
+        style="max-width: 600px"
+        id="about"
+        data-component="dialog"
+    >
         <header>
-            <h1>About</h1>
+            <h1 id="about-title">About</h1>
             <button
                 type="button"
                 data-variant="ghost"
                 data-size="icon"
-                commandFor="about"
-                command="close"
+                aria-label="Close about dialog"
+                @click="closeDialog(aboutDialog)"
             >
                 <span class="md-symbols" aria-hidden="true">close</span>
             </button>

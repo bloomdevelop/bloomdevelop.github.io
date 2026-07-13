@@ -57,11 +57,8 @@
 
     * {
         &:focus-visible {
-            outline: 3px dashed
-                light-dark(
-                    color-mix(var(--primary), black 30%),
-                    color-mix(var(--primary), white 30%)
-                );
+            outline: 3px dashed var(--info);
+            outline-offset: 3px;
         }
     }
 
@@ -79,5 +76,17 @@
 
     .md-symbols {
         font-family: var(--material-symbols);
+    }
+
+    .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
     }
 }

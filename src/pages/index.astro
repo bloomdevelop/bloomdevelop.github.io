@@ -44,13 +44,13 @@ import Logs from "../components/logs.vue";
         </section>
         <section>
             <h2>Servers</h2>
-            <span style="margin-bottom: 12px">
+            <div style="margin-bottom: 12px">
                 <p>
                     Since I moderate the server named "The Furrest". I would
                     like to invite you to talk with each others here :)
                 </p>
                 <p>They're chill here, no worries btw.</p>
-            </span>
+            </div>
             <div
                 style="margin-block: 12px"
                 data-component="alert"
@@ -81,9 +81,9 @@ import Logs from "../components/logs.vue";
         </section>
         <section>
             <h2 style="display: flex; align-items: center; gap: 0.5rem;">
-                Logs <span data-component="badge" data-variant="primary"
-                    >Powered by ATProto</span
-                >
+                Logs <span data-component="badge" data-variant="primary">
+                    Powered by ATProto
+                </span>
             </h2>
             <Logs client:only />
         </section>
