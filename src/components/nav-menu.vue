@@ -126,7 +126,6 @@ function closeDialog(dialog: HTMLDialogElement | null) {
     <dialog
         ref="aboutDialog"
         aria-labelledby="about-title"
-        style="max-width: 600px"
         id="about"
         data-component="dialog"
     >
@@ -157,15 +156,15 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 v-if="isDev"
                 src="/favicon-dev.svg"
                 alt="Website Logo"
-                width="96"
-                height="96"
+                width="64"
+                height="64"
             />
             <img
                 v-else
                 src="/favicon.svg"
                 alt="Website Logo"
-                width="96"
-                height="96"
+                width="64"
+                height="64"
             />
             <div
                 style="
@@ -176,7 +175,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                     gap: 0.5rem;
                 "
             >
-                <h1 style="margin: 0">Spring's Website</h1>
+                <h1 style="font-size: 1.5em; margin: 0">Spring's Website</h1>
                 <p style="margin: 0">
                     Fairly minimal website built with Astro and Vue
                 </p>
