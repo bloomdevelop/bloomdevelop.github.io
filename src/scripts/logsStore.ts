@@ -6,6 +6,7 @@ export function prependLog(entry: {
   rkey: string;
   content: string;
   createdAt: string;
+  isCrosspostEnabled: boolean
 }) {
   logs.value.unshift(entry);
 }
