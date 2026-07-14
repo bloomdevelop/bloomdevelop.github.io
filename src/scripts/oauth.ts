@@ -12,11 +12,11 @@ import {
 import { BrowserOAuthClient } from "@atproto/oauth-client-browser";
 import { isDidAllowed, isInitialized, agent as sharedAgent } from "./agent";
 import { toGraphemeSegments } from "./segments";
-import { ALLOWED_DIDS } from "./consts";
+import { ALLOWED_DIDS, OLD_LOG_LEXICON, NEW_LOG_LEXICON } from "./consts";
 
 /// OAuth scopes for the app, should match the ones in oauth-client-metadata.json
 const OAUTH_SCOPES =
-  "atproto include:app.bsky.authViewAll?aud=did:web:api.bsky.app%23bsky_appview repo:app.bsky.feed.post?action=create repo:space.bunniesin.micro.log?action=create";
+  `atproto include:app.bsky.authViewAll?aud=did:web:api.bsky.app%23bsky_appview repo:app.bsky.feed.post?action=create repo:${OLD_LOG_LEXICON}?action=delete repo:${NEW_LOG_LEXICON}?action=create`;
 
 /**
  * Utility function to construct an XRPC URL
@@ -243,10 +243,10 @@ async function crosspost(content: string, tid: string, createdAt: string) {
 
   await agent.com.atproto.repo.createRecord({
     repo: agent.did as string, // god fucking dammit
-    collection: "space.bunniesin.micro.log",
+    collection: NEW_LOG_LEXICON,
     rkey: tid,
     record: {
-      $type: "space.bunniesin.micro.log",
+      $type: NEW_LOG_LEXICON,
       content: content,
       createdAt,
       blueskyPost: {
@@ -278,10 +278,10 @@ export async function createLog(
   } else {
     await agent.com.atproto.repo.createRecord({
       repo: agent.did as string,
-      collection: "space.bunniesin.micro.log",
+      collection: NEW_LOG_LEXICON,
       rkey: tid,
       record: {
-        $type: "space.bunniesin.micro.log",
+        $type: NEW_LOG_LEXICON,
         content: content,
         createdAt,
       },

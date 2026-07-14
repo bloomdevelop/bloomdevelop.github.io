@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { constructApiUrl } from "../scripts/oauth";
-import { DEFAULT_PREVIEW_DID, DEFAULT_PREVIEW_PDS } from "../scripts/consts";
+import {
+  DEFAULT_PREVIEW_DID,
+  DEFAULT_PREVIEW_PDS,
+  NEW_LOG_LEXICON,
+} from "../scripts/consts";
 import { extractRkeyFromPlainAtURI, formatDate } from "../scripts/utils";
 import { nextTick, onMounted, ref, type Ref } from "vue";
 import { logs } from "../scripts/logsStore";
@@ -24,7 +28,7 @@ async function fetchPostsFromPreviewDID(previous_cursor: string) {
             "com.atproto.repo.listRecords",
             {
                 repo: DEFAULT_PREVIEW_DID,
-                collection: "space.bunniesin.micro.log",
+                collection: NEW_LOG_LEXICON,
                 cursor: previous_cursor,
             },
             DEFAULT_PREVIEW_PDS,
