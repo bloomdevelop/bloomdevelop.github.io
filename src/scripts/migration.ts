@@ -92,7 +92,7 @@ export async function queryAllRecordsToBeMigrated(
 	const records: (BunnyLogEntry & { rkey: string })[] = [];
 
 	async function next(): Promise<ListRecordsResponse> {
-		const res = await agent.value!.com.atproto.repo.listRecords({
+		const res = await agent.value?.com.atproto.repo.listRecords({
 			repo: target,
 			collection: OLD_LOG_LEXICON,
 			cursor: cursor ?? undefined,
@@ -162,8 +162,8 @@ export async function migrateRecordsToNewLexicon(
 			rkey: r.rkey,
 		}));
 
-		let res = await agent.value!.com.atproto.repo.applyWrites({
-			repo: agent.value!.did as string,
+		let res = await agent.value?.com.atproto.repo.applyWrites({
+			repo: agent.value?.did as string,
 			writes: creates,
 			validate: false, // Most, if not all PDSes do not include our lexicons, so validation is not possible
 		});
@@ -175,8 +175,8 @@ export async function migrateRecordsToNewLexicon(
 
 		console.info("[MIGRATION]", `Created ${creates.length} records.`);
 
-		res = await agent.value!.com.atproto.repo.applyWrites({
-			repo: agent.value!.did as string,
+		res = await agent.value?.com.atproto.repo.applyWrites({
+			repo: agent.value?.did as string,
 			writes: deletes,
 			validate: false,
 		});
