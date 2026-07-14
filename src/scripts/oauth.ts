@@ -5,18 +5,17 @@
 
 import { now } from "@atcute/tid";
 import {
-  Agent,
-  type AppBskyEmbedExternal,
-  type ComAtprotoRepoCreateRecord,
+	Agent,
+	type AppBskyEmbedExternal,
+	type ComAtprotoRepoCreateRecord,
 } from "@atproto/api";
 import { BrowserOAuthClient } from "@atproto/oauth-client-browser";
 import { isDidAllowed, isInitialized, agent as sharedAgent } from "./agent";
+import { ALLOWED_DIDS, NEW_LOG_LEXICON, OLD_LOG_LEXICON } from "./consts";
 import { toGraphemeSegments } from "./segments";
-import { ALLOWED_DIDS } from "./consts";
 
 /// OAuth scopes for the app, should match the ones in oauth-client-metadata.json
-const OAUTH_SCOPES =
-  "atproto include:app.bsky.authViewAll?aud=did:web:api.bsky.app%23bsky_appview repo:app.bsky.feed.post?action=create repo:space.bunniesin.micro.log?action=create";
+const OAUTH_SCOPES = `atproto include:app.bsky.authViewAll?aud=did:web:api.bsky.app%23bsky_appview repo:app.bsky.feed.post?action=create repo:${OLD_LOG_LEXICON}?action=delete repo:${NEW_LOG_LEXICON}?action=create`;
 
 /**
  * Utility function to construct an XRPC URL
@@ -29,34 +28,34 @@ const OAUTH_SCOPES =
  * // => "https://api.bsky.app/xrpc/com.atproto.repo.getRecord?repo=did:plc:...&rkey=self&collection=app.bsky.actor.profile"
  */
 export function constructApiUrl(
-  nsid: string,
-  options: Record<string, string>,
-  api: string = "https://api.bsky.app",
+	nsid: string,
+	options: Record<string, string>,
+	api: string = "https://api.bsky.app",
 ): string {
-  const url = new URL(`${api}/xrpc/${nsid}`);
-  for (const [key, value] of Object.entries(options)) {
-    if (!value) continue;
-    url.searchParams.set(key, value);
-  }
+	const url = new URL(`${api}/xrpc/${nsid}`);
+	for (const [key, value] of Object.entries(options)) {
+		if (!value) continue;
+		url.searchParams.set(key, value);
+	}
 
-  return url.toString();
+	return url.toString();
 }
 
 /**
  * Gets the client ID, necesary for the OAuth flow.
  */
 function clientID(): string {
-  const isLocal = ["localhost", "127.0.0.1"].includes(window.location.hostname);
-  if (isLocal) {
-    // see https://atproto.com/specs/oauth#localhost-client-development
-    return `http://localhost?${new URLSearchParams({
-      scope: OAUTH_SCOPES,
-      redirect_uri: Object.assign(new URL(window.location.origin), {
-        hostname: "127.0.0.1",
-      }).href,
-    })}`;
-  }
-  return `https://${window.location.host}/oauth-client-metadata.json`;
+	const isLocal = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+	if (isLocal) {
+		// see https://atproto.com/specs/oauth#localhost-client-development
+		return `http://localhost?${new URLSearchParams({
+			scope: OAUTH_SCOPES,
+			redirect_uri: Object.assign(new URL(window.location.origin), {
+				hostname: "127.0.0.1",
+			}).href,
+		})}`;
+	}
+	return `https://${window.location.host}/oauth-client-metadata.json`;
 }
 
 const CLIENT_ID = clientID();
@@ -69,30 +68,30 @@ let agent: Agent;
  * Check if the user is able to perform OAuth flow
  */
 async function beforeLogin(identifier: string): Promise<boolean> {
-  console.debug(
-    "[OAUTH]",
-    "performing beforeLogin check for handle",
-    identifier,
-  );
+	console.debug(
+		"[OAUTH]",
+		"performing beforeLogin check for handle",
+		identifier,
+	);
 
-  const res = await fetch(
-    constructApiUrl(
-      "com.atproto.identity.resolveHandle",
-      {
-        handle: identifier,
-      },
-      "https://api.bsky.app",
-    ),
-  ).then(async (res) => await res.json());
+	const res = await fetch(
+		constructApiUrl(
+			"com.atproto.identity.resolveHandle",
+			{
+				handle: identifier,
+			},
+			"https://api.bsky.app",
+		),
+	).then(async (res) => await res.json());
 
-  if (!ALLOWED_DIDS.includes(res.did)) {
-    console.warn("[OAUTH]", "Unauthorized DID", res.did);
-    isDidAllowed.value = false;
-    return false;
-  }
+	if (!ALLOWED_DIDS.includes(res.did)) {
+		console.warn("[OAUTH]", "Unauthorized DID", res.did);
+		isDidAllowed.value = false;
+		return false;
+	}
 
-  isDidAllowed.value = true;
-  return true;
+	isDidAllowed.value = true;
+	return true;
 }
 
 /**
@@ -100,50 +99,50 @@ async function beforeLogin(identifier: string): Promise<boolean> {
  * @todo Split off client/agent setup and session restoration
  */
 export async function setupOAuth() {
-  try {
-    oauthClient = await BrowserOAuthClient.load({
-      clientId: CLIENT_ID,
-      handleResolver: "https://bsky.social",
-    });
+	try {
+		oauthClient = await BrowserOAuthClient.load({
+			clientId: CLIENT_ID,
+			handleResolver: "https://bsky.social",
+		});
 
-    const result = await oauthClient.init();
+		const result = await oauthClient.init();
 
-    if (!result) return;
+		if (!result) return;
 
-    const { session, state } = result;
-    if (state != null) {
-      console.debug(
-        "[OAUTH]",
-        "Authenticated",
-        session.sub,
-        `(state: ${state})`,
-      );
-    } else {
-      console.info("[OAUTH]", "Restored session", session.sub);
+		const { session, state } = result;
+		if (state != null) {
+			console.debug(
+				"[OAUTH]",
+				"Authenticated",
+				session.sub,
+				`(state: ${state})`,
+			);
+		} else {
+			console.info("[OAUTH]", "Restored session", session.sub);
 
-      if (!ALLOWED_DIDS.includes(session.did)) {
-        console.warn("[OAUTH]", "DID", session.did, "is not allowed!");
-        isDidAllowed.value = false;
-        return;
-      }
+			if (!ALLOWED_DIDS.includes(session.did)) {
+				console.warn("[OAUTH]", "DID", session.did, "is not allowed!");
+				isDidAllowed.value = false;
+				return;
+			}
 
-      isDidAllowed.value = true;
-    }
+			isDidAllowed.value = true;
+		}
 
-    agent = new Agent(session);
+		agent = new Agent(session);
 
-    const res = await agent.com.atproto.server.getSession();
-    if (!res.success) {
-      console.error("[OAUTH]", "Could not acquire session", res);
-      throw new Error(JSON.stringify(res));
-    }
+		const res = await agent.com.atproto.server.getSession();
+		if (!res.success) {
+			console.error("[OAUTH]", "Could not acquire session", res);
+			throw new Error(JSON.stringify(res));
+		}
 
-    console.info("[OAUTH]", "Agent initialized");
-    sharedAgent.value = agent;
-    isInitialized.value = true;
-  } catch (error) {
-    console.error("[OAUTH]", "An error occurred during OAuth setup:", error);
-  }
+		console.info("[OAUTH]", "Agent initialized");
+		sharedAgent.value = agent;
+		isInitialized.value = true;
+	} catch (error) {
+		console.error("[OAUTH]", "An error occurred during OAuth setup:", error);
+	}
 }
 
 /**
@@ -152,26 +151,26 @@ export async function setupOAuth() {
  * @example await startLoginFlow("did:plc:z72i7hdynmk6r22z27h6tvur")
  */
 export async function startLoginFlow(identifier: string) {
-  try {
-    if (!(await beforeLogin(identifier))) return;
+	try {
+		if (!(await beforeLogin(identifier))) return;
 
-    await oauthClient.signIn(identifier, {
-      state: window.crypto.randomUUID(),
-      signal: new AbortController().signal,
-    });
-  } catch (err) {
-    console.error("[OAUTH]", "Failed to start OAuth client sign-in flow:", err);
-  }
+		await oauthClient.signIn(identifier, {
+			state: window.crypto.randomUUID(),
+			signal: new AbortController().signal,
+		});
+	} catch (err) {
+		console.error("[OAUTH]", "Failed to start OAuth client sign-in flow:", err);
+	}
 }
 
 /**
  * Revoke the current oauth session and reload the page.
  */
 export function revokeSession() {
-  if (!agent?.did) return; // do not revoke if we aren't logged in lol
+	if (!agent?.did) return; // do not revoke if we aren't logged in lol
 
-  oauthClient.revoke(agent.did);
-  window.location.reload();
+	oauthClient.revoke(agent.did);
+	window.location.reload();
 }
 
 /**
@@ -181,16 +180,16 @@ export function revokeSession() {
  * @param generatedTID - A pre-defined TID to use for the embed's URI. It should point to that specific log entry.
  */
 function generateEmbedForContent(
-  length: number,
-  content: string,
-  generatedTID: string,
+	length: number,
+	content: string,
+	generatedTID: string,
 ): AppBskyEmbedExternal.External {
-  return {
-    $type: "app.bsky.embed.external#external",
-    uri: `${window.location.href}?log=${generatedTID}`,
-    title: "View in Spring's Website",
-    description: length > 63 ? `${content.substring(0, 60)}…` : "", // Skip description because otherwise it looks weird and repetitive
-  };
+	return {
+		$type: "app.bsky.embed.external#external",
+		uri: `${window.location.href}?log=${generatedTID}`,
+		title: "View in Spring's Website",
+		description: length > 63 ? `${content.substring(0, 60)}…` : "", // Skip description because otherwise it looks weird and repetitive
+	};
 }
 
 /**
@@ -201,33 +200,33 @@ function generateEmbedForContent(
  * YOU SHOULD BE USING {@link createLog}, NOT createCrosspostedLog!!!
  */
 async function createCrosspostedLog(
-  tid: string,
-  content: string,
-  createdAt: string,
+	tid: string,
+	content: string,
+	createdAt: string,
 ): Promise<ComAtprotoRepoCreateRecord.Response | undefined> {
-  let text: string[] | string = toGraphemeSegments(content);
-  const embedRecord = generateEmbedForContent(length, text.join(""), tid);
-  if (text.length > 300) {
-    text = [...content.slice(0, 299), "..."];
-  }
+	let text: string[] | string = toGraphemeSegments(content);
+	const embedRecord = generateEmbedForContent(length, text.join(""), tid);
+	if (text.length > 300) {
+		text = [...content.slice(0, 299), "..."];
+	}
 
-  text = text.join("");
+	text = text.join("");
 
-  return await agent.com.atproto.repo.createRecord({
-    repo: agent.did as string, // They are one and the same, not sure why typescript is complaining about it
-    collection: "app.bsky.feed.post",
-    rkey: tid,
-    validate: true,
-    record: {
-      $type: "app.bsky.feed.post",
-      text,
-      embed: {
-        $type: "app.bsky.embed.external",
-        external: embedRecord,
-      },
-      createdAt,
-    },
-  });
+	return await agent.com.atproto.repo.createRecord({
+		repo: agent.did as string, // They are one and the same, not sure why typescript is complaining about it
+		collection: "app.bsky.feed.post",
+		rkey: tid,
+		validate: true,
+		record: {
+			$type: "app.bsky.feed.post",
+			text,
+			embed: {
+				$type: "app.bsky.embed.external",
+				external: embedRecord,
+			},
+			createdAt,
+		},
+	});
 }
 
 /**
@@ -237,24 +236,24 @@ async function createCrosspostedLog(
  * Please use {@link createLog} instead
  */
 async function crosspost(content: string, tid: string, createdAt: string) {
-  const crosspost = await createCrosspostedLog(tid, content, createdAt);
-  // @ts-expect-error this might seem nonsensical, but that's also what bluesky does themselves
-  if (!crosspost?.success) throw new Error(crosspost as object);
+	const crosspost = await createCrosspostedLog(tid, content, createdAt);
+	// @ts-expect-error this might seem nonsensical, but that's also what bluesky does themselves
+	if (!crosspost?.success) throw new Error(crosspost as object);
 
-  await agent.com.atproto.repo.createRecord({
-    repo: agent.did as string, // god fucking dammit
-    collection: "space.bunniesin.micro.log",
-    rkey: tid,
-    record: {
-      $type: "space.bunniesin.micro.log",
-      content: content,
-      createdAt,
-      blueskyPost: {
-        uri: crosspost.data.uri,
-        cid: crosspost.data.cid,
-      },
-    },
-  });
+	await agent.com.atproto.repo.createRecord({
+		repo: agent.did as string, // god fucking dammit
+		collection: NEW_LOG_LEXICON,
+		rkey: tid,
+		record: {
+			$type: NEW_LOG_LEXICON,
+			content: content,
+			createdAt,
+			blueskyPost: {
+				uri: crosspost.data.uri,
+				cid: crosspost.data.cid,
+			},
+		},
+	});
 }
 
 /**
@@ -263,36 +262,36 @@ async function crosspost(content: string, tid: string, createdAt: string) {
  * @param shouldCrosspost - Whether a bluesky post should be created alongside the entry, defaults to `false`
  */
 export async function createLog(
-  content: string,
-  shouldCrosspost: boolean = false,
+	content: string,
+	shouldCrosspost: boolean = false,
 ): Promise<{
-  rkey: string;
-  content: string;
-  createdAt: string;
+	rkey: string;
+	content: string;
+	createdAt: string;
 }> {
-  const tid = now();
-  const createdAt = new Date().toISOString();
+	const tid = now();
+	const createdAt = new Date().toISOString();
 
-  if (shouldCrosspost) {
-    await crosspost(content, tid, createdAt);
-  } else {
-    await agent.com.atproto.repo.createRecord({
-      repo: agent.did as string,
-      collection: "space.bunniesin.micro.log",
-      rkey: tid,
-      record: {
-        $type: "space.bunniesin.micro.log",
-        content: content,
-        createdAt,
-      },
-    });
-  }
+	if (shouldCrosspost) {
+		await crosspost(content, tid, createdAt);
+	} else {
+		await agent.com.atproto.repo.createRecord({
+			repo: agent.did as string,
+			collection: NEW_LOG_LEXICON,
+			rkey: tid,
+			record: {
+				$type: NEW_LOG_LEXICON,
+				content: content,
+				createdAt,
+			},
+		});
+	}
 
-  return {
-    rkey: tid,
-    content,
-    createdAt,
-  };
+	return {
+		rkey: tid,
+		content,
+		createdAt,
+	};
 }
 
 // Set up the OAuth client as soon as the module is loaded

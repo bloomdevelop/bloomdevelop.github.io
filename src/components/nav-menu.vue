@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import Compose from "./compose.vue";
 import OAuthDialog from "./oauth-dialog.vue";
+import MigrationDialog from "./migration-dialog.vue";
 import { isInitialized, agent, isDidAllowed } from "../scripts/agent";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { revokeSession } from "../scripts/oauth";
+import { shouldMigrate } from "../scripts/migration";
 
 const isDev = import.meta.env.DEV;
 const avatarUrl = ref("");
@@ -11,6 +13,8 @@ const composeDialog = ref<HTMLDialogElement | null>(null);
 const oauthDialog = ref<HTMLDialogElement | null>(null);
 const logoutDialog = ref<HTMLDialogElement | null>(null);
 const aboutDialog = ref<HTMLDialogElement | null>(null);
+const migrationDialog =
+  ref<InstanceType<typeof MigrationDialog> | null>(null);
 
 function isLoggedIn() {
     return isInitialized.value;
@@ -29,8 +33,26 @@ onMounted(async () => {
 });
 
 function logout() {
-    revokeSession();
+  revokeSession();
 }
+
+// When a session is established, prompt for migration if the user still has
+// records under the old lexicon namespace.
+watch(
+  isInitialized,
+  async (initialized) => {
+    if (!initialized || !agent.value?.did) return;
+
+    try {
+      if (await shouldMigrate(agent.value.did)) {
+        migrationDialog.value?.open();
+      }
+    } catch (e) {
+      console.error("[MIGRATION]", "Could not check migration eligibility:", e);
+    }
+  },
+  { immediate: true },
+);
 
 function openDialog(dialog: HTMLDialogElement | null) {
     dialog?.showModal();
@@ -191,4 +213,5 @@ function closeDialog(dialog: HTMLDialogElement | null) {
             </a>
         </div>
     </dialog>
+    <MigrationDialog ref="migrationDialog" />
 </template>

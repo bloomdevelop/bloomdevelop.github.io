@@ -1,87 +1,72 @@
 @layer colors {
-    :root {
-        /* Required for dark mode to function properly */
-        color-scheme: light dark;
+	:root {
+		/* Required for dark mode to function properly */
+		color-scheme: light dark;
 
-        /* ------------------------------------------------------------------ *
+		/* ------------------------------------------------------------------ *
          * Brand palette
          * Solid fills are tuned so `contrast-color()` text passes WCAG AA
          * (>= 4.5:1) in both light and dark modes.
          * ------------------------------------------------------------------ */
-        --primary: light-dark(
-            oklch(0.665 0.21 48.7),
-            oklch(0.66 0.21 48.7)
-        );
-        --primary-contrast: contrast-color(var(--primary));
+		--primary: light-dark(oklch(0.665 0.21 48.7), oklch(0.66 0.21 48.7));
+		--primary-contrast: contrast-color(var(--primary));
 
-        --secondary: light-dark(
-            oklch(0.70 0.17 150),
-            oklch(0.73 0.16 150)
-        );
-        --secondary-contrast: contrast-color(var(--secondary));
+		--secondary: light-dark(oklch(0.7 0.17 150), oklch(0.73 0.16 150));
+		--secondary-contrast: contrast-color(var(--secondary));
 
-        /* ------------------------------------------------------------------ *
+		/* ------------------------------------------------------------------ *
          * Semantic palette
          * info (blue) was missing from the previous revision and is used by
          * components for links, focus and status. Each color ships with its
          * AA-compliant on-color via `contrast-color()`.
          * ------------------------------------------------------------------ */
-        --info: light-dark(
-            oklch(0.55 0.17 250),
-            oklch(0.62 0.17 250)
-        );
-        --info-contrast: contrast-color(var(--info));
+		--info: light-dark(oklch(0.55 0.17 250), oklch(0.62 0.17 250));
+		--info-contrast: contrast-color(var(--info));
 
-        --warning: light-dark(
-            oklch(0.72 0.15 82),
-            oklch(0.74 0.14 82)
-        );
-        --warning-contrast: contrast-color(var(--warning));
+		--warning: light-dark(oklch(0.72 0.15 82), oklch(0.74 0.14 82));
+		--warning-contrast: contrast-color(var(--warning));
 
-        --error: light-dark(
-            oklch(0.61 0.23 27),
-            oklch(0.63 0.23 25)
-        );
-        --error-contrast: contrast-color(var(--error));
+		--error: light-dark(oklch(0.61 0.23 27), oklch(0.63 0.23 25));
+		--error-contrast: contrast-color(var(--error));
 
-        /* ------------------------------------------------------------------ *
+		/* ------------------------------------------------------------------ *
          * Neutral / surface palette
          * ------------------------------------------------------------------ */
-        --border-primary: light-dark(
-            color-mix(in oklch, var(--primary), black 10%),
-            color-mix(in oklch, var(--primary), white 10%)
-        );
+		--border-primary: light-dark(
+			color-mix(in oklch, var(--primary), black 10%),
+			color-mix(in oklch, var(--primary), white 10%)
+		);
 
-        --border: light-dark(
-            color-mix(in oklch, var(--surface-1-contrast), transparent 86%),
-            color-mix(in oklch, var(--surface-1-contrast), transparent 82%)
-        );
+		--border: light-dark(
+			color-mix(in oklch, var(--surface-1-contrast), transparent 86%),
+			color-mix(in oklch, var(--surface-1-contrast), transparent 82%)
+		);
 
-        --surface: light-dark(oklch(1 0 0), oklch(0 0 0));
-        --surface-contrast: contrast-color(var(--surface));
+		--surface: light-dark(oklch(1 0 0), oklch(0 0 0));
+		--surface-contrast: contrast-color(var(--surface));
 
-        --surface-1: light-dark(oklch(0.8917 0 0), oklch(0.3 0 0));
-        --surface-1-contrast: contrast-color(var(--surface-1));
+		--surface-1: light-dark(oklch(0.8917 0 0), oklch(0.3 0 0));
+		--surface-1-contrast: contrast-color(var(--surface-1));
 
-        --surface-2: light-dark(oklch(0.94 0 0), oklch(0.22 0 0));
-        --surface-2-contrast: contrast-color(var(--surface-2));
+		--surface-2: light-dark(oklch(0.94 0 0), oklch(0.22 0 0));
+		--surface-2-contrast: contrast-color(var(--surface-2));
 
-        --surface-primary: light-dark(
-            color-mix(in oklch, var(--primary), transparent 90%),
-            color-mix(in oklch, var(--primary), transparent 88%)
-        );
-        --surface-primary-contrast: contrast-color(var(--surface-primary));
+		--surface-primary: light-dark(
+			color-mix(in oklch, var(--primary), transparent 90%),
+			color-mix(in oklch, var(--primary), transparent 88%)
+		);
+		--surface-primary-contrast: contrast-color(var(--surface-primary));
 
-        --surface-primary-2: light-dark(
-            color-mix(in oklch, var(--primary), transparent 80%),
-            color-mix(in oklch, var(--primary), transparent 78%)
-        );
-        --surface-primary-2-contrast: contrast-color(var(--surface-primary-2));
+		--surface-primary-2: light-dark(
+			color-mix(in oklch, var(--primary), transparent 80%),
+			color-mix(in oklch, var(--primary), transparent 78%)
+		);
+		--surface-primary-2-contrast: contrast-color(var(--surface-primary-2));
 
-        --info-surface: light-dark(
-            color-mix(in oklch, var(--info), transparent 88%),
-            color-mix(in oklch, var(--info), transparent 86%)
-        );
-        --info-surface-contrast: contrast-color(var(--info-surface));
-    }
+		--info-surface: light-dark(
+			color-mix(in oklch, var(--info), transparent 88%),
+			color-mix(in oklch, var(--info), transparent 86%)
+		);
+		--info-surface-contrast: contrast-color(var(--info-surface));
+	}
 }
