@@ -30,9 +30,9 @@ interface BunnyLogEntry {
 	$type?: string;
 }
 
-interface ListRecordsResponse {
+interface ListRecordsResponse<T> {
 	cursor?: string;
-	records: { uri: string; value: BunnyLogEntry }[];
+  records: { uri: string; cid: string, value: T }[];
 }
 
 /**
@@ -91,7 +91,7 @@ export async function queryAllRecordsToBeMigrated(
 	let cursor: string | null = "";
 	const records: (BunnyLogEntry & { rkey: string })[] = [];
 
-	async function next(): Promise<ListRecordsResponse> {
+	async function next(): Promise<ListRecordsResponse<BunnyLogEntry>> {
 		const res = await agent.value?.com.atproto.repo.listRecords({
 			repo: target,
 			collection: OLD_LOG_LEXICON,
@@ -99,13 +99,13 @@ export async function queryAllRecordsToBeMigrated(
 			limit: 100,
 		});
 
-		if (!res.success) {
+		if (!res?.success) {
 			return retry(next); // /technically/ recursive, but it isn't
 		}
 
 		return {
 			cursor: res.data.cursor,
-			records: res.data.records as unknown as ListRecordsResponse["records"],
+			records: res.data.records as unknown as ListRecordsResponse<BunnyLogEntry>["records"],
 		};
 	}
 
@@ -168,7 +168,7 @@ export async function migrateRecordsToNewLexicon(
 			validate: false, // Most, if not all PDSes do not include our lexicons, so validation is not possible
 		});
 
-		if (!res.success)
+		if (!res?.success)
 			throw new Error(
 				`FAILED TO CREATE RECORDS!!!!! FUCK!!!!!\n${JSON.stringify(res)}`,
 			);
@@ -181,7 +181,7 @@ export async function migrateRecordsToNewLexicon(
 			validate: false,
 		});
 
-		if (!res.success)
+		if (!res?.success)
 			throw new Error(
 				`FAILED TO DELETE OLD RECORDS!!!!! FUCK!!!!!\n${JSON.stringify(res)}`,
 			);
