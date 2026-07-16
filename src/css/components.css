@@ -584,7 +584,7 @@
 			background-color: #5865f2;
 			color: white;
 
-			@supports (contrast-color(oklch(0.2957 0.0123 258.37))) {
+			@supports (contrast-color(#5865f2)) {
 				color: contrast-color(#5865f2);
 			}
 		}
@@ -593,7 +593,7 @@
 			background-color: #4641d9;
 			color: white;
 
-			@supports (contrast-color(oklch(0.2957 0.0123 258.37))) {
+			@supports (contrast-color(#4641d9)) {
 				color: contrast-color(#4641d9);
 			}
 		}
