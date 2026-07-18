@@ -53,7 +53,7 @@ try {
 ---
 
 <script type="application/json" id="logs-initial" is:inline>
-{JSON.stringify(posts)}
+{encodeURIComponent(JSON.stringify(posts))}
 </script>
 
 <div class="logs" id="logs">
@@ -95,7 +95,8 @@ import { getLogs, setLogs, subscribe } from "../scripts/logsStore";
 import { formatDate } from "../scripts/utils";
 
 const dataEl = document.getElementById("logs-initial");
-const initialLogs: any[] = dataEl ? JSON.parse(dataEl.textContent || "[]") : [];
+const raw = dataEl?.textContent?.trim() || "[]";
+const initialLogs: any[] = raw ? JSON.parse(decodeURIComponent(raw)) : [];
 
 if (initialLogs.length > 0) {
   setLogs(initialLogs);
