@@ -1,32 +1,4 @@
 @layer components {
-	@property --left-fade {
-		syntax: "<length>";
-		inherits: false;
-		initial-value: 0;
-	}
-
-	@property --right-fade {
-		syntax: "<length>";
-		inherits: false;
-		initial-value: 0;
-	}
-
-	@keyframes scrollfade {
-		0% {
-			--left-fade: 0;
-		}
-		1%,
-		100% {
-			--left-fade: 3rem;
-		}
-		0%,
-		99% {
-			--right-fade: 3rem;
-		}
-		100% {
-			--right-fade: 0;
-		}
-	}
 
 	nav {
 		display: flex;
@@ -401,29 +373,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-lg);
-
-		@media (min-width: 768px) {
-			overflow-x: scroll;
-			mask: linear-gradient(
-				to right,
-				#0000,
-				#ffff var(--left-fade) calc(100% - var(--right-fade)),
-				#0000
-			);
-			animation: scrollfade;
-			animation-timeline: --scrollfade;
-			scroll-timeline: --scrollfade x;
-			flex-direction: row;
-
-			& [data-component="card"] {
-				flex: 0 0 auto;
-				min-width: 300px;
-
-				& .card-content {
-					flex: 1;
-				}
-			}
-		}
 	}
 
 	[data-component="card"] {
@@ -432,7 +381,6 @@
 
 		content-visibility: auto;
 		contain-intrinsic-size: 300px 200px;
-		max-width: 550px;
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-sm);
@@ -486,9 +434,6 @@
 			}
 		}
 
-		@media (max-width: 767px) {
-			max-width: unset;
-		}
 	}
 
 	[data-component="badge"] {

@@ -94,17 +94,24 @@ try {
 import { getLogs, setLogs, subscribe } from "../scripts/logsStore";
 import { formatDate } from "../scripts/utils";
 
-const dataEl = document.getElementById("logs-initial");
-const raw = dataEl?.textContent?.trim() || "[]";
-const initialLogs: any[] = raw ? JSON.parse(decodeURIComponent(raw)) : [];
-
-if (initialLogs.length > 0) {
-  setLogs(initialLogs);
-}
-
 const container = document.getElementById("logs");
 if (!container) {
   throw new Error("Logs container not found");
+}
+
+const dataEl = document.getElementById("logs-initial");
+if (dataEl) {
+  try {
+    const raw = dataEl.textContent?.trim();
+    if (raw) {
+      const initialLogs: any[] = JSON.parse(decodeURIComponent(raw));
+      if (initialLogs.length > 0) {
+        setLogs(initialLogs);
+      }
+    }
+  } catch (e) {
+    console.error("[APP]", "failed to parse initial logs:", e);
+  }
 }
 
 function escapeHtml(text: string): string {
@@ -137,7 +144,32 @@ function makeCardHTML(log: any): string {
   `;
 }
 
-container.addEventListener("click", (e) => {
+async function copyToClipboard(text: string): Promise<boolean> {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // fall through to fallback
+    }
+  }
+  try {
+    const textarea = document.createElement("textarea");
+    textarea.value = text;
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
+    textarea.style.pointerEvents = "none";
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textarea);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+container.addEventListener("click", async (e) => {
   const button = (e.target as HTMLElement).closest("button[data-rkey]");
   if (!button) return;
   const rkey = button.getAttribute("data-rkey");
@@ -146,38 +178,36 @@ container.addEventListener("click", (e) => {
   const permalink = new URL(window.location.href);
   permalink.searchParams.set("rkey", rkey);
 
-  navigator.clipboard.writeText(permalink.toString()).then(
-    () => {
-      const span = button.querySelector("span");
-      if (span) {
-        const original = span.textContent;
-        span.textContent = "Copied!";
-        setTimeout(() => {
-          span.textContent = original;
-        }, 2000);
-      }
-    },
-    () => {
-      console.error("[APP]", "failed to copy permalink");
-      const span = button.querySelector("span");
-      if (span) span.textContent = "Unable to copy permalink";
-    },
-  );
+  const span = button.querySelector("span");
+  const original = span?.textContent;
+
+  if (await copyToClipboard(permalink.toString())) {
+    if (span) {
+      span.textContent = "Copied!";
+      setTimeout(() => { span.textContent = original; }, 2000);
+    }
+  } else {
+    console.error("[APP]", "failed to copy permalink");
+    if (span) span.textContent = "Unable to copy permalink";
+  }
 });
 
-const rkey = new URL(window.location.href).searchParams.get("rkey");
-if (rkey) {
-  const target = container.querySelector(`[data-rkey="${rkey}"]`);
-  if (target) {
-    requestAnimationFrame(() => {
-      target.closest("[data-component=card]")?.scrollIntoView({
-        behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
-          .matches
-          ? "auto"
-          : "smooth",
-        block: "center",
-      });
-    });
+const rkeyParam = new URL(window.location.href).searchParams.get("rkey");
+if (rkeyParam) {
+  const scrollToCard = () => {
+    const target = container.querySelector(`[data-rkey="${CSS.escape(rkeyParam)}"]`);
+    if (!target) return;
+    const card = target.closest("[data-component=card]");
+    if (!card) return;
+    card.scrollIntoView({ behavior: "instant", block: "start" });
+  };
+  const queueScroll = () => {
+    requestAnimationFrame(() => requestAnimationFrame(scrollToCard));
+  };
+  if (document.readyState === "complete") {
+    queueScroll();
+  } else {
+    window.addEventListener("load", queueScroll, { once: true });
   }
 }
 
