@@ -4,42 +4,19 @@
 // Code:
 
 import { now } from "@atcute/tid";
-import {
+import type {
 	Agent,
-	type AppBskyEmbedExternal,
-	type ComAtprotoRepoCreateRecord,
+	AppBskyEmbedExternal,
+	ComAtprotoRepoCreateRecord,
 } from "@atproto/api";
-import { BrowserOAuthClient } from "@atproto/oauth-client-browser";
+import type { BrowserOAuthClient } from "@atproto/oauth-client-browser";
 import { isDidAllowed, isInitialized, agent as sharedAgent } from "./agent";
 import { ALLOWED_DIDS, NEW_LOG_LEXICON, OLD_LOG_LEXICON } from "./consts";
 import { toGraphemeSegments } from "./segments";
+import { constructApiUrl } from "./utils";
 
 /// OAuth scopes for the app, should match the ones in oauth-client-metadata.json
 const OAUTH_SCOPES = `atproto include:app.bsky.authViewAll?aud=did:web:api.bsky.app%23bsky_appview repo:app.bsky.feed.post?action=create repo:${OLD_LOG_LEXICON}?action=delete repo:${NEW_LOG_LEXICON}?action=create`;
-
-/**
- * Utility function to construct an XRPC URL
- * If you want to PATCH or POST, please use {@link Agent} instead.
- * @param nsid - XRPC endpoint NSID
- * @param options - Query parameters of said endpoint
- * @param api - Base URL of the AppView or PDS to use, defaults to Bluesky's public API
- * @example
- * constructApiUrl("com.atproto.repo.getRecord", { repo: "did:plc:...", rkey: "self", collection: "app.bsky.actor.profile"})
- * // => "https://api.bsky.app/xrpc/com.atproto.repo.getRecord?repo=did:plc:...&rkey=self&collection=app.bsky.actor.profile"
- */
-export function constructApiUrl(
-	nsid: string,
-	options: Record<string, string>,
-	api: string = "https://api.bsky.app",
-): string {
-	const url = new URL(`${api}/xrpc/${nsid}`);
-	for (const [key, value] of Object.entries(options)) {
-		if (!value) continue;
-		url.searchParams.set(key, value);
-	}
-
-	return url.toString();
-}
 
 /**
  * Gets the client ID, necesary for the OAuth flow.
@@ -100,6 +77,11 @@ async function beforeLogin(identifier: string): Promise<boolean> {
  */
 export async function setupOAuth() {
 	try {
+		const { BrowserOAuthClient } = await import(
+			"@atproto/oauth-client-browser"
+		);
+		const { Agent } = await import("@atproto/api");
+
 		oauthClient = await BrowserOAuthClient.load({
 			clientId: CLIENT_ID,
 			handleResolver: "https://bsky.social",
@@ -293,8 +275,5 @@ export async function createLog(
 		createdAt,
 	};
 }
-
-// Set up the OAuth client as soon as the module is loaded
-setupOAuth();
 
 // oauth.ts ends here

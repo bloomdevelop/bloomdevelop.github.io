@@ -1,8 +1,9 @@
 ---
 import { Font } from "astro:assets";
-import "@fontsource-variable/google-sans-flex/rond.css";
+import "../css/google-sans-flex.css";
 
 import "../css/styles.css";
+import { DEFAULT_PREVIEW_PDS } from "../scripts/consts";
 ---
 
 <html lang="en">
@@ -24,9 +25,10 @@ import "../css/styles.css";
         <meta name="theme-color" content="light-dark(#fff, #000)" />
         <title>Spring's Website</title>
 
+        <link rel="preconnect" href={DEFAULT_PREVIEW_PDS} />
+        <link rel="preconnect" href="https://api.bsky.app" />
         <Font cssVariable="--inter" preload />
         <Font cssVariable="--maple-mono" preload />
-        <Font cssVariable="--material-symbols" preload />
     </head>
     <body>
         <a href="#main-content" class="skip-link">Skip to main content</a>

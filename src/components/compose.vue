@@ -47,7 +47,7 @@ async function submit() {
             command="close"
             aria-label="Close"
         >
-            <span aria-hidden="true" class="md-symbols">close</span>
+            <svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
     </header>
     <form style="margin-top: 5px;" @submit.prevent="submit" class="compose">

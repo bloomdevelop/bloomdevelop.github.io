@@ -17,10 +17,5 @@ export default defineConfig({
       provider: fontProviders.fontsource(),
       name: "Maple Mono",
     },
-    {
-      cssVariable: "--material-symbols",
-      provider: fontProviders.fontsource(),
-      name: "Material Symbols",
-    },
   ],
 });

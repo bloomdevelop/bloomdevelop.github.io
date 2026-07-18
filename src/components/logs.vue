@@ -1,13 +1,43 @@
 <script setup lang="ts">
-import { constructApiUrl } from "../scripts/oauth";
 import {
   DEFAULT_PREVIEW_DID,
   DEFAULT_PREVIEW_PDS,
   NEW_LOG_LEXICON,
 } from "../scripts/consts";
-import { extractRkeyFromPlainAtURI, formatDate } from "../scripts/utils";
+import {
+  constructApiUrl,
+  extractRkeyFromPlainAtURI,
+  formatDate,
+} from "../scripts/utils";
 import { nextTick, onMounted, ref, type Ref } from "vue";
 import { logs } from "../scripts/logsStore";
+
+const CACHE_KEY = "bloom-logs";
+
+interface CacheEntry {
+  data: any[];
+  timestamp: number;
+}
+
+function getCachedLogs(): any[] | null {
+  try {
+    const raw = sessionStorage.getItem(CACHE_KEY);
+    if (!raw) return null;
+    const entry: CacheEntry = JSON.parse(raw);
+    return entry.data;
+  } catch {
+    return null;
+  }
+}
+
+function setCachedLogs(data: any[]) {
+  try {
+    const entry: CacheEntry = { data, timestamp: Date.now() };
+    sessionStorage.setItem(CACHE_KEY, JSON.stringify(entry));
+  } catch {
+    /* sessionStorage full */
+  }
+}
 
 const copiedRkey: Ref<string | null> = ref(null);
 const activeRkey: Ref<string | null> = ref(null);
@@ -69,15 +99,24 @@ async function copyPermalink(log: any) {
 }
 
 onMounted(async () => {
-    loading.value = true;
+    const cached = getCachedLogs();
+    if (cached) {
+      logs.value = cached;
+    }
+
+    loading.value = !cached;
+
     try {
         const posts = await fetchPostsFromPreviewDID(preview_cursor);
         if (posts) {
             logs.value = posts;
+            setCachedLogs(posts);
         }
     } catch (e) {
         console.error("[APP]", "failed to fetch latest logs:", e);
-        error.value = e instanceof Error ? e.message : String(e);
+        if (!cached) {
+            error.value = e instanceof Error ? e.message : String(e);
+        }
     } finally {
         loading.value = false;
     }
@@ -133,9 +172,7 @@ onMounted(async () => {
                     data-component="badge"
                     data-variant="secondary"
                 >
-                    <span class="md-symbols" aria-hidden="true"
-                        >call_split</span
-                    >
+                    <svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M14 4l2.29 2.29-2.88 2.88 1.42 1.42 2.88-2.88L20 10V4zm-4 0H4v6l2.29-2.29 4.71 4.7V20h2v-8.41l-5.29-5.3z"/></svg>
                     Crossposted
                 </div>
 
@@ -143,7 +180,7 @@ onMounted(async () => {
                     :data-variant="clipboardErrorRkey === log.rkey ? 'error' : 'primary'"
                     @click="copyPermalink(log)"
                 >
-                    <span aria-hidden="true" class="md-symbols"> link_2 </span>
+                    <svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
                     <span>
                         {{
                             copiedRkey === log.rkey

@@ -50,6 +50,8 @@
 
 		--google-sans-flex: "Google Sans Flex Variable", sans-serif;
 
+		--body: var(--inter);
+
 		scrollbar-gutter: stable;
 	}
 
@@ -70,10 +72,6 @@
 	html,
 	body {
 		font-family: var(--inter);
-	}
-
-	.md-symbols {
-		font-family: var(--material-symbols);
 	}
 
 	.visually-hidden {

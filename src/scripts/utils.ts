@@ -1,3 +1,23 @@
+/**
+ * Utility function to construct an XRPC URL
+ * @param nsid - XRPC endpoint NSID
+ * @param options - Query parameters of said endpoint
+ * @param api - Base URL of the AppView or PDS to use, defaults to Bluesky's public API
+ */
+export function constructApiUrl(
+	nsid: string,
+	options: Record<string, string>,
+	api: string = "https://api.bsky.app",
+): string {
+	const url = new URL(`${api}/xrpc/${nsid}`);
+	for (const [key, value] of Object.entries(options)) {
+		if (!value) continue;
+		url.searchParams.set(key, value);
+	}
+
+	return url.toString();
+}
+
 export function extractRkeyFromPlainAtURI(uri: string) {
 	return uri.split("/").at(-1);
 }
