@@ -6,6 +6,11 @@ import { defineConfig, fontProviders } from "astro/config";
 // https://astro.build/config
 export default defineConfig({
   integrations: [vue()],
+  vite: {
+    optimizeDeps: {
+      include: ["@atproto/oauth-client-browser"],
+    },
+  },
   fonts: [
     {
       cssVariable: "--inter",
