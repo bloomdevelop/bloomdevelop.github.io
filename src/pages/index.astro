@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "../layouts/base-layout.astro";
 import NavMenu from "../components/nav-menu.vue";
-import Logs from "../components/logs.vue";
+import Logs from "../components/logs.astro";
 ---
 
 <BaseLayout>
@@ -85,7 +85,7 @@ import Logs from "../components/logs.vue";
                     Powered by ATProto
                 </span>
             </h2>
-            <Logs client:only />
+            <Logs />
         </section>
     </main>
 </BaseLayout>

@@ -1,6 +1,16 @@
-import { type Ref, ref } from "vue";
+type Listener = () => void;
 
-export const logs: Ref<any[]> = ref([]);
+let data: any[] = [];
+const listeners: Set<Listener> = new Set();
+
+export function subscribe(fn: Listener) {
+	listeners.add(fn);
+	return () => listeners.delete(fn);
+}
+
+function notify() {
+	listeners.forEach(fn => fn());
+}
 
 export function prependLog(entry: {
 	rkey: string;
@@ -8,5 +18,15 @@ export function prependLog(entry: {
 	createdAt: string;
 	isCrosspostEnabled?: boolean;
 }) {
-	logs.value.unshift(entry);
+	data.unshift(entry);
+	notify();
+}
+
+export function setLogs(entries: any[]) {
+	data = entries;
+	notify();
+}
+
+export function getLogs(): any[] {
+	return data;
 }

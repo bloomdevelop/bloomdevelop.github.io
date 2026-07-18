@@ -1,0 +1,201 @@
+---
+import {
+  DEFAULT_PREVIEW_DID,
+  DEFAULT_PREVIEW_PDS,
+  NEW_LOG_LEXICON,
+} from "../scripts/consts";
+import {
+  constructApiUrl,
+  extractRkeyFromPlainAtURI,
+  formatDate,
+} from "../scripts/utils";
+
+interface LogEntry {
+  rkey: string;
+  content: string;
+  createdAt: string;
+  blueskyPost?: boolean;
+}
+
+async function fetchPostsFromPreviewDID(): Promise<LogEntry[]> {
+  const res = await fetch(
+    constructApiUrl(
+      "com.atproto.repo.listRecords",
+      {
+        repo: DEFAULT_PREVIEW_DID,
+        collection: NEW_LOG_LEXICON,
+      },
+      DEFAULT_PREVIEW_PDS,
+    ),
+  );
+
+  if (!res.ok) {
+    throw new Error(`Could not load logs: ${res.statusText}`);
+  }
+
+  const { records } = await res.json();
+
+  return records.map((record: any) => ({
+    ...record.value,
+    rkey: extractRkeyFromPlainAtURI(record.uri),
+  }));
+}
+
+let posts: LogEntry[] = [];
+let fetchError: string | null = null;
+
+try {
+  posts = await fetchPostsFromPreviewDID();
+} catch (e) {
+  fetchError = e instanceof Error ? e.message : String(e);
+  console.error("[APP]", "failed to fetch logs:", e);
+}
+---
+
+<script type="application/json" id="logs-initial" is:inline>
+{JSON.stringify(posts)}
+</script>
+
+<div class="logs" id="logs">
+  <p role="status" aria-atomic="true" class="visually-hidden" id="logs-status"></p>
+  {fetchError ? (
+    <div role="alert" data-component="alert" data-variant="error">
+      {fetchError}
+    </div>
+  ) : posts.length === 0 ? (
+    <div data-component="alert" data-variant="warning">
+      There's no logs… yet. :(
+    </div>
+  ) : (
+    posts.map((log) => (
+      <div data-component="card" data-rkey={log.rkey}>
+        <div class="card-content">
+          <p>{log.content}</p>
+        </div>
+        <footer>
+          <span data-type="date">{formatDate(log.createdAt)}</span>
+          {log.blueskyPost && (
+            <div data-component="badge" data-variant="secondary">
+              <svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M14 4l2.29 2.29-2.88 2.88 1.42 1.42 2.88-2.88L20 10V4zm-4 0H4v6l2.29-2.29 4.71 4.7V20h2v-8.41l-5.29-5.3z"/></svg>
+              Crossposted
+            </div>
+          )}
+          <button data-variant="primary" data-rkey={log.rkey}>
+            <svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>
+            <span>Permalink</span>
+          </button>
+        </footer>
+      </div>
+    ))
+  )}
+</div>
+
+<script>
+import { getLogs, setLogs, subscribe } from "../scripts/logsStore";
+import { formatDate } from "../scripts/utils";
+
+const dataEl = document.getElementById("logs-initial");
+const initialLogs: any[] = dataEl ? JSON.parse(dataEl.textContent || "[]") : [];
+
+if (initialLogs.length > 0) {
+  setLogs(initialLogs);
+}
+
+const container = document.getElementById("logs");
+if (!container) {
+  throw new Error("Logs container not found");
+}
+
+function escapeHtml(text: string): string {
+  const div = document.createElement("div");
+  div.appendChild(document.createTextNode(text));
+  return div.innerHTML;
+}
+
+function makeCardHTML(log: any): string {
+  const shareIcon = '<svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>';
+  const blueskyIcon = '<svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M14 4l2.29 2.29-2.88 2.88 1.42 1.42 2.88-2.88L20 10V4zm-4 0H4v6l2.29-2.29 4.71 4.7V20h2v-8.41l-5.29-5.3z"/></svg>';
+
+  return `
+    <div data-component="card" data-rkey="${log.rkey}">
+      <div class="card-content">
+        <p>${escapeHtml(log.content)}</p>
+      </div>
+      <footer>
+        <span data-type="date">${formatDate(log.createdAt)}</span>
+        ${
+          log.blueskyPost
+            ? `<div data-component="badge" data-variant="secondary">${blueskyIcon}Crossposted</div>`
+            : ""
+        }
+        <button data-variant="primary" data-rkey="${log.rkey}">
+          ${shareIcon}<span>Permalink</span>
+        </button>
+      </footer>
+    </div>
+  `;
+}
+
+container.addEventListener("click", (e) => {
+  const button = (e.target as HTMLElement).closest("button[data-rkey]");
+  if (!button) return;
+  const rkey = button.getAttribute("data-rkey");
+  if (!rkey) return;
+
+  const permalink = new URL(window.location.href);
+  permalink.searchParams.set("rkey", rkey);
+
+  navigator.clipboard.writeText(permalink.toString()).then(
+    () => {
+      const span = button.querySelector("span");
+      if (span) {
+        const original = span.textContent;
+        span.textContent = "Copied!";
+        setTimeout(() => {
+          span.textContent = original;
+        }, 2000);
+      }
+    },
+    () => {
+      console.error("[APP]", "failed to copy permalink");
+      const span = button.querySelector("span");
+      if (span) span.textContent = "Unable to copy permalink";
+    },
+  );
+});
+
+const rkey = new URL(window.location.href).searchParams.get("rkey");
+if (rkey) {
+  const target = container.querySelector(`[data-rkey="${rkey}"]`);
+  if (target) {
+    requestAnimationFrame(() => {
+      target.closest("[data-component=card]")?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+          .matches
+          ? "auto"
+          : "smooth",
+        block: "center",
+      });
+    });
+  }
+}
+
+subscribe(() => {
+  const allLogs = getLogs();
+  if (allLogs.length === 0) return;
+  const newest = allLogs[0];
+  if (container.querySelector(`[data-rkey="${newest.rkey}"]`)) return;
+
+  const wrapper = document.createElement("div");
+  wrapper.innerHTML = makeCardHTML(newest);
+  const card = wrapper.firstElementChild;
+  if (card) {
+    const statusEl = container.querySelector("#logs-status");
+    if (statusEl && statusEl.nextSibling) {
+      container.insertBefore(card, statusEl.nextSibling);
+    } else {
+      container.prepend(card);
+    }
+  }
+});
+</script>
