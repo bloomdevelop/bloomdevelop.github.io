@@ -37,10 +37,6 @@ interface ListRecordsResponse<T> {
 
 /**
  * Split an array into partitions of at most `n` elements.
- * @template T
- * @param {T[]} array
- * @param {number} n - Partition size, must be greater than 1
- * @returns {T[][]}
  */
 function partition<T>(array: T[], n: number): T[][] {
 	let local_idx = 0;
@@ -67,8 +63,6 @@ function partition<T>(array: T[], n: number): T[][] {
  *
  * Uses the authenticated agent so the request is routed to the user's PDS
  * (the public AppView does not implement com.atproto.repo.describeRepo).
- * @param {string} target - The DID to check
- * @returns {Promise<boolean>}
  */
 export async function shouldMigrate(target: string): Promise<boolean> {
 	if (!agent.value) return false;
@@ -82,8 +76,6 @@ export async function shouldMigrate(target: string): Promise<boolean> {
 
 /**
  * List every record still living under the old lexicon namespace.
- * @param {string} target - The DID to read records from
- * @returns {Promise<(BunnyLogEntry & { rkey: string })[]>}
  */
 export async function queryAllRecordsToBeMigrated(
 	target: string,
@@ -125,10 +117,6 @@ export async function queryAllRecordsToBeMigrated(
 
 /**
  * Migrate all old-lexicon records to the new namespace & lexicon.
- * @param {string} target - The DID that owns the records
- * @param {number} [batchSize=50] - Records per applyWrites batch
- * @param {(info: MigrationProgress) => void} [onProgress] - Called after each batch
- * @returns {Promise<boolean>}
  */
 export async function migrateRecordsToNewLexicon(
 	target: string,
@@ -209,8 +197,6 @@ export async function migrateRecordsToNewLexicon(
 
 /**
  * Orchestrate the whole migration flow for the currently logged-in user.
- * @param {(info: MigrationProgress) => void} [onProgress] - Progress reporter
- * @returns {Promise<boolean>}
  */
 export async function startMigration(
 	onProgress?: (info: MigrationProgress) => void,
