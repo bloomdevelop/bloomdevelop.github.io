@@ -51,30 +51,30 @@
 		}
 
 		&[data-variant="primary"] {
-			background-color: var(--primary);
+			background: linear-gradient(var(--primary), color-mix(in oklch, var(--primary), black 15%));
 			color: var(--primary-contrast);
 		}
 
 		&[data-variant="secondary"] {
-			background-color: var(--secondary);
+			background: linear-gradient(var(--secondary), color-mix(in oklch, var(--secondary), black 15%));
 			color: var(--secondary-contrast);
 		}
 
 		&[data-variant="neutral"] {
-			background-color: var(--surface-1);
+			background: var(--surface-1);
 			color: var(--surface-1-contrast);
 		}
 
 		&[data-variant="error"] {
-			background-color: var(--error);
+			background: linear-gradient(var(--error), color-mix(in oklch, var(--error), black 15%));
 			color: var(--error-contrast);
 		}
 
 		&[data-variant="ghost"] {
-			background-color: transparent;
+			background: transparent;
 
 			&:hover {
-				background-color: var(--surface-1);
+				background: var(--surface-1);
 				color: var(--surface-1-contrast);
 			}
 
@@ -305,7 +305,7 @@
 			);
 		padding: var(--padding);
 		border-radius: var(--rounded-size);
-		box-shadow: var(--shadow-lg);
+		box-shadow: var(--inset-shadow-lg);
 		overscroll-behavior: contain;
 
 		& button {
@@ -326,7 +326,7 @@
 			border-radius: max(0px, calc(var(--rounded-size) - var(--padding)));
 
 			&:hover {
-				background-color: var(--surface-primary);
+				background-color: light-dark(var(--surface-primary), color-mix(in oklch, var(--surface-primary), white 10%));
 			}
 
 			&:active {

@@ -3,23 +3,12 @@
 		/* Required for dark mode to function properly */
 		color-scheme: light dark;
 
-		/* ------------------------------------------------------------------ *
-         * Brand palette
-         * Solid fills are tuned so `contrast-color()` text passes WCAG AA
-         * (>= 4.5:1) in both light and dark modes.
-         * ------------------------------------------------------------------ */
 		--primary: light-dark(oklch(0.665 0.21 48.7), oklch(0.66 0.21 48.7));
-		--primary-contrast: contrast-color(var(--primary));
+		--primary-contrast: white;
 
 		--secondary: light-dark(oklch(0.7 0.17 150), oklch(0.73 0.16 150));
 		--secondary-contrast: contrast-color(var(--secondary));
 
-		/* ------------------------------------------------------------------ *
-         * Semantic palette
-         * info (blue) was missing from the previous revision and is used by
-         * components for links, focus and status. Each color ships with its
-         * AA-compliant on-color via `contrast-color()`.
-         * ------------------------------------------------------------------ */
 		--info: light-dark(oklch(0.55 0.17 250), oklch(0.62 0.17 250));
 		--info-contrast: contrast-color(var(--info));
 
@@ -52,8 +41,8 @@
 		--surface-2-contrast: contrast-color(var(--surface-2));
 
 		--surface-primary: light-dark(
-			color-mix(in oklch, var(--primary), transparent 90%),
-			color-mix(in oklch, var(--primary), transparent 88%)
+			color-mix(in oklch, var(--primary), transparent 75%),
+			color-mix(in oklch, var(--primary), transparent 75%)
 		);
 		--surface-primary-contrast: contrast-color(var(--surface-primary));
 
