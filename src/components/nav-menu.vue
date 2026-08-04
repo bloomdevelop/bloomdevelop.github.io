@@ -183,6 +183,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 alt="Website Logo"
                 width="64"
                 height="64"
+                style="border-radius: 50%"
             />
             <img
                 v-else
@@ -190,6 +191,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 alt="Website Logo"
                 width="64"
                 height="64"
+                style="border-radius: 50%"
             />
             <div
                 style="
