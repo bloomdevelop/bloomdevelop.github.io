@@ -113,6 +113,9 @@ async function submit() {
     font-size: 1rem;
     border: 2px solid var(--surface-primary-2);
     border-radius: var(--rounded-md);
+    @supports (corner-shape: squircle) {
+        corner-shape: squircle;
+    }
     background: var(--surface-primary);
     color: var(--surface-contrast);
     padding: var(--space-md);

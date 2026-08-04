@@ -91,7 +91,7 @@ try {
 </div>
 
 <script>
-import { getLogs, setLogs, subscribe } from "../scripts/logsStore";
+import { getLogs, setLogs, subscribe, mergeWithPending } from "../scripts/logsStore";
 import { formatDate } from "../scripts/utils";
 
 const container = document.getElementById("logs");
@@ -105,8 +105,9 @@ if (dataEl) {
     const raw = dataEl.textContent?.trim();
     if (raw) {
       const initialLogs: any[] = JSON.parse(decodeURIComponent(raw));
-      if (initialLogs.length > 0) {
-        setLogs(initialLogs);
+      const merged = mergeWithPending(initialLogs);
+      if (merged.length > 0) {
+        setLogs(merged);
       }
     }
   } catch (e) {
@@ -214,18 +215,22 @@ if (rkeyParam) {
 subscribe(() => {
   const allLogs = getLogs();
   if (allLogs.length === 0) return;
-  const newest = allLogs[0];
-  if (container.querySelector(`[data-rkey="${newest.rkey}"]`)) return;
 
-  const wrapper = document.createElement("div");
-  wrapper.innerHTML = makeCardHTML(newest);
-  const card = wrapper.firstElementChild;
-  if (card) {
-    const statusEl = container.querySelector("#logs-status");
-    if (statusEl && statusEl.nextSibling) {
-      container.insertBefore(card, statusEl.nextSibling);
+  const statusEl = container.querySelector("#logs-status");
+  const anchor = statusEl?.nextSibling ?? container.firstChild;
+
+  for (const log of allLogs) {
+    if (container.querySelector(`[data-rkey="${CSS.escape(log.rkey)}"]`)) continue;
+
+    const wrapper = document.createElement("div");
+    wrapper.innerHTML = makeCardHTML(log);
+    const card = wrapper.firstElementChild;
+    if (!card) continue;
+
+    if (anchor) {
+      container.insertBefore(card, anchor);
     } else {
-      container.prepend(card);
+      container.appendChild(card);
     }
   }
 });
