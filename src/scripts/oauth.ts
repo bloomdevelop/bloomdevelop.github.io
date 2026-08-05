@@ -101,15 +101,15 @@ export async function setupOAuth() {
 			);
 		} else {
 			console.info("[OAUTH]", "Restored session", session.sub);
-
-			if (!ALLOWED_DIDS.includes(session.did)) {
-				console.warn("[OAUTH]", "DID", session.did, "is not allowed!");
-				isDidAllowed.value = false;
-				return;
-			}
-
-			isDidAllowed.value = true;
 		}
+
+		if (!ALLOWED_DIDS.includes(session.did)) {
+			console.warn("[OAUTH]", "DID", session.did, "is not allowed!");
+			isDidAllowed.value = false;
+			return;
+		}
+
+		isDidAllowed.value = true;
 
 		agent = new Agent(session);
 
