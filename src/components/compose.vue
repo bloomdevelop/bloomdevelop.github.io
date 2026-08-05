@@ -79,7 +79,7 @@ async function submit() {
         <div data-type="footer">
             <label>
                 <input type="checkbox" v-model="isCrosspostEnabled" />
-                <span>Crosspost to Bluesky?</span>
+                <span>Crosspost?</span>
             </label>
             <button
                 :disabled="isEmpty || isSubmitting"
@@ -108,18 +108,20 @@ async function submit() {
 
     width: 100%;
     resize: vertical;
-    transition: border-color var(--duration) ease;
+    transition: box-shadow var(--duration) ease;
     font-family: var(--body);
     font-size: 1rem;
-    border: 2px solid var(--surface-primary-2);
+    border: none;
     border-radius: var(--rounded-md);
-    @supports (corner-shape: squircle) {
-        corner-shape: squircle;
-    }
-    background: var(--surface-primary);
+    background: var(--surface);
     color: var(--surface-contrast);
     padding: var(--space-md);
     box-sizing: border-box;
+    box-shadow:
+        inset 0 1px 2px light-dark(rgba(0,0,0, 0.12), rgba(255,255,255, 0.06)),
+        inset 0 2px 8px light-dark(rgba(0,0,0, 0.06), rgba(255,255,255, 0.03)),
+        inset 0 -1px 2px light-dark(rgba(255,255,255, 0.08), rgba(0,0,0, 0.25)),
+        inset 0 0 0 1px color-mix(in oklch, var(--surface-contrast), transparent 85%);
 }
 
 .compose-footer {

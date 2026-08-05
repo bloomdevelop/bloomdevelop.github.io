@@ -4,7 +4,6 @@ import "../css/google-sans-flex.css";
 
 import "../css/styles.css";
 import { DEFAULT_PREVIEW_PDS } from "../scripts/consts";
-import { optional } from "astro:schema";
 ---
 
 <html lang="en" data-sky="sunset">
@@ -33,7 +32,9 @@ import { optional } from "astro:schema";
     </head>
     <body data-sky="sunrise">
         <a href="#main-content" class="skip-link">Skip to main content</a>
-        <slot />
+        <main>
+            <slot />
+        </main>
         <footer style={{
           textAlign: "center",
           padding: "var(--space-lg)",
