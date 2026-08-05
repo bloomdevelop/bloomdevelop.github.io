@@ -1,0 +1,78 @@
+---
+import { Font } from "astro:assets";
+import "../css/google-sans-flex.css";
+
+import "../css/styles.css";
+import { DEFAULT_PREVIEW_PDS } from "../scripts/consts";
+---
+
+<html lang="en" data-sky="sunset">
+    <head>
+        <meta charset="utf-8" />
+        { import.meta.env.DEV ?
+        (
+          <link rel="icon" type="image/svg+xml" href="/favicon-dev.svg" />
+          <link rel="icon" href="/favicon-dev.ico" />
+        )
+          : (
+            <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+            <link rel="icon" href="/favicon.ico" />
+          )
+        }
+
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <meta name="theme-color" content="light-dark(#fff, #000)" />
+        <title>Spring's Website</title>
+
+        <link rel="preconnect" href={DEFAULT_PREVIEW_PDS} />
+        <link rel="preconnect" href="https://api.bsky.app" />
+<Font cssVariable="--inter" preload />
+        <Font cssVariable="--maple-mono" preload />
+    </head>
+    <body data-sky="sunrise">
+        <a href="#main-content" class="skip-link">Skip to main content</a>
+        <main>
+            <slot />
+        </main>
+        <footer style={{
+          textAlign: "center",
+          padding: "var(--space-lg)",
+          opacity: 0.5
+        }}>
+            Designed by Bloom Perez in Dominican Republic. &copy; {new Date().getFullYear()}
+        </footer>
+
+        <script>
+            import { initSky } from "../scripts/sky.ts";
+            initSky();
+
+            // Refresh at the top of the next hour so the sky stays current
+            // without polling.
+            const untilNextHour =
+                (60 - new Date().getMinutes()) * 60_000 -
+                new Date().getSeconds() * 1_000;
+            setTimeout(() => {
+                location.reload();
+            }, untilNextHour);
+        </script>
+    </body>
+</html>
+
+<style>
+    .skip-link {
+        opacity: 0;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 9999;
+        padding: var(--space-md) var(--space-lg);
+        background: var(--surface);
+        color: var(--surface-contrast);
+        font-weight: 600;
+
+        &:focus-visible {
+            opacity: 1;
+        }
+    }
+</style>
