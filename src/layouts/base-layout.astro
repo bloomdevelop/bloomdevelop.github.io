@@ -4,6 +4,7 @@ import "../css/google-sans-flex.css";
 
 import "../css/styles.css";
 import { DEFAULT_PREVIEW_PDS } from "../scripts/consts";
+import { optional } from "astro:schema";
 ---
 
 <html lang="en" data-sky="sunset">
@@ -33,6 +34,13 @@ import { DEFAULT_PREVIEW_PDS } from "../scripts/consts";
     <body data-sky="sunrise">
         <a href="#main-content" class="skip-link">Skip to main content</a>
         <slot />
+        <footer style={{
+          textAlign: "center",
+          padding: "var(--space-lg)",
+          opacity: 0.5
+        }}>
+            Designed by Bloom Perez in Dominican Republic. &copy; {new Date().getFullYear()}
+        </footer>
 
         <script>
             import { initSky } from "../scripts/sky.ts";

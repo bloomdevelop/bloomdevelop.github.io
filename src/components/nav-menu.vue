@@ -13,8 +13,8 @@ const composeDialog = ref<HTMLDialogElement | null>(null);
 const oauthDialog = ref<HTMLDialogElement | null>(null);
 const logoutDialog = ref<HTMLDialogElement | null>(null);
 const aboutDialog = ref<HTMLDialogElement | null>(null);
-const migrationDialog =
-  ref<InstanceType<typeof MigrationDialog> | null>(null);
+const migrationDialog = ref<InstanceType<typeof MigrationDialog> | null>(null);
+const isHovered = ref(false);
 
 function isLoggedIn() {
     return isInitialized.value;
@@ -37,25 +37,27 @@ onMounted(async () => {
 });
 
 function logout() {
-  revokeSession();
+    revokeSession();
 }
 
-// When a session is established, prompt for migration if the user still has
-// records under the old lexicon namespace.
 watch(
-  isInitialized,
-  async (initialized) => {
-    if (!initialized || !agent.value?.did) return;
+    isInitialized,
+    async (initialized) => {
+        if (!initialized || !agent.value?.did) return;
 
-    try {
-      if (await shouldMigrate(agent.value.did)) {
-        migrationDialog.value?.open();
-      }
-    } catch (e) {
-      console.error("[MIGRATION]", "Could not check migration eligibility:", e);
-    }
-  },
-  { immediate: true },
+        try {
+            if (await shouldMigrate(agent.value.did)) {
+                migrationDialog.value?.open();
+            }
+        } catch (e) {
+            console.error(
+                "[MIGRATION]",
+                "Could not check migration eligibility:",
+                e,
+            );
+        }
+    },
+    { immediate: true },
 );
 
 function openDialog(dialog: HTMLDialogElement | null) {
@@ -68,50 +70,88 @@ function closeDialog(dialog: HTMLDialogElement | null) {
 </script>
 
 <template>
-    <button
-        data-variant="ghost"
-        data-size="icon"
-        popovertarget="menu"
-        aria-label="Menu"
+    <div
+        role="toolbar"
+        class="toolbar-hover-zone"
+        @mouseenter="isHovered = true"
+        @mouseleave="isHovered = false"
     >
-        <img
-            style="border-radius: 50%;"
-            v-if="isLoggedIn() && avatarUrl"
-            width="24"
-            height="24"
-            :src="avatarUrl"
-            alt="Your profile image"
-        />
-
-            <svg aria-label="Profile" aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor" v-else><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm0 14c-2.03 0-4.43-.82-6.14-2.88a9.947 9.947 0 0 1 12.28 0C16.43 19.18 14.03 20 12 20z"/></svg>
-    </button>
-    <div id="menu" data-component="menu" popover>
-        <div>
-            <button @click="openDialog(aboutDialog)">
-                <svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg> About
+        <nav class="floating-toolbar" :class="{ 'is-visible': isHovered }">
+            <button
+                class="toolbar-btn"
+                @click="openDialog(aboutDialog)"
+                aria-label="About"
+            >
+                <svg
+                    aria-hidden="true"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                >
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
+                    />
+                </svg>
             </button>
+
             <button
                 v-if="isLoggedIn() && isDidAllowed"
+                class="toolbar-btn"
                 @click="openDialog(composeDialog)"
+                aria-label="New Log"
             >
-                <svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> New Log
+                <svg
+                    aria-hidden="true"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                >
+                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+                </svg>
             </button>
 
             <button
                 v-if="isLoggedIn()"
+                class="toolbar-btn"
                 @click="openDialog(logoutDialog)"
+                aria-label="Logout"
             >
-                <svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg> Logout
+                <svg
+                    aria-hidden="true"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                >
+                    <path
+                        d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"
+                    />
+                </svg>
             </button>
 
             <button
                 v-if="!isLoggedIn()"
+                class="toolbar-btn"
                 @click="openDialog(oauthDialog)"
+                aria-label="Login"
             >
-                <svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"/></svg> Login
+                <svg
+                    aria-hidden="true"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                >
+                    <path
+                        d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"
+                    />
+                </svg>
             </button>
-        </div>
+        </nav>
     </div>
+
     <dialog ref="composeDialog" id="compose" data-component="dialog">
         <Compose />
     </dialog>
@@ -121,29 +161,11 @@ function closeDialog(dialog: HTMLDialogElement | null) {
     <dialog ref="logoutDialog" id="logout-confirmation" data-component="dialog">
         <header>
             <h1>Logout?</h1>
-
-            <!-- <button
-                type="button"
-                data-variant="ghost"
-                data-size="icon"
-                commandFor="logout-confirmation"
-                command="close"
-            >
-                <span class="md-symbols" aria-hidden="true">close</span>
-            </button> -->
         </header>
         <p>Are you sure you want to logout?</p>
         <div data-type="footer">
-            <button
-                data-variant="primary"
-                @click="logout"
-            >
-                Logout
-            </button>
-            <button
-                data-variant="neutral"
-                @click="closeDialog(logoutDialog)"
-            >
+            <button data-variant="primary" @click="logout">Logout</button>
+            <button data-variant="neutral" @click="closeDialog(logoutDialog)">
                 Cancel
             </button>
         </div>
@@ -163,7 +185,17 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 aria-label="Close about dialog"
                 @click="closeDialog(aboutDialog)"
             >
-                <svg aria-hidden="true" width="1em" height="1em" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                <svg
+                    aria-hidden="true"
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                >
+                    <path
+                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
+                    />
+                </svg>
             </button>
         </header>
         <div
@@ -220,3 +252,90 @@ function closeDialog(dialog: HTMLDialogElement | null) {
     </dialog>
     <MigrationDialog ref="migrationDialog" />
 </template>
+
+<style scoped>
+.toolbar-hover-zone {
+    --toolbar-radius: var(--rounded-xl);
+    --toolbar-padding: var(--space-md);
+
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(400px, 90vw);
+    height: 80px;
+    z-index: 100;
+    pointer-events: auto;
+}
+
+.floating-toolbar {
+    position: absolute;
+    bottom: var(--space-lg);
+    left: 50%;
+    transform: translateX(-50%) translateY(50px);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--toolbar-padding);
+    border-radius: var(--toolbar-radius);
+    background: linear-gradient(
+        color-mix(in oklch, var(--surface), white 6%) 0%,
+        var(--surface) 45%,
+        var(--surface) 65%,
+        color-mix(in oklch, var(--surface), white 4%) 100%
+    );
+    box-shadow:
+        inset 0 2px 6px
+            color-mix(in oklch, var(--surface-contrast), transparent 80%),
+        inset 0 0 0 1px
+            color-mix(in oklch, var(--surface-contrast), transparent 80%),
+        var(--shadow-lg);
+    opacity: 0.35;
+    transition:
+        opacity var(--duration-medium) var(--ease-smooth-out),
+        transform var(--duration-medium) var(--ease-smooth-out);
+}
+
+.floating-toolbar.is-visible,
+.toolbar-hover-zone:focus-within .floating-toolbar {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toolbar-btn {
+    --size: 40px;
+    display: grid;
+    place-content: center;
+    width: var(--size);
+    height: var(--size);
+    border: none;
+    background: transparent;
+    border-radius: max(
+        0px,
+        calc(var(--toolbar-radius) - var(--toolbar-padding))
+    );
+    cursor: pointer;
+    color: var(--surface-contrast);
+    font-size: 1.2rem;
+}
+
+.toolbar-btn:hover {
+    background: var(--surface-1);
+    color: var(--surface-1-contrast);
+}
+
+.toolbar-btn:active {
+    background: linear-gradient(
+        color-mix(in oklch, var(--primary), white 25%),
+        var(--primary),
+        color-mix(in oklch, var(--primary), white 20%)
+    );
+    color: var(--primary-contrast);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .floating-toolbar {
+        transition: none;
+    }
+}
+</style>

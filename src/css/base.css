@@ -121,8 +121,8 @@
         }
     }
 
-    body {
-        border-radius: var(--rounded-xl);
+    main {
+        border-radius: calc(var(--rounded-2xl) * 1.5);
 
         font-family: var(--inter);
         margin: 1rem auto;
