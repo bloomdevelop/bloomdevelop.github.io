@@ -77,6 +77,15 @@
         text-wrap: balance;
     }
 
+    :is(p, span) {
+        font-family: var(--inter);
+
+    }
+
+    html, body {
+        font-family: var(--inter);
+    }
+
     html {
         overflow-y: scroll;
 
@@ -123,8 +132,6 @@
 
     main {
         border-radius: calc(var(--rounded-2xl) * 1.5);
-
-        font-family: var(--inter);
         margin: 1rem auto;
 
         max-width: 82ch;
