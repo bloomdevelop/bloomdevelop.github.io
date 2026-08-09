@@ -303,7 +303,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
 }
 
 .toolbar-btn {
-    --size: 40px;
+    --size: 44px;
     display: grid;
     place-content: center;
     width: var(--size);
@@ -331,6 +331,23 @@ function closeDialog(dialog: HTMLDialogElement | null) {
         color-mix(in oklch, var(--primary), white 20%)
     );
     color: var(--primary-contrast);
+}
+
+@media (hover: none) {
+    .toolbar-hover-zone {
+        pointer-events: none;
+    }
+
+    .floating-toolbar {
+        pointer-events: auto;
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+        gap: var(--space-md);
+    }
+
+    .toolbar-btn {
+        --size: 48px;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
