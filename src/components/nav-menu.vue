@@ -78,6 +78,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
     >
         <nav class="floating-toolbar" :class="{ 'is-visible': isHovered }">
             <button
+                data-component="button"
                 class="toolbar-btn"
                 @click="openDialog(aboutDialog)"
                 aria-label="About"
@@ -96,6 +97,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
             </button>
 
             <button
+                data-component="button"
                 v-if="isLoggedIn() && isDidAllowed"
                 class="toolbar-btn"
                 @click="openDialog(composeDialog)"
@@ -113,6 +115,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
             </button>
 
             <button
+                data-component="button"
                 v-if="isLoggedIn()"
                 class="toolbar-btn"
                 @click="openDialog(logoutDialog)"
@@ -132,6 +135,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
             </button>
 
             <button
+                data-component="button"
                 v-if="!isLoggedIn()"
                 class="toolbar-btn"
                 @click="openDialog(oauthDialog)"
@@ -164,8 +168,8 @@ function closeDialog(dialog: HTMLDialogElement | null) {
         </header>
         <p>Are you sure you want to logout?</p>
         <div data-type="footer">
-            <button data-variant="primary" @click="logout">Logout</button>
-            <button data-variant="neutral" @click="closeDialog(logoutDialog)">
+            <button data-component="button" data-variant="primary" @click="logout">Logout</button>
+            <button data-component="button" data-variant="neutral" @click="closeDialog(logoutDialog)">
                 Cancel
             </button>
         </div>
@@ -179,6 +183,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
         <header>
             <h1 id="about-title">About</h1>
             <button
+                data-component="button"
                 type="button"
                 data-variant="ghost"
                 data-size="icon"

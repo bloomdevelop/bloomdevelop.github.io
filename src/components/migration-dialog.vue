@@ -96,6 +96,7 @@ defineExpose({ open, close });
     </div>
     <div data-type="footer">
       <button
+        data-component="button"
         data-variant="primary"
         :disabled="isMigrating"
         :aria-busy="isMigrating"
@@ -104,6 +105,7 @@ defineExpose({ open, close });
         {{ isMigrating ? "Migrating, please wait…" : "Ok" }}
       </button>
       <button
+        data-component="button"
         class="danger"
         data-variant="neutral"
         :disabled="isMigrating"

@@ -13,6 +13,7 @@ async function login() {
         <h1>Login via OAuth</h1>
 
         <button
+            data-component="button"
             type="button"
             data-variant="ghost"
             data-size="icon"
@@ -39,7 +40,7 @@ async function login() {
             />
         </label>
         <footer>
-            <button data-variant="primary" type="submit">Login</button>
+            <button data-component="button" data-variant="primary" type="submit">Login</button>
         </footer>
     </form>
 </template>

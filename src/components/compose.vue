@@ -40,6 +40,7 @@ async function submit() {
         <h1>New Log</h1>
 
         <button
+            data-component="button"
             type="button"
             data-variant="ghost"
             data-size="icon"
@@ -82,6 +83,7 @@ async function submit() {
                 <span>Crosspost?</span>
             </label>
             <button
+                data-component="button"
                 :disabled="isEmpty || isSubmitting"
                 type="submit"
                 data-variant="primary"
