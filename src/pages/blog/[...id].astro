@@ -17,14 +17,36 @@ const { Content } = await render(post);
 ---
 
 <BaseLayout>
-    <article>
-        <div>
+    <nav>
+        <a href="/">
+            <button data-variant="primary">
+                Back to home page
+            </button>
+        </a>
+    </nav>
+    <article id="main-content">
+        <div class="post-details">
             <h1>{post.data.title}</h1>
-            <p>{post.data.pubDate.toLocaleDateString()}</p>
+            <p>Published on {post.data.pubDate.toLocaleDateString()}</p>
+            {post.data.draft && (
+              <div data-component="alert">
+                    <p>This post is a draft and may not be published yet. Please revise the content and publish when ready.</p>
+              </div>
+            )}
+
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                {post.data.tags?.map((tag) => <Tag tag={tag} />)}
+            </div>
         </div>
-        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            {post.data.tags?.map((tag) => <Tag tag={tag} />)}
-        </div>
+
         <Content />
     </article>
 </BaseLayout>
+
+<style>
+.post-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+</style>
