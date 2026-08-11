@@ -1,0 +1,30 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/base-layout.astro';
+import Tag from '../../components/tag.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map(post => ({
+    params: { id: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+---
+
+<BaseLayout>
+    <article>
+        <div>
+            <h1>{post.data.title}</h1>
+            <p>{post.data.pubDate.toLocaleDateString()}</p>
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            {post.data.tags?.map((tag) => <Tag tag={tag} />)}
+        </div>
+        <Content />
+    </article>
+</BaseLayout>

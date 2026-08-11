@@ -1,5 +1,5 @@
 ---
-layout: ../layouts/post-layout.astro
+layout: ../layouts/spa-layout.astro
 ---
 
 # The "Do Not Interact" Policy

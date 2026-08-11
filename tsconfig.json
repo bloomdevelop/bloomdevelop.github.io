@@ -8,6 +8,8 @@
     "dist"
   ],
   "compilerOptions": {
-    "jsx": "preserve"
+    "jsx": "preserve",
+    "strictNullChecks": true,
+    "allowJs": true
   }
 }

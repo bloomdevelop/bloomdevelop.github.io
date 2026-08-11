@@ -7,7 +7,7 @@ import { DEFAULT_PREVIEW_PDS } from "../scripts/consts";
 import { optional } from "astro:schema";
 ---
 
-<html lang="en" data-sky="sunset">
+<html lang="en">
     <head>
         <meta charset="utf-8" />
         { import.meta.env.DEV ?
@@ -28,7 +28,7 @@ import { optional } from "astro:schema";
 
         <link rel="preconnect" href={DEFAULT_PREVIEW_PDS} />
         <link rel="preconnect" href="https://api.bsky.app" />
-<Font cssVariable="--inter" preload />
+        <Font cssVariable="--inter" preload />
         <Font cssVariable="--maple-mono" preload />
     </head>
     <body data-sky="sunrise">
@@ -43,20 +43,6 @@ import { optional } from "astro:schema";
                 Designed by Bloom Perez in Dominican Republic. &copy; {new Date().getFullYear()}
             </p>
         </footer>
-
-        <script>
-            import { initSky } from "../scripts/sky.ts";
-            initSky();
-
-            // Refresh at the top of the next hour so the sky stays current
-            // without polling.
-            const untilNextHour =
-                (60 - new Date().getMinutes()) * 60_000 -
-                new Date().getSeconds() * 1_000;
-            setTimeout(() => {
-                location.reload();
-            }, untilNextHour);
-        </script>
     </body>
 </html>
 
