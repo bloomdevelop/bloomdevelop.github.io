@@ -5,6 +5,7 @@ import "../css/google-sans-flex.css";
 import "../css/styles.css";
 import { DEFAULT_PREVIEW_PDS } from "../scripts/consts";
 import { optional } from "astro:schema";
+import ProgressiveBlur from "../components/progressive-blur.astro";
 ---
 
 <html lang="en">
@@ -30,8 +31,11 @@ import { optional } from "astro:schema";
         <link rel="preconnect" href="https://api.bsky.app" />
         <Font cssVariable="--inter" preload />
         <Font cssVariable="--maple-mono" preload />
+        <Font cssVariable="--material-symbols-rounded" preload />
     </head>
     <body data-sky="sunrise">
+        <ProgressiveBlur position="top" />
+        <ProgressiveBlur position="bottom" />
         <a href="#main-content" class="skip-link">Skip to main content</a>
         <slot />
         <footer style={{
@@ -51,7 +55,7 @@ import { optional } from "astro:schema";
         opacity: 0;
         position: fixed;
         top: 10px;
-        left: 10px;
+        right: 10px;
         z-index: 9999;
         padding: var(--space-md) var(--space-lg);
         background: var(--surface);

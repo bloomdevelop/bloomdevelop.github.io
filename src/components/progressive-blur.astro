@@ -1,0 +1,137 @@
+---
+interface Props {
+    position?: "top" | "bottom";
+    height?: string;
+}
+
+const { position = "bottom", height = "50px" } = Astro.props;
+
+const BLUR_LEVELS_PX = [1, 2, 4, 8, 16, 32, 64];
+---
+
+<div
+    class="progressive-blur"
+    data-position={position}
+    style={`--progressive-blur-height: ${height}`}
+    aria-hidden="true"
+>
+    {BLUR_LEVELS_PX.map((px) => <div class="layer" style={`--blur: ${px}px`}></div>)}
+    <div class="gradient"></div>
+</div>
+
+<style>
+    .progressive-blur {
+        position: fixed;
+        z-index: 100;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: var(--progressive-blur-height);
+        pointer-events: none;
+
+        &[data-position="top"] {
+            top: 0;
+        }
+
+        &[data-position="bottom"] {
+            top: auto;
+            bottom: 0;
+        }
+
+        & > .layer,
+       & > .gradient {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        & > .layer {
+            backdrop-filter: blur(var(--blur));
+
+            &:nth-child(7) {
+                z-index: 10;
+            }
+        }
+
+        &[data-position="bottom"] > .layer:nth-child(1) {
+            mask-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 40%);
+            -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 40%);
+        }
+
+        &[data-position="bottom"] > .layer:nth-child(2) {
+            mask-image: linear-gradient(rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 50%);
+            -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 50%);
+        }
+
+        &[data-position="bottom"] > .layer:nth-child(3) {
+            mask-image: linear-gradient(rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 60%);
+            -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 60%);
+        }
+
+        &[data-position="bottom"] > .layer:nth-child(4) {
+            mask-image: linear-gradient(rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 70%);
+            -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 70%);
+        }
+
+        &[data-position="bottom"] > .layer:nth-child(5) {
+            mask-image: linear-gradient(rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 90%);
+            -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 90%);
+        }
+
+        &[data-position="bottom"] > .layer:nth-child(6) {
+            mask-image: linear-gradient(rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 1) 80%);
+            -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 1) 80%);
+        }
+
+        &[data-position="bottom"] > .layer:nth-child(7) {
+            mask-image: linear-gradient(rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 1) 100%);
+            -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 1) 100%);
+        }
+
+        &[data-position="bottom"] > .gradient {
+            background: linear-gradient(transparent, var(--surface));
+        }
+
+        &[data-position="top"] > .layer:nth-child(1) {
+            mask-image: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 40%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 40%);
+        }
+
+        &[data-position="top"] > .layer:nth-child(2) {
+            mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 50%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 10%, rgba(0, 0, 0, 1) 20%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 50%);
+        }
+
+        &[data-position="top"] > .layer:nth-child(3) {
+            mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 60%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 15%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 60%);
+        }
+
+        &[data-position="top"] > .layer:nth-child(4) {
+            mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 70%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 0) 70%);
+        }
+
+        &[data-position="top"] > .layer:nth-child(5) {
+            mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 90%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 1) 60%, rgba(0, 0, 0, 1) 80%, rgba(0, 0, 0, 0) 90%);
+        }
+
+        &[data-position="top"] > .layer:nth-child(6) {
+            mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 1) 80%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 1) 80%);
+        }
+
+        &[data-position="top"] > .layer:nth-child(7) {
+            mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 1) 100%);
+            -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0) 70%, rgba(0, 0, 0, 1) 100%);
+        }
+
+        &[data-position="top"] > .gradient {
+            background: linear-gradient(var(--surface), transparent);
+        }
+    }
+</style>

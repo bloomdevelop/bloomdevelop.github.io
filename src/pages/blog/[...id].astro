@@ -19,7 +19,8 @@ const { Content } = await render(post);
 <BaseLayout>
     <nav>
         <a href="/" data-component="button" data-variant="primary">
-            Back to home page
+          <span class="md-symbols">arrow_back</span>
+          Back to home page
         </a>
     </nav>
     <article id="main-content">
@@ -42,6 +43,16 @@ const { Content } = await render(post);
 </BaseLayout>
 
 <style>
+nav {
+  position: sticky;
+  z-index: 200 !important;
+}
+
+article {
+  margin-inline: auto;
+  max-width: 80ch;
+}
+
 .post-details {
     display: flex;
     flex-direction: column;

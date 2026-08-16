@@ -79,15 +79,21 @@
 
   html,
   body {
+    margin: 0;
+    padding: 0;
     font-family: var(--inter);
     background-color: var(--surface);
   }
 
   main {
-    margin: 1rem auto;
-
+    margin-block: var(--space-md);
+    margin-inline: auto;
     max-width: 90ch;
     padding: var(--space-lg);
+  }
+
+  .md-symbols {
+    font-family: var(--material-symbols-rounded);
   }
 
   .visually-hidden {

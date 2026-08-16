@@ -4,6 +4,7 @@ import "../css/google-sans-flex.css";
 
 import "../css/styles.css";
 import { DEFAULT_PREVIEW_PDS } from "../scripts/consts";
+import ProgressiveBlur from "../components/progressive-blur.astro";
 ---
 
 <html lang="en">
@@ -31,6 +32,8 @@ import { DEFAULT_PREVIEW_PDS } from "../scripts/consts";
         <Font cssVariable="--maple-mono" preload />
     </head>
     <body data-sky="sunrise">
+        <ProgressiveBlur position="top" />
+        <ProgressiveBlur position="bottom" />
         <a href="#main-content" class="skip-link">Skip to main content</a>
         <main>
             <slot />

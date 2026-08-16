@@ -83,17 +83,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 @click="openDialog(aboutDialog)"
                 aria-label="About"
             >
-                <svg
-                    aria-hidden="true"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                >
-                    <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"
-                    />
-                </svg>
+                <span class="md-symbols" aria-hidden="true">info</span>
             </button>
 
             <button
@@ -103,15 +93,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 @click="openDialog(composeDialog)"
                 aria-label="New Log"
             >
-                <svg
-                    aria-hidden="true"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                >
-                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
-                </svg>
+                <span class="md-symbols" aria-hidden="true">add</span>
             </button>
 
             <button
@@ -121,17 +103,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 @click="openDialog(logoutDialog)"
                 aria-label="Logout"
             >
-                <svg
-                    aria-hidden="true"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                >
-                    <path
-                        d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"
-                    />
-                </svg>
+                <span class="md-symbols" aria-hidden="true">logout</span>
             </button>
 
             <button
@@ -141,17 +113,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 @click="openDialog(oauthDialog)"
                 aria-label="Login"
             >
-                <svg
-                    aria-hidden="true"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                >
-                    <path
-                        d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v14z"
-                    />
-                </svg>
+                <span class="md-symbols" aria-hidden="true">login</span>
             </button>
         </nav>
     </div>
@@ -190,17 +152,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 aria-label="Close about dialog"
                 @click="closeDialog(aboutDialog)"
             >
-                <svg
-                    aria-hidden="true"
-                    width="1em"
-                    height="1em"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                >
-                    <path
-                        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"
-                    />
-                </svg>
+                <span class="md-symbols" aria-hidden="true">close</span>
             </button>
         </header>
         <div
@@ -269,7 +221,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
     transform: translateX(-50%);
     width: min(400px, 90vw);
     height: 80px;
-    z-index: 100;
+    z-index: 10000;
     pointer-events: auto;
 }
 

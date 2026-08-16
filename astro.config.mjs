@@ -22,5 +22,10 @@ export default defineConfig({
       provider: fontProviders.fontsource(),
       name: "Maple Mono",
     },
+    {
+      cssVariable: "--material-symbols-rounded",
+      provider: fontProviders.fontsource(),
+      name: "Material Symbols Rounded",
+    },
   ],
 });

@@ -22,6 +22,7 @@
     background: none;
     cursor: pointer;
     user-select: none;
+    text-decoration: none;
     -moz-user-select: none;
     -webkit-user-select: none;
     color: var(--surface-contrast);
