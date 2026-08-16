@@ -1,0 +1,8 @@
+@layer components {
+  .blogs {
+    display: grid;
+    /* Automatically fits as many card columns as possible */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-xl);
+  }
+}

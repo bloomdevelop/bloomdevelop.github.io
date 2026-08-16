@@ -1,10 +1,11 @@
 @layer base {
   :root {
-    --space-sm: 4px;
-    --space-md: 8px;
-    --space-lg: 16px;
-    --space-xl: 32px;
-    --space-2xl: 64px;
+    --space-sm: 2px;
+    --space-md: 4px;
+    --space-lg: 8px;
+    --space-xl: 16px;
+    --space-2xl: 32px;
+    --space-3xl: 64px;
 
     --rounded-sm: 5px;
     --rounded-md: 10px;
@@ -89,7 +90,7 @@
     margin-block: var(--space-md);
     margin-inline: auto;
     max-width: 90ch;
-    padding: var(--space-lg);
+    padding: var(--space-xl);
   }
 
   .md-symbols {

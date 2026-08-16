@@ -1,0 +1,14 @@
+@layer components {
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-lg);
+
+    @media (max-width: 320px) {
+      & h1 {
+        font-size: 1.5rem;
+      }
+    }
+  }
+}

@@ -130,10 +130,10 @@ function closeDialog(dialog: HTMLDialogElement | null) {
         </header>
         <p>Are you sure you want to logout?</p>
         <div data-type="footer">
-            <button data-component="button" data-variant="primary" @click="logout">Logout</button>
-            <button data-component="button" data-variant="neutral" @click="closeDialog(logoutDialog)">
+            <button data-component="button" data-color="neutral" @click="closeDialog(logoutDialog)">
                 Cancel
             </button>
+            <button data-component="button" data-color="error" @click="logout">Logout</button>
         </div>
     </dialog>
     <dialog
@@ -163,7 +163,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 align-items: center;
                 justify-content: center;
                 gap: 1rem;
-                margin-block: var(--space-md);
+                margin-block: var(--space-lg);
             "
         >
             <img
@@ -197,15 +197,16 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 </p>
             </div>
         </div>
-        <div data-type="footer">
-            <p>&copy; {{ new Date().getFullYear() }} Bloom Perez</p>
+        <footer>
             <a
                 href="https://github.com/bloomdevelop/bloomdevelop.github.io"
                 target="_blank"
+                data-component="button"
+                data-color="neutral"
             >
                 View Source
             </a>
-        </div>
+        </footer>
     </dialog>
     <MigrationDialog ref="migrationDialog" />
 </template>
@@ -213,7 +214,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
 <style scoped>
 .toolbar-hover-zone {
     --toolbar-radius: var(--rounded-xl);
-    --toolbar-padding: var(--space-md);
+    --toolbar-padding: var(--space-lg);
 
     position: fixed;
     bottom: 0;

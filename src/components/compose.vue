@@ -68,12 +68,12 @@ async function submit() {
             v-if="isCrosspostEnabled && content.trim().length > 300"
             aria-live="polite"
             data-component="alert"
-            data-variant="warning"
+            data-color="warning"
         >
             <p>Looks like your content is over 300 characters…</p>
             <p>It will be truncated when submitted.</p>
         </div>
-        <div v-if="errorRef" role="alert" data-component="alert" data-variant="error">
+        <div v-if="errorRef" role="alert" data-component="alert" data-color="error">
             {{ errorRef.message }}
         </div>
 
@@ -86,7 +86,7 @@ async function submit() {
                 data-component="button"
                 :disabled="isEmpty || isSubmitting"
                 type="submit"
-                data-variant="primary"
+                data-color
             >
                 Submit
             </button>
@@ -117,7 +117,7 @@ async function submit() {
     border-radius: var(--rounded-md);
     background: var(--surface);
     color: var(--surface-contrast);
-    padding: var(--space-md);
+    padding: var(--space-lg);
     box-sizing: border-box;
     box-shadow:
         inset 0 1px 2px light-dark(rgba(0,0,0, 0.12), rgba(255,255,255, 0.06)),

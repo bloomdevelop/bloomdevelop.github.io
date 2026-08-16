@@ -16,7 +16,7 @@
 		--warning-contrast: contrast-color(var(--warning));
 
 		--error: light-dark(oklch(0.61 0.23 27), oklch(0.63 0.23 25));
-		--error-contrast: contrast-color(var(--error));
+		--error-contrast: white; /* contrast-color() appears to create a bad contrast against that color. */
 
 		--border-primary: light-dark(
 			color-mix(in oklch, var(--primary), black 10%),

@@ -59,11 +59,11 @@ try {
 <div class="logs" id="logs">
   <p role="status" aria-atomic="true" class="visually-hidden" id="logs-status"></p>
   {fetchError ? (
-    <div role="alert" data-component="alert" data-variant="error">
+    <div role="alert" data-component="alert" data-color="error">
       {fetchError}
     </div>
   ) : posts.length === 0 ? (
-    <div data-component="alert" data-variant="warning">
+    <div data-component="alert" data-color="warning">
       There's no logs… yet. :(
     </div>
   ) : (
@@ -75,12 +75,12 @@ try {
         <footer>
           <span data-type="date">{formatDate(log.createdAt)}</span>
           {log.blueskyPost && (
-            <div data-component="badge" data-variant="secondary">
+            <div data-component="badge" data-color="secondary">
               <span class="md-symbols" aria-hidden="true">share</span>
               Crossposted
             </div>
           )}
-          <button data-component="button" data-variant="primary" data-rkey={log.rkey}>
+          <button data-component="button" data-color data-rkey={log.rkey}>
             <span class="md-symbols" aria-hidden="true">link</span>
             <span>Permalink</span>
           </button>
@@ -134,10 +134,10 @@ function makeCardHTML(log: any): string {
         <span data-type="date">${formatDate(log.createdAt)}</span>
         ${
           log.blueskyPost
-            ? `<div data-component="badge" data-variant="secondary">${shareIcon}Crossposted</div>`
+            ? `<div data-component="badge" data-color="secondary">${shareIcon}Crossposted</div>`
             : ""
         }
-        <button data-component="button" data-variant="primary" data-rkey="${log.rkey}">
+        <button data-component="button" data-color data-rkey="${log.rkey}">
           ${linkIcon}<span>Permalink</span>
         </button>
       </footer>

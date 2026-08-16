@@ -1,0 +1,77 @@
+@layer components {
+  [data-component="link"] {
+    --duration: 250ms;
+
+    @media (prefers-reduced-motion: reduce) {
+      --duration: 0ms;
+    }
+
+    /* Kept flex here just to align internal text/icons side-by-side */
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+
+    padding: var(--space-lg) var(--space-xl);
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--rounded-md);
+    transition: color var(--duration) ease;
+    font-size: 1.4em;
+
+    /* NOTE: Removed 'flex-grow: 1' and 'width: 100%' @media (max-width: 600px)
+       because the parent Grid handles full-width stretching automatically.
+        */
+
+    &[data-type="twitter"] {
+      background-color: oklch(0.6813 0.1606 244.82);
+      color: white;
+
+      @supports (contrast-color(oklch(0.6813 0.1606 244.82))) {
+        color: contrast-color(oklch(0.6813 0.1606 244.82));
+      }
+    }
+
+    &[data-type="bluesky"] {
+      background-color: oklch(0.6193 0.2028 256.33);
+      color: white;
+
+      @supports (contrast-color(oklch(0.6193 0.2028 256.33))) {
+        color: contrast-color(oklch(0.6193 0.2028 256.33));
+      }
+    }
+
+    &[data-type="github"] {
+      background-color: oklch(0.2957 0.0123 258.37);
+      color: white;
+
+      @supports (contrast-color(oklch(0.2957 0.0123 258.37))) {
+        color: contrast-color(oklch(0.2957 0.0123 258.37));
+      }
+    }
+
+    &[data-type="discord"] {
+      background-color: #5865f2;
+      color: white;
+
+      @supports (contrast-color(#5865f2)) {
+        color: contrast-color(#5865f2);
+      }
+    }
+
+    &[data-type="fluxer"] {
+      background-color: #4641d9;
+      color: white;
+
+      @supports (contrast-color(#4641d9)) {
+        color: contrast-color(#4641d9);
+      }
+    }
+
+    @media (max-width: 507px) {
+      &:last-child {
+        grid-column: 1 / -1;
+      }
+    }
+  }
+}

@@ -71,7 +71,7 @@ defineExpose({ open, close });
       v-if="error"
       role="alert"
       data-component="alert"
-      data-variant="error"
+      data-color="error"
     >
       <p>Migration was interrupted by an error:</p>
       <p>{{ error }}</p>
@@ -81,7 +81,7 @@ defineExpose({ open, close });
       role="status"
       aria-live="polite"
       data-component="alert"
-      data-variant="warning"
+      data-color="warning"
     >
       <p>
         {{ progress ? `${progress.processed} / ${progress.total}` : "preparing…" }}
@@ -97,7 +97,7 @@ defineExpose({ open, close });
     <div data-type="footer">
       <button
         data-component="button"
-        data-variant="primary"
+        data-color
         :disabled="isMigrating"
         :aria-busy="isMigrating"
         @click="start"
@@ -107,7 +107,7 @@ defineExpose({ open, close });
       <button
         data-component="button"
         class="danger"
-        data-variant="neutral"
+        data-color="neutral"
         :disabled="isMigrating"
         @click="cancelAndLogout"
       >

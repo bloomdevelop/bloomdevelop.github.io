@@ -18,7 +18,7 @@ const { Content } = await render(post);
 
 <BaseLayout>
     <nav>
-        <a href="/" data-component="button" data-variant="primary">
+        <a href="/" data-component="button" data-color>
           <span class="md-symbols">arrow_back</span>
           Back to home page
         </a>
@@ -33,7 +33,7 @@ const { Content } = await render(post);
               </div>
             )}
 
-            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <div data-component="tags">
                 {post.data.tags?.map((tag) => <Tag tag={tag} />)}
             </div>
         </div>

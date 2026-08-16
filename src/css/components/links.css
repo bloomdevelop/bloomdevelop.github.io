@@ -1,0 +1,19 @@
+@layer components {
+  [data-component="links"] {
+    display: grid;
+    /* Automatically fits as many columns as possible, stretching them to fill the space */
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: var(--space-sm);
+
+    @media (max-width: 425px) {
+      /* Drops down to a single full-width column */
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    }
+
+    &:has(> :nth-last-child(2):first-child) {
+      @media (max-width: 507px) {
+        grid-template-columns: unset;
+      }
+    }
+  }
+}
