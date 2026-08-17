@@ -31,9 +31,13 @@
     }
 
     & .card-content {
-      padding: var(--space-lg);
+      padding: var(--space-md) var(--space-lg);
       white-space: pre-wrap;
       overflow-wrap: break-word;
+
+      & p {
+        margin-block: 0;
+      }
     }
 
     & h2 {

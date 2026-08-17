@@ -31,9 +31,7 @@ try {
   ) : (
     posts.map((log) => (
       <div data-component="card" data-rkey={log.rkey}>
-        <div class="card-content">
-          <p>{log.content}</p>
-        </div>
+        <div class="card-content"><p>{log.content}</p></div>
         <footer>
           <span data-type="date">{formatDate(log.createdAt)}</span>
           {log.blueskyPost && (
@@ -45,6 +43,16 @@ try {
           <button data-component="button" data-color data-rkey={log.rkey}>
             <span class="md-symbols" aria-hidden="true">link</span>
             <span>Permalink</span>
+          </button>
+          <button
+            data-component="button"
+            data-color
+            data-copy-twitter
+            data-rkey={log.rkey}
+            style="--color: var(--twitter); --color-contrast: white;"
+          >
+            <span class="md-symbols" aria-hidden="true">content_copy</span>
+            <span>Copy as Twitter post</span>
           </button>
         </footer>
       </div>
@@ -122,12 +130,13 @@ function escapeHtml(text: string): string {
 function makeCardHTML(log: LogEntry): string {
   const shareIcon = '<span class="md-symbols" aria-hidden="true">share</span>';
   const linkIcon = '<span class="md-symbols" aria-hidden="true">link</span>';
+  const twitterCopyIcon =
+    '<span class="md-symbols" aria-hidden="true">content_copy</span>';
+  const twitterStyle = 'style="--color: var(--twitter); --color-contrast: white;"';
 
   return `
     <div data-component="card" data-rkey="${log.rkey}">
-      <div class="card-content">
-        <p>${escapeHtml(log.content)}</p>
-      </div>
+      <div class="card-content"><p>${escapeHtml(log.content)}</p></div>
       <footer>
         <span data-type="date">${formatDate(log.createdAt)}</span>
         ${
@@ -137,6 +146,15 @@ function makeCardHTML(log: LogEntry): string {
         }
         <button data-component="button" data-color data-rkey="${log.rkey}">
           ${linkIcon}<span>Permalink</span>
+        </button>
+        <button
+          data-component="button"
+          data-color
+          data-copy-twitter
+          data-rkey="${log.rkey}"
+          ${twitterStyle}
+        >
+          ${twitterCopyIcon}<span>Copy as Twitter post</span>
         </button>
       </footer>
     </div>
@@ -169,25 +187,42 @@ async function copyToClipboard(text: string): Promise<boolean> {
 }
 
 container.addEventListener("click", async (e) => {
-  const button = (e.target as HTMLElement).closest('[data-component="button"][data-rkey]');
+  const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-component="button"][data-rkey]');
   if (!button) return;
   const rkey = button.getAttribute("data-rkey");
   if (!rkey) return;
 
-  const permalink = new URL(window.location.href);
-  permalink.searchParams.set("rkey", rkey);
-
+  const status = document.getElementById("logs-status");
   const span = button.querySelector("span:last-child");
   const original = span?.textContent ?? null;
 
-  if (await copyToClipboard(permalink.toString())) {
+  const permalink = new URL(window.location.href);
+  permalink.searchParams.set("rkey", rkey);
+
+  const isTwitterCopy = button.dataset.copyTwitter !== undefined;
+  let text: string;
+  let failureLabel: string;
+  if (isTwitterCopy) {
+    const content =
+      button.closest("[data-component=card]")
+        ?.querySelector(".card-content p")?.textContent?.trim() ?? "";
+    text = [content, permalink.toString()].filter(Boolean).join("\n\n");
+    failureLabel = "Unable to copy Twitter post";
+  } else {
+    text = permalink.toString();
+    failureLabel = "Unable to copy permalink";
+  }
+
+  if (await copyToClipboard(text)) {
     if (span) {
       span.textContent = "Copied!";
       setTimeout(() => { span.textContent = original; }, 2000);
     }
+    if (status) status.textContent = "Copied to clipboard.";
   } else {
-    console.error("[APP]", "failed to copy permalink");
-    if (span) span.textContent = "Unable to copy permalink";
+    console.error("[APP]", isTwitterCopy ? "failed to copy twitter post" : "failed to copy permalink");
+    if (span) span.textContent = failureLabel;
+    if (status) status.textContent = `Failed to copy. ${failureLabel}`;
   }
 });
 
