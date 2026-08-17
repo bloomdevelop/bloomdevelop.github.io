@@ -19,7 +19,8 @@ export function constructApiUrl(
 }
 
 export function extractRkeyFromPlainAtURI(uri: string) {
-	return uri.split("/").at(-1);
+	// split() always produces at least one element, so `at(-1)` is never undefined.
+	return uri.split("/").at(-1) ?? "";
 }
 
 export function formatDate(date: string) {

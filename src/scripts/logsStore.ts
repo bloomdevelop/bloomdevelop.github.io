@@ -1,12 +1,12 @@
 type Listener = () => void;
 
-const STORAGE_KEY = "bloom.logs.pending";
+export const STORAGE_KEY = "bloom.logs.pending";
 
-interface LogEntry {
+export interface LogEntry {
 	rkey: string;
 	content: string;
 	createdAt: string;
-	blueskyPost?: boolean;
+	blueskyPost?: boolean | { uri: string; cid: string };
 }
 
 let data: LogEntry[] = [];
@@ -57,6 +57,10 @@ export function getLogs(): LogEntry[] {
 	return data;
 }
 
+function byNewest(a: LogEntry, b: LogEntry): number {
+	return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+}
+
 /**
  * Merge logs created locally (and persisted client-side) into freshly-fetched
  * server logs. Keeps the newest local logs visible even when the server-side
@@ -78,7 +82,20 @@ export function mergeWithPending(serverLogs: LogEntry[]): LogEntry[] {
 	for (const log of serverLogs) byRkey.set(log.rkey, log);
 	for (const log of pending) byRkey.set(log.rkey, log);
 
-	return [...byRkey.values()].sort(
-		(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-	);
+	return [...byRkey.values()].sort(byNewest);
+}
+
+/**
+ * Merge logs pending in localStorage (e.g. written by another tab) into the
+ * current in-memory list, without touching server state.
+ */
+export function mergeLocalPending() {
+	const pending = readPending();
+	if (pending.length === 0) return;
+
+	const byRkey = new Map<string, LogEntry>();
+	for (const log of data) byRkey.set(log.rkey, log);
+	for (const log of pending) byRkey.set(log.rkey, log);
+
+	setLogs([...byRkey.values()].sort(byNewest));
 }
