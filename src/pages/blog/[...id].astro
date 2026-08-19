@@ -5,7 +5,8 @@ import Tag from '../../components/tag.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
-  return posts.map(post => ({
+  const visiblePosts = posts.filter((post) => import.meta.env.DEV || !post.data.draft);
+  return visiblePosts.map(post => ({
     params: { id: post.id },
     props: { post },
   }));
@@ -27,7 +28,7 @@ const { Content } = await render(post);
         <div class="post-details">
             <h1>{post.data.title}</h1>
             <p>Published on {post.data.pubDate.toLocaleDateString()}</p>
-            {post.data.draft && (
+            {post.data.draft && import.meta.env.DEV && (
               <div data-component="alert">
                     <p>This post is a draft and may not be published yet. Please revise the content and publish when ready.</p>
               </div>
