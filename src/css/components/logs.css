@@ -1,7 +1,62 @@
 @layer components {
-  .logs {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-lg);
-  }
+	.logs {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-lg);
+	}
+
+	/* Loading skeleton shown while the client re-syncs the initial snapshot */
+	[data-logs-skeleton] {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-lg);
+
+		& .skeleton-line,
+		& .skeleton-pill {
+			display: block;
+			position: relative;
+			overflow: hidden;
+			border-radius: var(--rounded-md);
+			background: color-mix(in oklch, var(--surface-contrast), transparent 90%);
+		}
+
+		& .skeleton-line {
+			height: 0.85em;
+			margin-block: 0.4em;
+		}
+
+		& .skeleton-pill {
+			width: 104px;
+			height: 34px;
+			border-radius: 999px;
+		}
+
+		& .skeleton-line::after,
+		& .skeleton-pill::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			transform: translateX(-100%);
+			background: linear-gradient(
+				90deg,
+				transparent,
+				color-mix(in oklch, var(--surface-contrast), transparent 78%),
+				transparent
+			);
+			animation: skeleton-shimmer 1.5s ease-in-out infinite;
+		}
+	}
+}
+
+@keyframes skeleton-shimmer {
+	100% {
+		transform: translateX(100%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-logs-skeleton] .skeleton-line::after,
+	[data-logs-skeleton] .skeleton-pill::after {
+		animation: none;
+	}
 }
