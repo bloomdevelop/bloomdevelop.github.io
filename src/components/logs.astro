@@ -14,9 +14,12 @@ try {
 }
 ---
 
-<script type="application/json" id="logs-initial" is:inline>
-{encodeURIComponent(JSON.stringify(posts))}
-</script>
+<script
+    type="application/json"
+    id="logs-initial"
+    is:inline
+    set:html={encodeURIComponent(JSON.stringify(posts))}
+></script>
 
 <div class="logs" id="logs">
   <p role="status" aria-atomic="true" class="visually-hidden" id="logs-status"></p>
