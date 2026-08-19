@@ -1,128 +1,128 @@
 @layer components {
-  [data-component="dialog"]:open {
-    opacity: 1;
-    transform: translateY(0px);
-  }
+	[data-component="dialog"]:open {
+		opacity: 1;
+		transform: translateY(0px);
+	}
 
-  [data-component="dialog"] {
-    --duration: var(--duration-fast);
-    --rounded-size: var(--rounded-xl);
-    --padding: calc(var(--space-lg) + 5px);
+	[data-component="dialog"] {
+		--duration: var(--duration-fast);
+		--rounded-size: var(--rounded-xl);
+		--padding: calc(var(--space-lg) + 5px);
 
-    @media (prefers-reduced-motion: reduce) {
-      --duration: 0ms;
-    }
+		@media (prefers-reduced-motion: reduce) {
+			--duration: 0ms;
+		}
 
-    border-radius: var(--rounded-size);
-    border: none;
-    background: linear-gradient(
-      color-mix(in oklch, var(--surface), white 6%) 0%,
-      var(--surface) 45%,
-      var(--surface) 65%,
-      color-mix(in oklch, var(--surface), white 4%) 100%
-    );
-    box-shadow:
-      inset 0 2px 6px
-        color-mix(in oklch, var(--surface-contrast), transparent 60%),
-      inset 0 0 0 1px
-        color-mix(in oklch, var(--surface-contrast), transparent 80%),
-      var(--shadow-lg);
-    overscroll-behavior: contain;
+		border-radius: var(--rounded-size);
+		border: none;
+		background: linear-gradient(
+			color-mix(in oklch, var(--surface), white 6%) 0%,
+			var(--surface) 45%,
+			var(--surface) 65%,
+			color-mix(in oklch, var(--surface), white 4%) 100%
+		);
+		box-shadow:
+			inset 0 2px 6px
+			color-mix(in oklch, var(--surface-contrast), transparent 60%),
+			inset 0 0 0 1px
+			color-mix(in oklch, var(--surface-contrast), transparent 80%),
+			var(--shadow-lg);
+		overscroll-behavior: contain;
 
-    width: 100%;
-    max-width: 320px;
+		width: 100%;
+		max-width: 320px;
 
-    padding: var(--padding);
+		padding: var(--padding);
 
-    opacity: 0;
-    transform: translateY(-10px);
+		opacity: 0;
+		transform: translateY(-10px);
 
-    transition:
-      opacity var(--duration) var(--ease-smooth-out),
-      transform var(--duration) var(--ease-smooth-out),
-      overlay var(--duration) allow-discrete,
-      display var(--duration) allow-discrete;
+		transition:
+			opacity var(--duration) var(--ease-smooth-out),
+			transform var(--duration) var(--ease-smooth-out),
+			overlay var(--duration) allow-discrete,
+			display var(--duration) allow-discrete;
 
-    & [data-type="footer"] {
-      display: flex;
-      gap: var(--space-md);
-      justify-content: flex-end;
-      align-items: center;
-    }
+		& [data-type="footer"] {
+			display: flex;
+			gap: var(--space-md);
+			justify-content: flex-end;
+			align-items: center;
+		}
 
-    & header {
-      display: flex;
-      gap: var(--space-md);
-      justify-content: space-between;
-      align-items: flex-start;
+		& header {
+			display: flex;
+			gap: var(--space-md);
+			justify-content: space-between;
+			align-items: flex-start;
 
-      & h1 {
-        font-size: 1.7em;
-        margin: var(--space-sm);
-        margin-bottom: var(--space-md);
-      }
+			& h1 {
+				font-size: 1.7em;
+				margin: var(--space-sm);
+				margin-bottom: var(--space-md);
+			}
 
-      & [data-component="button"][data-size="icon"] {
-        --size: 2rem;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: var(--size);
-        height: var(--size);
-        font-size: calc(var(--size) / 2);
-        padding: 0;
-        border-radius: max(0px, calc(var(--rounded-size) - var(--padding)));
-      }
-    }
+			& [data-component="button"][data-size="icon"] {
+				--size: 2rem;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				width: var(--size);
+				height: var(--size);
+				font-size: calc(var(--size) / 2);
+				padding: 0;
+				border-radius: max(0px, calc(var(--rounded-size) - var(--padding)));
+			}
+		}
 
-    & [data-type="footer"] {
-      gap: var(--space-lg);
-    }
+		& [data-type="footer"] {
+			gap: var(--space-lg);
+		}
 
-    & [data-type="footer"] [data-component="button"] {
-      border-radius: max(0px, calc(var(--rounded-size) - var(--padding)));
-    }
+		& [data-type="footer"] [data-component="button"] {
+			border-radius: max(0px, calc(var(--rounded-size) - var(--padding)));
+		}
 
-    & [data-type="footer"] p {
-      margin: 0;
-    }
+		& [data-type="footer"] p {
+			margin: 0;
+		}
 
-    /* Footer links that look like buttons now are actual buttons
+		/* Footer links that look like buttons now are actual buttons
        (data-component="button" data-color="neutral"). Keep the compact
        height; hover comes from the shared button :hover overlay. */
-    & [data-type="footer"] a[data-component="button"][data-color="neutral"] {
-      max-height: 32px;
-    }
-  }
+		& [data-type="footer"] a[data-component="button"][data-color="neutral"] {
+			max-height: 32px;
+		}
+	}
 
-  [data-component="dialog"]::backdrop {
-    --duration: var(--duration-fast);
+	[data-component="dialog"]::backdrop {
+		--duration: var(--duration-fast);
 
-    @media (prefers-reduced-motion: reduce) {
-      --duration: 0ms;
-    }
+		@media (prefers-reduced-motion: reduce) {
+			--duration: 0ms;
+		}
 
-    background-color: transparent;
-    transition:
-      display var(--duration) allow-discrete,
-      overlay var(--duration) allow-discrete,
-      background-color var(--duration) var(--ease-smooth-out);
-  }
+		background-color: transparent;
+		transition:
+			display var(--duration) allow-discrete,
+			overlay var(--duration) allow-discrete,
+			background-color var(--duration) var(--ease-smooth-out);
+	}
 
-  [data-component="dialog"]:open::backdrop {
-    background-color: color-mix(in oklch, black, transparent 80%);
-  }
+	[data-component="dialog"]:open::backdrop {
+		background-color: color-mix(in oklch, black, transparent 80%);
+	}
 
-  @starting-style {
-    [data-component="dialog"]::backdrop {
-      background-color: transparent;
-    }
-  }
+	@starting-style {
+		[data-component="dialog"]::backdrop {
+			background-color: transparent;
+		}
+	}
 
-  @starting-style {
-    [data-component="dialog"]:open {
-      opacity: 0;
-      transform: translateY(-10px);
-    }
-  }
+	@starting-style {
+		[data-component="dialog"]:open {
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+	}
 }

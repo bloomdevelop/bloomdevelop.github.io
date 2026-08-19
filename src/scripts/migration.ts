@@ -32,7 +32,7 @@ interface BunnyLogEntry {
 
 interface ListRecordsResponse<T> {
 	cursor?: string;
-  records: { uri: string; cid: string, value: T }[];
+	records: { uri: string; cid: string; value: T }[];
 }
 
 /**
@@ -97,7 +97,8 @@ export async function queryAllRecordsToBeMigrated(
 
 		return {
 			cursor: res.data.cursor,
-			records: res.data.records as unknown as ListRecordsResponse<BunnyLogEntry>["records"],
+			records: res.data
+				.records as unknown as ListRecordsResponse<BunnyLogEntry>["records"],
 		};
 	}
 

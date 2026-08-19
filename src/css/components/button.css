@@ -1,147 +1,152 @@
 @layer components {
-  [data-component="button"] {
-    --duration: 250ms;
-    @media (prefers-reduced-motion: reduce) {
-      --duration: 0ms;
-    }
+	[data-component="button"] {
+		--duration: 250ms;
+		@media (prefers-reduced-motion: reduce) {
+			--duration: 0ms;
+		}
 
-    padding: 0;
-    margin: 0;
-    border: none;
-    background: none;
-    cursor: pointer;
-    user-select: none;
-    text-decoration: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    color: var(--surface-contrast);
+		padding: 0;
+		margin: 0;
+		border: none;
+		background: none;
+		cursor: pointer;
+		user-select: none;
+		text-decoration: none;
+		-moz-user-select: none;
+		-webkit-user-select: none;
+		color: var(--surface-contrast);
 
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
 
-    &[data-variant],
-    &[data-color] {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      font-size: 13px;
+		&[data-variant],
+		&[data-color] {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+			font-size: 13px;
 
-      padding: var(--space-lg) var(--space-xl);
-      font-family: var(--body);
-      font-weight: 400;
-      border-radius: var(--rounded-md);
+			padding: var(--space-lg) var(--space-xl);
+			font-family: var(--body);
+			font-weight: 400;
+			border-radius: var(--rounded-md);
 
-      transition:
-        background-color var(--duration),
-        background-image var(--duration),
-        color var(--duration),
-        box-shadow var(--duration);
-    }
+			transition:
+				background-color var(--duration),
+				background-image var(--duration),
+				color var(--duration),
+				box-shadow var(--duration);
+		}
 
-    &[data-variant="ghost"] {
-      background: transparent;
+		&[data-variant="ghost"] {
+			background: transparent;
 
-      &:hover {
-        background: var(--surface-1);
-        color: var(--surface-1-contrast);
-      }
+			&:hover {
+				background: var(--surface-1);
+				color: var(--surface-1-contrast);
+			}
 
-      &:active {
-        background-color: light-dark(
-          color-mix(in oklch, var(--surface-1), black 10%),
-          color-mix(in oklch, var(--surface-1), white 10%)
-        );
-      }
-    }
+			&:active {
+				background-color: light-dark(
+					color-mix(in oklch, var(--surface-1), black 10%),
+					color-mix(in oklch, var(--surface-1), white 10%)
+				);
+			}
+		}
 
-    &[data-size="icon"] {
-      --size: 34px;
-      display: grid;
-      place-content: center;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
+		&[data-size="icon"] {
+			--size: 34px;
+			display: grid;
+			place-content: center;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
 
-      font-size: 1.25rem;
-      min-width: var(--size);
-      min-height: var(--size);
-      padding: var(--space-md);
-      border-radius: var(--rounded-sm);
+			font-size: 1.25rem;
+			min-width: var(--size);
+			min-height: var(--size);
+			padding: var(--space-md);
+			border-radius: var(--rounded-sm);
 
-      & span {
-        margin-top: 1px;
-      }
-    }
+			& span {
+				margin-top: 1px;
+			}
+		}
 
-    &[popovertarget] {
-      anchor-name: --popover;
-    }
-  }
+		&[popovertarget] {
+			anchor-name: --popover;
+		}
+	}
 
-  /* Colored surfaces for buttons & badges are driven entirely by --color
+	/* Colored surfaces for buttons & badges are driven entirely by --color
      (plus its contrast token); `data-color` picks between the named theme
      colors below. Bare `data-color` (empty value) falls back to primary.
      Badges with an inline style="--color: …" use the same treatment. */
-  [data-component="button"][data-color],
-  [data-component="badge"][data-color],
-  [data-component="badge"][style^="--color"] {
-    --color: var(--primary);
-    --color-contrast: var(--primary-contrast);
+	[data-component="button"][data-color],
+	[data-component="badge"][data-color],
+	[data-component="badge"][style^="--color"] {
+		--color: var(--primary);
+		--color-contrast: var(--primary-contrast);
 
-    background: var(--color);
-    background-image: linear-gradient(
-      color-mix(in oklch, var(--color), white 25%) 0%,
-      var(--color) 60%,
-      var(--color) 70%,
-      color-mix(in oklch, var(--color), white 30%) 90%
-    );
-    text-shadow: 0 1px 2px color-mix(in oklch, var(--color), black 35%);
-    color: var(--color-contrast);
-    box-shadow:
-      inset 0 0 0 0.5px color-mix(in oklch, var(--color), black 20%),
-      0 1px 4px color-mix(in oklch, var(--color), transparent 20%),
-      0 3px 8px color-mix(in oklch, color-mix(in oklch, var(--color), transparent 40%), black 20%);
+		background: var(--color);
+		background-image: linear-gradient(
+			color-mix(in oklch, var(--color), white 25%) 0%,
+			var(--color) 60%,
+			var(--color) 70%,
+			color-mix(in oklch, var(--color), white 30%) 90%
+		);
+		text-shadow: 0 1px 2px color-mix(in oklch, var(--color), black 35%);
+		color: var(--color-contrast);
+		box-shadow:
+			inset 0 0 0 0.5px color-mix(in oklch, var(--color), black 20%),
+			0 1px 4px color-mix(in oklch, var(--color), transparent 20%),
+			0 3px 8px
+			color-mix(
+				in oklch,
+				color-mix(in oklch, var(--color), transparent 40%),
+				black 20%
+			);
 
-    & svg {
-      filter: drop-shadow(
-        0 1px 2px color-mix(in oklch, var(--color), black 35%)
-      );
-    }
-  }
+		& svg {
+			filter: drop-shadow(
+				0 1px 2px color-mix(in oklch, var(--color), black 35%)
+			);
+		}
+	}
 
-  /* Pressed feedback for colored buttons (not badges): like a real
+	/* Pressed feedback for colored buttons (not badges): like a real
      button being pushed — the gradient darkens & flattens, and the drop
      shadow collapses to suggest the button pressed into its housing. */
-  [data-component="button"][data-color]:active:not(:disabled) {
-    background-image: linear-gradient(
-      var(--color) 0%,
-      color-mix(in oklch, var(--color), black 12%) 40%,
-      color-mix(in oklch, var(--color), black 18%) 100%
-    );
-    box-shadow:
-      inset 0 0 0 0.5px color-mix(in oklch, var(--color), black 30%),
-      inset 0 2px 6px color-mix(in oklch, var(--color), black 25%),
-      0 1px 2px color-mix(in oklch, var(--color), transparent 50%);
-  }
+	[data-component="button"][data-color]:active:not(:disabled) {
+		background-image: linear-gradient(
+			var(--color) 0%,
+			color-mix(in oklch, var(--color), black 12%) 40%,
+			color-mix(in oklch, var(--color), black 18%) 100%
+		);
+		box-shadow:
+			inset 0 0 0 0.5px color-mix(in oklch, var(--color), black 30%),
+			inset 0 2px 6px color-mix(in oklch, var(--color), black 25%),
+			0 1px 2px color-mix(in oklch, var(--color), transparent 50%);
+	}
 
-  [data-component="button"][data-color="secondary"],
-  [data-component="badge"][data-color="secondary"] {
-    --color: var(--secondary);
-    --color-contrast: var(--secondary-contrast);
-  }
+	[data-component="button"][data-color="secondary"],
+	[data-component="badge"][data-color="secondary"] {
+		--color: var(--secondary);
+		--color-contrast: var(--secondary-contrast);
+	}
 
-  [data-component="button"][data-color="neutral"],
-  [data-component="badge"][data-color="neutral"] {
-    --color: var(--surface-1);
-    --color-contrast: var(--surface-1-contrast);
-  }
+	[data-component="button"][data-color="neutral"],
+	[data-component="badge"][data-color="neutral"] {
+		--color: var(--surface-1);
+		--color-contrast: var(--surface-1-contrast);
+	}
 
-  [data-component="button"][data-color="error"],
-  [data-component="badge"][data-color="error"] {
-    --color: var(--error);
-    --color-contrast: var(--error-contrast);
-  }
+	[data-component="button"][data-color="error"],
+	[data-component="badge"][data-color="error"] {
+		--color: var(--error);
+		--color-contrast: var(--error-contrast);
+	}
 }

@@ -58,17 +58,16 @@
 		/* Brand colors — shared between the social links and copy actions */
 		--twitter: oklch(0.6813 0.1606 244.82);
 
-
 		/* Hourly sky colors */
 		--sunrise-t: oklch(70% 0.06 51.57);
 		--sunrise-m: oklch(82% 0.13 64.04);
 		--sunrise-b: oklch(72% 0.18 46.87);
 
 		--noon-t: oklch(61% 0.13 236.48);
-		--noon-m: oklch(76% 0.14 220.40);
+		--noon-m: oklch(76% 0.14 220.4);
 		--noon-b: oklch(91% 0.04 198.58);
 
-		--sunset-t: oklch(74% 0.03 25.40);
+		--sunset-t: oklch(74% 0.03 25.4);
 		--sunset-m: oklch(84% 0.14 74.99);
 		--sunset-b: oklch(63% 0.25 23.22);
 

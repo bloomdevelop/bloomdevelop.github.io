@@ -135,7 +135,10 @@ export async function setupOAuth() {
 export async function startLoginFlow(identifier: string) {
 	try {
 		if (!oauthClient) {
-			console.error("[OAUTH]", "OAuth client not initialized (failed to load @atproto/oauth-client-browser). Try reloading the page.");
+			console.error(
+				"[OAUTH]",
+				"OAuth client not initialized (failed to load @atproto/oauth-client-browser). Try reloading the page.",
+			);
 			return;
 		}
 		if (!(await beforeLogin(identifier))) return;
