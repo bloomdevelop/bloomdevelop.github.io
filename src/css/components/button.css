@@ -38,7 +38,9 @@
 				background-color var(--duration),
 				background-image var(--duration),
 				color var(--duration),
-				box-shadow var(--duration);
+				box-shadow var(--duration),
+				padding-inline var(--duration),
+				width var(--duration);
 		}
 
 		&[data-variant="ghost"] {
