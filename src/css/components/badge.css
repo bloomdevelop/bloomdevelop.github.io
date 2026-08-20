@@ -3,10 +3,13 @@
 		display: inline-flex;
 		justify-content: center;
 		align-items: center;
-		gap: var(--space-sm);
+		gap: 0.5rem;
 		padding: var(--space-lg) var(--space-xl);
 		border-radius: var(--rounded-2xl);
 		font-size: 13px;
+		font-family: var(--body);
+		font-weight: 400;
+		line-height: normal;
 
 		/* Colored fill uses the shared button/badge treatment — see the
        [data-color] rules near [data-component="button"] above. */

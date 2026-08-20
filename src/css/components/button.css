@@ -32,6 +32,7 @@
 			padding: var(--space-lg) var(--space-xl);
 			font-family: var(--body);
 			font-weight: 400;
+			line-height: normal;
 			border-radius: var(--rounded-md);
 
 			transition:
