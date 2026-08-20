@@ -32,6 +32,20 @@ import ProgressiveBlur from "../components/progressive-blur.astro";
         <Font cssVariable="--inter" preload />
         <Font cssVariable="--maple-mono" preload />
         <Font cssVariable="--material-symbols-rounded" preload />
+
+        <!-- Apply persisted Settings before first paint so the progressive
+             blur never flashes on for users who have it disabled. -->
+        <script is:inline>
+            (() => {
+                try {
+                    const raw = localStorage.getItem("bloom.settings");
+                    const settings = raw ? JSON.parse(raw) : {};
+                    if (settings && settings.progressiveBlur) {
+                        document.documentElement.dataset.progressiveBlur = "on";
+                    }
+                } catch {}
+            })();
+        </script>
     </head>
     <body data-sky="sunrise">
         <ProgressiveBlur position="top" />

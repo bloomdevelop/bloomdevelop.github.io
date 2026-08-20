@@ -14,7 +14,7 @@ const hue = hash % 360;
 const chroma = 0.15 + ((hash >>> 8) % 13) / 100;
 const lightness = 0.42 + ((hash >>> 16) % 14) / 100;
 const background = `oklch(${lightness} ${chroma} ${hue})`;
-const color = lightness > 0.6 ? "#000" : "#fff";
+const color = lightness > 0.6 ? "var(--ink)" : "var(--paper)";
 ---
 
 <span data-component="badge" style={`--color: ${background}; color: ${color}`}>{tag}</span>

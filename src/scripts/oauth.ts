@@ -169,15 +169,15 @@ export function revokeSession() {
  * @param generatedTID - A pre-defined TID to use for the embed's URI. It should point to that specific log entry.
  */
 function generateEmbedForContent(
-	length: number,
-	content: string,
+	segments: string[],
 	generatedTID: string,
 ): AppBskyEmbedExternal.External {
 	return {
 		$type: "app.bsky.embed.external#external",
 		uri: `${window.location.href}?log=${generatedTID}`,
 		title: "View in Spring's Website",
-		description: length > 63 ? `${content.substring(0, 60)}…` : "", // Skip description because otherwise it looks weird and repetitive
+		description:
+			segments.length > 63 ? `${segments.slice(0, 60).join("")}…` : "", // Skip description because otherwise it looks weird and repetitive
 	};
 }
 
@@ -193,13 +193,19 @@ async function createCrosspostedLog(
 	content: string,
 	createdAt: string,
 ): Promise<ComAtprotoRepoCreateRecord.Response | undefined> {
-	let text: string[] | string = toGraphemeSegments(content);
-	const embedRecord = generateEmbedForContent(length, text.join(""), tid);
-	if (text.length > 300) {
-		text = [...content.slice(0, 299), "..."];
-	}
+	const segments = toGraphemeSegments(content);
+	const embedRecord = generateEmbedForContent(segments, tid);
 
-	text = text.join("");
+	let text: string;
+	if (segments.length > 300) {
+		// Truncate by grapheme so we never split a surrogate pair (emoji /
+		// astral characters) and produce replacement-character "garbage".
+		// Reserve 3 graphemes for the ellipsis so the post stays within
+		// Bluesky's 300-grapheme limit.
+		text = `${segments.slice(0, 300 - 3).join("")}...`;
+	} else {
+		text = content;
+	}
 
 	return await agent.com.atproto.repo.createRecord({
 		repo: agent.did as string, // They are one and the same, not sure why typescript is complaining about it

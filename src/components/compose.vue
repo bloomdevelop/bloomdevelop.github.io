@@ -7,6 +7,7 @@ const content = ref("");
 
 const count = computed(() => content.value.length);
 const isCrosspostEnabled = ref(false);
+const hasInteracted = ref(false);
 const isSubmitting = ref(false);
 const isEmpty = computed(() => content.value.trim().length === 0);
 const errorRef: Ref<Error | null> = ref(null);
@@ -79,7 +80,12 @@ async function submit() {
 
         <div data-type="footer">
             <label>
-                <input type="checkbox" v-model="isCrosspostEnabled" />
+                <input
+                    type="checkbox"
+                    v-model="isCrosspostEnabled"
+                    :class="{ 'is-init': hasInteracted }"
+                    @change="hasInteracted = true"
+                />
                 <span>Crosspost?</span>
             </label>
             <button

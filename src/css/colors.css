@@ -3,16 +3,16 @@
 		/* Required for dark mode to function properly */
 		color-scheme: light dark;
 
-		--primary: light-dark(oklch(0.665 0.21 48.7), oklch(0.66 0.21 48.7));
-		--primary-contrast: white;
+		--primary: light-dark(oklch(0.665 0.179 48.7), oklch(0.66 0.177 48.7));
+		--primary-contrast: contrast-color(var(--primary));
 
 		--secondary: light-dark(oklch(0.7 0.17 150), oklch(0.73 0.16 150));
 		--secondary-contrast: contrast-color(var(--secondary));
 
-		--info: light-dark(oklch(0.55 0.17 250), oklch(0.62 0.17 250));
+		--info: light-dark(oklch(0.55 0.155 250), oklch(0.62 0.17 250));
 		--info-contrast: contrast-color(var(--info));
 
-		--warning: light-dark(oklch(0.72 0.15 82), oklch(0.74 0.14 82));
+		--warning: light-dark(oklch(0.72 0.148 82), oklch(0.74 0.14 82));
 		--warning-contrast: contrast-color(var(--warning));
 
 		--error: light-dark(oklch(0.61 0.23 27), oklch(0.63 0.23 25));
@@ -30,6 +30,11 @@
 
 		--surface: light-dark(oklch(1 0 0), oklch(0 0 0));
 		--surface-contrast: contrast-color(var(--surface));
+
+		/* Absolute neutrals (mode-independent) — used where text color depends
+		   on a surface's own lightness, not the page theme (e.g. tag badges). */
+		--ink: oklch(0 0 0);
+		--paper: oklch(1 0 0);
 
 		--surface-1: light-dark(oklch(0.8917 0 0), oklch(0.3 0 0));
 		--surface-1-contrast: contrast-color(var(--surface-1));
@@ -56,7 +61,11 @@
 		--info-surface-contrast: contrast-color(var(--info-surface));
 
 		/* Brand colors — shared between the social links and copy actions */
-		--twitter: oklch(0.6813 0.1606 244.82);
+		--twitter: oklch(0.681 0.161 244.82);
+		--bluesky: oklch(0.619 0.203 256.33);
+		--github: oklch(0.296 0.012 258.37);
+		--discord: oklch(0.577 0.209 273.85);
+		--fluxer: oklch(0.486 0.223 275.65);
 
 		/* Hourly sky colors */
 		--sunrise-t: oklch(70% 0.06 51.57);

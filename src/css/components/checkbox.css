@@ -5,12 +5,19 @@
 		--gap: 2px;
 		--duration: var(--duration-quick);
 
+		/* Toggle (transitions.dev): the thumb travels across the track with a
+		   double-bounce overshoot. Travel is derived from --size; the rest
+		   follow the canonical toggle tuning from base.css. */
+		--toggle-travel: var(--size);
+
 		@media (prefers-reduced-motion: reduce) {
 			--duration: 0ms;
+			--toggle-dur: 0ms;
 		}
 
 		appearance: none;
 		-webkit-appearance: none;
+		border: none;
 		width: calc(var(--size) * 2);
 		height: var(--size);
 		border-radius: var(--rounded-2xl);
@@ -41,6 +48,8 @@
 				0 1px 2px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3)),
 				inset 0 1px 1px
 				light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08));
+			transform: translateX(0);
+			will-change: transform;
 			transition:
 				transform var(--duration) var(--ease-smooth-out),
 				background-color var(--duration) var(--ease-smooth-out);
@@ -59,12 +68,25 @@
 				0 1px 4px color-mix(in oklch, var(--primary), transparent 50%);
 
 			&::after {
-				transform: translateX(var(--size));
+				transform: translateX(var(--toggle-travel));
 				background: var(--primary-contrast);
 				box-shadow:
 					0 1px 3px color-mix(in oklch, var(--primary), black 40%),
 					inset 0 1px 1px rgba(255, 255, 255, 0.4);
 			}
+		}
+
+		/* Toggle double-bounce (transitions.dev). Gated behind .is-init so the
+		   keyframes only play on user interaction — without it an already-checked
+		   box would bounce on load and an unchecked box would slide in from the
+		   far end. `backwards` fill lets the resting transform (and the :active
+		   press nudge) take over once the bounce settles. */
+		&.is-init:checked::after {
+			animation: t-toggle-on var(--toggle-dur) var(--toggle-ease) backwards;
+		}
+
+		&.is-init:not(:checked)::after {
+			animation: t-toggle-off var(--toggle-dur) var(--toggle-ease) backwards;
 		}
 
 		&:hover:not(:checked) {
@@ -79,7 +101,7 @@
 		}
 
 		&:checked:active::after {
-			transform: translateX(calc(var(--size) - 2px));
+			transform: translateX(calc(var(--toggle-travel) - 2px));
 		}
 
 		&:disabled {
@@ -90,6 +112,42 @@
 		&:focus-visible {
 			outline: 2px solid var(--info);
 			outline-offset: 2px;
+		}
+	}
+
+	@keyframes t-toggle-on {
+		0% {
+			transform: translateX(0);
+		}
+		55% {
+			transform: translateX(calc(var(--toggle-travel) + var(--toggle-ov1)));
+		}
+		80% {
+			transform: translateX(calc(var(--toggle-travel) - var(--toggle-ov2)));
+		}
+		100% {
+			transform: translateX(var(--toggle-travel));
+		}
+	}
+
+	@keyframes t-toggle-off {
+		0% {
+			transform: translateX(var(--toggle-travel));
+		}
+		55% {
+			transform: translateX(calc(0px - var(--toggle-ov1)));
+		}
+		80% {
+			transform: translateX(var(--toggle-ov2));
+		}
+		100% {
+			transform: translateX(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		input[type="checkbox"].is-init::after {
+			animation: none;
 		}
 	}
 }

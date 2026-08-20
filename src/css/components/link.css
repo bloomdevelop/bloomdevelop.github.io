@@ -27,44 +27,44 @@
 			background-color: var(--twitter);
 			color: white;
 
-			@supports (contrast-color(oklch(0.6813 0.1606 244.82))) {
+			@supports (contrast-color(var(--twitter))) {
 				color: contrast-color(var(--twitter));
 			}
 		}
 
 		&[data-type="bluesky"] {
-			background-color: oklch(0.6193 0.2028 256.33);
+			background-color: var(--bluesky);
 			color: white;
 
-			@supports (contrast-color(oklch(0.6193 0.2028 256.33))) {
-				color: contrast-color(oklch(0.6193 0.2028 256.33));
+			@supports (contrast-color(var(--bluesky))) {
+				color: contrast-color(var(--bluesky));
 			}
 		}
 
 		&[data-type="github"] {
-			background-color: oklch(0.2957 0.0123 258.37);
+			background-color: var(--github);
 			color: white;
 
-			@supports (contrast-color(oklch(0.2957 0.0123 258.37))) {
-				color: contrast-color(oklch(0.2957 0.0123 258.37));
+			@supports (contrast-color(var(--github))) {
+				color: contrast-color(var(--github));
 			}
 		}
 
 		&[data-type="discord"] {
-			background-color: #5865f2;
+			background-color: var(--discord);
 			color: white;
 
-			@supports (contrast-color(#5865f2)) {
-				color: contrast-color(#5865f2);
+			@supports (contrast-color(var(--discord))) {
+				color: contrast-color(var(--discord));
 			}
 		}
 
 		&[data-type="fluxer"] {
-			background-color: #4641d9;
+			background-color: var(--fluxer);
 			color: white;
 
-			@supports (contrast-color(#4641d9)) {
-				color: contrast-color(#4641d9);
+			@supports (contrast-color(var(--fluxer))) {
+				color: contrast-color(var(--fluxer));
 			}
 		}
 

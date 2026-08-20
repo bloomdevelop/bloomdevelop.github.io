@@ -2,6 +2,7 @@
 import Compose from "./compose.vue";
 import OAuthDialog from "./oauth-dialog.vue";
 import MigrationDialog from "./migration-dialog.vue";
+import SettingsDialog from "./settings-dialog.vue";
 import { isInitialized, agent, isDidAllowed } from "../scripts/agent";
 import { onMounted, ref, watch } from "vue";
 import { revokeSession, setupOAuth } from "../scripts/oauth";
@@ -14,6 +15,7 @@ const oauthDialog = ref<HTMLDialogElement | null>(null);
 const logoutDialog = ref<HTMLDialogElement | null>(null);
 const aboutDialog = ref<HTMLDialogElement | null>(null);
 const migrationDialog = ref<InstanceType<typeof MigrationDialog> | null>(null);
+const settingsDialog = ref<InstanceType<typeof SettingsDialog> | null>(null);
 const isHovered = ref(false);
 
 function isLoggedIn() {
@@ -84,6 +86,15 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 aria-label="About"
             >
                 <span class="md-symbols" aria-hidden="true">info</span>
+            </button>
+
+            <button
+                data-component="button"
+                class="toolbar-btn"
+                @click="settingsDialog?.open()"
+                aria-label="Settings"
+            >
+                <span class="md-symbols" aria-hidden="true">settings</span>
             </button>
 
             <button
@@ -209,6 +220,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
         </footer>
     </dialog>
     <MigrationDialog ref="migrationDialog" />
+    <SettingsDialog ref="settingsDialog" />
 </template>
 
 <style scoped>
@@ -291,6 +303,60 @@ function closeDialog(dialog: HTMLDialogElement | null) {
     color: var(--primary-contrast);
 }
 
+/* Every toolbar button rises from below, staggered one after another so
+   the row reveals itself control by control. Uses an animation (not a
+   hover transition) so it always plays when a button appears — including
+   the moment it's rendered after login while the toolbar is already open,
+   which a transition would skip. Driven by transform/opacity only, so it
+   never triggers layout shift. The base transition smooths the close. */
+.toolbar-btn {
+    transform: translateY(var(--distance-medium));
+    opacity: 0;
+    will-change: transform, opacity;
+    transition:
+        transform var(--duration-fast) var(--ease-smooth-out),
+        opacity var(--duration-fast) var(--ease-smooth-out);
+}
+
+.floating-toolbar.is-visible .toolbar-btn,
+.toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn {
+    animation: toolbar-btn-rise var(--duration-fast) var(--ease-smooth-out)
+        both;
+}
+
+/* Stagger each control by one step of --duration-stagger (40ms). */
+.floating-toolbar.is-visible .toolbar-btn:nth-child(1),
+.toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(1) {
+    animation-delay: 0ms;
+}
+
+.floating-toolbar.is-visible .toolbar-btn:nth-child(2),
+.toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(2) {
+    animation-delay: var(--duration-stagger);
+}
+
+.floating-toolbar.is-visible .toolbar-btn:nth-child(3),
+.toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(3) {
+    animation-delay: calc(var(--duration-stagger) * 2);
+}
+
+.floating-toolbar.is-visible .toolbar-btn:nth-child(4),
+.toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(4) {
+    animation-delay: calc(var(--duration-stagger) * 3);
+}
+
+@keyframes toolbar-btn-rise {
+    from {
+        opacity: 0;
+        transform: translateY(var(--distance-medium));
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (hover: none) {
     .toolbar-hover-zone {
         pointer-events: none;
@@ -305,12 +371,24 @@ function closeDialog(dialog: HTMLDialogElement | null) {
 
     .toolbar-btn {
         --size: 48px;
+        /* On touch the toolbar is always shown, so reveal the buttons
+           without waiting for a hover-driven is-visible class. */
+        opacity: 1;
+        transform: none;
+        animation: none;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .floating-toolbar {
+    .floating-toolbar,
+    .toolbar-btn {
         transition: none;
+    }
+
+    .toolbar-btn {
+        transform: none;
+        opacity: 1;
+        animation: none;
     }
 }
 </style>

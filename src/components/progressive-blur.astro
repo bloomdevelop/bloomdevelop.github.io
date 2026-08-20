@@ -21,6 +21,11 @@ const BLUR_LEVELS_PX = [1, 2, 4, 8, 16, 32, 64];
 
 <style>
     .progressive-blur {
+        /* Hidden by default: the effect uses backdrop-filter + mask
+           compositing that glitches on non-Chromium browsers. It is
+           revealed only when the user enables it via Settings
+           (sets :root[data-progressive-blur="on"]). */
+        display: none;
         position: fixed;
         z-index: 100;
         top: 0;
@@ -29,7 +34,14 @@ const BLUR_LEVELS_PX = [1, 2, 4, 8, 16, 32, 64];
         width: 100%;
         height: var(--progressive-blur-height);
         pointer-events: none;
+    }
 
+    /* Enabled only when the user opts in via Settings. */
+    :global(:root[data-progressive-blur="on"]) .progressive-blur {
+        display: block;
+    }
+
+    .progressive-blur {
         &[data-position="top"] {
             top: 0;
         }
