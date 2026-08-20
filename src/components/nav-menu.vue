@@ -202,7 +202,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                     gap: 0.5rem;
                 "
             >
-                <h1 style="font-size: 1.5em; margin: 0">Spring's Website</h1>
+                <h1 style="font-size: 1.375rem; font-weight: 600; letter-spacing: normal; margin: 0">Spring's Website</h1>
                 <p style="margin: 0">
                     Fairly minimal website built with Astro and Vue
                 </p>
@@ -318,31 +318,38 @@ function closeDialog(dialog: HTMLDialogElement | null) {
         opacity var(--duration-fast) var(--ease-smooth-out);
 }
 
-.floating-toolbar.is-visible .toolbar-btn,
-.toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn {
-    animation: toolbar-btn-rise var(--duration-fast) var(--ease-smooth-out)
-        both;
-}
+/* The reveal is a hover interaction, so only run the rise animation on
+   hover-capable devices. On touch (hover: none) the toolbar is always shown
+   (see the @media (hover: none) block) and tapping a button must not trigger
+   the rise — without this gate, :focus-within fires on tap with higher
+   specificity than the touch block's animation: none, animating the buttons. */
+@media (hover: hover) {
+    .floating-toolbar.is-visible .toolbar-btn,
+    .toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn {
+        animation: toolbar-btn-rise var(--duration-fast) var(--ease-smooth-out)
+            both;
+    }
 
-/* Stagger each control by one step of --duration-stagger (40ms). */
-.floating-toolbar.is-visible .toolbar-btn:nth-child(1),
-.toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(1) {
-    animation-delay: 0ms;
-}
+    /* Stagger each control by one step of --duration-stagger (40ms). */
+    .floating-toolbar.is-visible .toolbar-btn:nth-child(1),
+    .toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(1) {
+        animation-delay: 0ms;
+    }
 
-.floating-toolbar.is-visible .toolbar-btn:nth-child(2),
-.toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(2) {
-    animation-delay: var(--duration-stagger);
-}
+    .floating-toolbar.is-visible .toolbar-btn:nth-child(2),
+    .toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(2) {
+        animation-delay: var(--duration-stagger);
+    }
 
-.floating-toolbar.is-visible .toolbar-btn:nth-child(3),
-.toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(3) {
-    animation-delay: calc(var(--duration-stagger) * 2);
-}
+    .floating-toolbar.is-visible .toolbar-btn:nth-child(3),
+    .toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(3) {
+        animation-delay: calc(var(--duration-stagger) * 2);
+    }
 
-.floating-toolbar.is-visible .toolbar-btn:nth-child(4),
-.toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(4) {
-    animation-delay: calc(var(--duration-stagger) * 3);
+    .floating-toolbar.is-visible .toolbar-btn:nth-child(4),
+    .toolbar-hover-zone:focus-within .floating-toolbar .toolbar-btn:nth-child(4) {
+        animation-delay: calc(var(--duration-stagger) * 3);
+    }
 }
 
 @keyframes toolbar-btn-rise {
@@ -367,6 +374,8 @@ function closeDialog(dialog: HTMLDialogElement | null) {
         opacity: 1;
         transform: translateX(-50%) translateY(0);
         gap: var(--space-md);
+        /* No hover on touch, so never transition the toolbar in/out. */
+        transition: none;
     }
 
     .toolbar-btn {
@@ -376,6 +385,10 @@ function closeDialog(dialog: HTMLDialogElement | null) {
         opacity: 1;
         transform: none;
         animation: none;
+        /* The base rule keeps a transform/opacity transition for the rise;
+           drop it on touch so inserting/removing buttons (login/logout) or
+           :focus-within never slides or fades the buttons. */
+        transition: none;
     }
 }
 

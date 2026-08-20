@@ -8,10 +8,30 @@
 		--duration: var(--duration-fast);
 		--rounded-size: var(--rounded-xl);
 		--padding: calc(var(--space-lg) + 5px);
+		/* Breathing room on every side. iOS Display Zoom reports a smaller
+		   viewport, so without a gutter the dialog would hug (or overflow)
+		   the screen edges; the safe-area insets also keep it clear of the
+		   notch / home indicator once viewport-fit=cover is used. */
+		--dialog-inset: max(
+			12px,
+			env(safe-area-inset-top),
+			env(safe-area-inset-right),
+			env(safe-area-inset-bottom),
+			env(safe-area-inset-left)
+		);
 
 		@media (prefers-reduced-motion: reduce) {
 			--duration: 0ms;
 		}
+
+		/* Explicit, deterministic centering. The browser's default modal
+		   centering can place a transformed top-layer <dialog> off-screen
+		   under iOS Display Zoom; pinning position/inset/margin makes the
+		   box resolve against the (zoomed) layout viewport every time. */
+		box-sizing: border-box;
+		position: fixed;
+		inset: 0;
+		margin: auto;
 
 		border-radius: var(--rounded-size);
 		border: none;
@@ -30,12 +50,21 @@
 		overscroll-behavior: contain;
 
 		width: 100%;
-		max-width: 320px;
+		/* Cap the *total* (border-box) width at 320px and always leave the
+		   gutter, so the dialog never overflows the smaller viewport that
+		   Display Zoom reports. */
+		max-width: min(320px, calc(100% - 2 * var(--dialog-inset)));
+		/* When Larger Text inflates the contents, keep the dialog inside the
+		   visible viewport and let it scroll instead of clipping the header
+		   (close button) or the footer actions. */
+		max-height: calc(100dvh - 2 * var(--dialog-inset));
+		overflow-y: auto;
 
 		padding: var(--padding);
 
 		opacity: 0;
 		transform: translateY(-10px);
+		transform-origin: center;
 
 		transition:
 			opacity var(--duration) var(--ease-smooth-out),
@@ -54,12 +83,18 @@
 			display: flex;
 			gap: var(--space-md);
 			justify-content: space-between;
-			align-items: flex-start;
+			align-items: center;
 
 			& h1 {
-				font-size: 1.7em;
+				flex: 1 1 auto;
+				min-width: 0;
 				margin: var(--space-sm);
 				margin-bottom: var(--space-md);
+				font-size: 1.375rem;
+				font-weight: 600;
+				letter-spacing: normal;
+				line-height: 1.2;
+				overflow-wrap: break-word;
 			}
 
 			& [data-component="button"][data-size="icon"] {

@@ -263,8 +263,16 @@ function swapLabel(button: HTMLButtonElement, span: HTMLElement, next: string) {
   // new animation by releasing the width mid-transition.
   window.clearTimeout(resizeTimers.get(button));
 
+  // On mobile the log footer stacks into a column and the action buttons
+  // stretch to fill the card (width: 100%). A width tween would fight that —
+  // briefly collapsing the full-width button down to its intrinsic text width
+  // before snapping back — so skip it there and only animate the text.
+  const parent = button.parentElement;
+  const fillsContainer =
+    !!parent && Math.abs(button.offsetWidth - parent.clientWidth) < 1;
+
   let startWidth = 0;
-  if (!prefersReducedMotion) {
+  if (!prefersReducedMotion && !fillsContainer) {
     startWidth = button.offsetWidth;
     // Use border-box so the measured offsetWidth equals the pixel width we
     // set back, keeping the layout identical while locked. overflow:hidden
@@ -285,7 +293,7 @@ function swapLabel(button: HTMLButtonElement, span: HTMLElement, next: string) {
     void span.offsetHeight; // force reflow so the next change transitions
     span.classList.remove("is-enter-start");
 
-    if (!prefersReducedMotion) {
+    if (!prefersReducedMotion && !fillsContainer) {
       // Measure the natural width for the new label, then animate to it.
       button.style.width = "auto";
       const endWidth = button.offsetWidth;
