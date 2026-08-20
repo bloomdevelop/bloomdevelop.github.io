@@ -253,11 +253,24 @@ async function copyToClipboard(text: string): Promise<boolean> {
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 const revertTimers = new WeakMap<HTMLElement, number>();
 const resizeTimers = new WeakMap<HTMLElement, number>();
+
+// Read --text-swap-dur from :root and normalize it to milliseconds. The
+// custom property's computed value keeps whatever unit the stylesheet
+// serialized, and the production build minifies `150ms` to `.15s` — which
+// bare parseFloat() would read as 0.15ms, making every swap snap instantly
+// (this is why the animation worked in dev but not in production).
+function getSwapDurationMs(): number {
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue("--text-swap-dur")
+    .trim();
+  const match = /^(\d+(?:\.\d+)?|\.\d+)(ms|s)?$/i.exec(raw);
+  if (!match) return 200;
+  const value = Number.parseFloat(match[1]);
+  return match[2]?.toLowerCase() === "s" ? value * 1000 : value;
+}
+
 function swapLabel(button: HTMLButtonElement, span: HTMLElement, next: string) {
-  const dur =
-    parseFloat(
-      getComputedStyle(document.documentElement).getPropertyValue("--text-swap-dur")
-    ) || 200;
+  const dur = getSwapDurationMs();
 
   // Cancel any in-flight width reset so a rapid re-click can't clobber the
   // new animation by releasing the width mid-transition.
