@@ -69,6 +69,19 @@ function openDialog(dialog: HTMLDialogElement | null) {
 function closeDialog(dialog: HTMLDialogElement | null) {
     dialog?.close();
 }
+
+// Non-modal (show()) so grammar-extension overlays (Grammarly/Harper) stay
+// clickable; a modal dialog would leave them inert (whatwg/html#9936).
+const isComposeOpen = ref(false);
+
+function openCompose() {
+    isComposeOpen.value = true;
+    composeDialog.value?.show();
+}
+
+function closeCompose() {
+    composeDialog.value?.close();
+}
 </script>
 
 <template>
@@ -101,7 +114,7 @@ function closeDialog(dialog: HTMLDialogElement | null) {
                 data-component="button"
                 v-if="isLoggedIn() && isDidAllowed"
                 class="toolbar-btn"
-                @click="openDialog(composeDialog)"
+                @click="openCompose()"
                 aria-label="New Log"
             >
                 <span class="md-symbols" aria-hidden="true">add</span>
@@ -129,7 +142,15 @@ function closeDialog(dialog: HTMLDialogElement | null) {
         </nav>
     </div>
 
-    <dialog ref="composeDialog" id="compose" data-component="dialog">
+    <!-- Click-through dimmer; non-modal dialogs get no ::backdrop. -->
+    <div v-if="isComposeOpen" class="compose-backdrop" aria-hidden="true"></div>
+    <dialog
+        ref="composeDialog"
+        id="compose"
+        data-component="dialog"
+        @close="isComposeOpen = false"
+        @keydown.escape="closeCompose()"
+    >
         <Compose />
     </dialog>
     <dialog ref="oauthDialog" id="oauth" data-component="dialog">
@@ -404,4 +425,18 @@ function closeDialog(dialog: HTMLDialogElement | null) {
         animation: none;
     }
 }
+
+/* Above the toolbar, below extension-injected UI — on purpose. */
+.compose-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    background-color: color-mix(in oklch, black, transparent 80%);
+}
+
+dialog#compose {
+    z-index: 10001;
+}
+
 </style>
