@@ -28,7 +28,6 @@
 			justify-content: center;
 			gap: 0.5rem;
 			font-size: 13px;
-			min-height: 44px;
 
 			padding: var(--space-lg) var(--space-xl);
 			font-family: var(--body);
