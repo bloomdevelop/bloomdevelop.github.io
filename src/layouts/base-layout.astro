@@ -6,6 +6,8 @@ import "../css/styles.css";
 import { DEFAULT_PREVIEW_PDS } from "../scripts/consts";
 import { optional } from "astro:schema";
 import ProgressiveBlur from "../components/progressive-blur.astro";
+import { ClientRouter } from "astro:transitions";
+import NavMenu from "../components/nav-menu.vue";
 ---
 
 <html lang="en">
@@ -32,27 +34,51 @@ import ProgressiveBlur from "../components/progressive-blur.astro";
         <Font cssVariable="--inter" preload />
         <Font cssVariable="--maple-mono" preload />
         <Font cssVariable="--material-symbols-rounded" preload />
+        <ClientRouter fallback="animate" />
 
         <!-- Apply persisted Settings before first paint so the progressive
              blur never flashes on for users who have it disabled. -->
         <script is:inline>
             (() => {
-                try {
-                    const raw = localStorage.getItem("bloom.settings");
-                    const settings = raw ? JSON.parse(raw) : {};
-                    if (settings && settings.progressiveBlur) {
-                        document.documentElement.dataset.progressiveBlur = "on";
-                    }
-                } catch {}
+                const apply = () => {
+                    try {
+                        const raw = localStorage.getItem("bloom.settings");
+                        const settings = raw ? JSON.parse(raw) : {};
+                        if (settings && settings.progressiveBlur) {
+                            document.documentElement.dataset.progressiveBlur = "on";
+                        } else {
+                            delete document.documentElement.dataset.progressiveBlur;
+                        }
+                    } catch {}
+                };
+                apply();
+                document.addEventListener("astro:after-swap", apply);
+                document.addEventListener("astro:page-load", apply);
+                document.addEventListener("astro:before-swap", (e) => {
+                    try {
+                        const raw = localStorage.getItem("bloom.settings");
+                        const settings = raw ? JSON.parse(raw) : {};
+                        const target = e.newDocument?.documentElement;
+                        if (!target) return;
+                        if (settings && settings.progressiveBlur) {
+                            target.dataset.progressiveBlur = "on";
+                        } else {
+                            delete target.dataset.progressiveBlur;
+                        }
+                    } catch {}
+                });
             })();
         </script>
     </head>
-    <body data-sky="sunrise">
-        <ProgressiveBlur position="top" />
-        <ProgressiveBlur position="bottom" />
+    <body>
+        <ProgressiveBlur position="top" transition:persist="blur-top" />
+        <ProgressiveBlur position="bottom" transition:persist="blur-bottom" />
+        <NavMenu client:only="vue" transition:persist="nav-menu" />
         <a href="#main-content" class="skip-link">Skip to main content</a>
         <slot />
-        <footer style={{
+        <footer
+            transition:persist="site-footer"
+            style={{
           textAlign: "center",
           padding: "var(--space-xl) var(--space-xl) calc(var(--space-3xl) + var(--space-2xl))",
           opacity: 0.5

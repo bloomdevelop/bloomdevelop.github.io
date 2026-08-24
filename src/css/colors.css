@@ -66,22 +66,5 @@
 		--github: oklch(0.296 0.012 258.37);
 		--discord: oklch(0.577 0.209 273.85);
 		--fluxer: oklch(0.486 0.223 275.65);
-
-		/* Hourly sky colors */
-		--sunrise-t: oklch(70% 0.06 51.57);
-		--sunrise-m: oklch(82% 0.13 64.04);
-		--sunrise-b: oklch(72% 0.18 46.87);
-
-		--noon-t: oklch(61% 0.13 236.48);
-		--noon-m: oklch(76% 0.14 220.4);
-		--noon-b: oklch(91% 0.04 198.58);
-
-		--sunset-t: oklch(74% 0.03 25.4);
-		--sunset-m: oklch(84% 0.14 74.99);
-		--sunset-b: oklch(63% 0.25 23.22);
-
-		--night-t: oklch(15% 0.01 60.05);
-		--night-m: oklch(23% 0.07 255.82);
-		--night-b: oklch(28% 0.08 254.91);
 	}
 }

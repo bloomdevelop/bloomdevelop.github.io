@@ -1,0 +1,148 @@
+/* biome-ignore-all lint/complexity/noImportantStyles: a11y — reduced-motion must forcibly override animations */
+@layer transitions {
+	/* Root view-transition — shared by all navigations.
+	   Uses motion tokens from base.css so timing stays in sync with
+	   the rest of the UI (transitions.dev scale). */
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		animation-duration: var(--duration-medium, 350ms);
+		animation-timing-function: var(--ease-smooth-out);
+	}
+
+	::view-transition-old(root) {
+		animation-name: vt-root-out;
+	}
+
+	::view-transition-new(root) {
+		animation-name: vt-root-in;
+	}
+
+	@keyframes vt-root-out {
+		from {
+			opacity: 1;
+			filter: blur(0);
+		}
+
+		to {
+			opacity: 0;
+			filter: blur(var(--blur-small));
+		}
+	}
+
+	@keyframes vt-root-in {
+		from {
+			opacity: 0;
+			filter: blur(var(--blur-small));
+		}
+
+		to {
+			opacity: 1;
+			filter: blur(0);
+		}
+	}
+
+	/* Shared-element groups (blog cards, log entries) need layout containment
+	   so size/position morphs are composited correctly. */
+	[data-component="card"][data-rkey],
+	[data-component="card"][data-blog-rkey],
+	article[data-blog-rkey],
+	[data-astro-transition-scope] {
+		contain: layout;
+		/* content-visibility interferes with view-transition snapshots */
+		content-visibility: visible;
+	}
+
+	/* Ensure the shared title morphs smoothly (card <-> post). */
+	[data-component="card"] h2,
+	article h1 {
+		contain: layout;
+		content-visibility: visible;
+	}
+
+	/* Shared morph — give blog/log groups a touch more time so the
+	   zoom is perceptible on both forward and back navigation. */
+	::view-transition-group(*) {
+		animation-duration: 420ms;
+		animation-timing-function: var(--ease-smooth-out);
+	}
+
+	::view-transition-group(root) {
+		animation-duration: var(--duration-medium, 350ms);
+	}
+
+	/* Blog zoom — subtle scale + blur for shared card morph.
+	   Applied via transition:animate custom on blog-card elements. */
+	@keyframes vt-blog-zoom-in {
+		from {
+			opacity: 0;
+			transform: scale(0.96);
+			filter: blur(var(--blur-small));
+		}
+
+		to {
+			opacity: 1;
+			transform: scale(1);
+			filter: blur(0);
+		}
+	}
+
+	@keyframes vt-blog-zoom-out {
+		from {
+			opacity: 1;
+			transform: scale(1);
+			filter: blur(0);
+		}
+
+		to {
+			opacity: 0;
+			transform: scale(0.98);
+			filter: blur(var(--blur-small));
+		}
+	}
+
+	/* Astro fallback (animate) uses data-astro-* attributes when the browser
+	   lacks native View Transitions. Keep it close to the native feel. */
+	[data-astro-transition-fallback="old"] {
+		animation: 180ms ease both vt-fallback-out;
+	}
+
+	[data-astro-transition-fallback="new"] {
+		animation: 320ms var(--ease-smooth-out) both vt-fallback-in;
+	}
+
+	@keyframes vt-fallback-out {
+		from {
+			opacity: 1;
+		}
+
+		to {
+			opacity: 0;
+		}
+	}
+
+	@keyframes vt-fallback-in {
+		from {
+			opacity: 0;
+			transform: translateY(var(--distance-micro));
+		}
+
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		::view-transition-group(*),
+		::view-transition-old(*),
+		::view-transition-new(*) {
+			animation-duration: 1ms !important;
+			animation-delay: 0ms !important;
+		}
+
+		[data-astro-transition-fallback="old"],
+		[data-astro-transition-fallback="new"] {
+			animation: none !important;
+		}
+	}
+}

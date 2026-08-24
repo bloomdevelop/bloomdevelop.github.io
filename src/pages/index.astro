@@ -1,13 +1,12 @@
 ---
 import BaseLayout from "../layouts/base-layout.astro";
-import NavMenu from "../components/nav-menu.vue";
 import Logs from "../components/logs.astro";
 import Blogs from "../components/blogs.astro";
+import { fade } from "astro:transitions";
 ---
 
 <BaseLayout>
-    <NavMenu client:only />
-    <main id="main-content">
+    <main id="main-content" transition:animate={fade({ duration: "0.32s" })}>
         <section>
             <h2>Links</h2>
             <div data-component="links">

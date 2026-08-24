@@ -7,15 +7,32 @@ const blogPosts = (await getCollection("blog"))
     .sort((a, b) => {
         return new Date(b.data.pubDate).getTime() - new Date(a.data.pubDate).getTime();
     });
+
+const blogZoom = {
+	forwards: {
+		old: { name: "vt-blog-zoom-out", duration: "420ms", easing: "cubic-bezier(0.22, 1, 0.36, 1)", fillMode: "both" },
+		new: { name: "vt-blog-zoom-in", duration: "420ms", easing: "cubic-bezier(0.22, 1, 0.36, 1)", fillMode: "both" },
+	},
+	backwards: {
+		old: { name: "vt-blog-zoom-out", duration: "360ms", easing: "cubic-bezier(0.22, 1, 0.36, 1)", fillMode: "both" },
+		new: { name: "vt-blog-zoom-in", duration: "360ms", easing: "cubic-bezier(0.22, 1, 0.36, 1)", fillMode: "both" },
+	},
+};
 ---
 
 <div class="blogs">
 
 {blogPosts.length === 0 && <p>No posts yet. :(</p>}
 {blogPosts.map((post) => (
-    <a data-component="card" href={`/blog/${post.id}`}>
+    <a
+        data-component="card"
+        href={`/blog/${post.id}`}
+        data-blog-rkey={post.id}
+        transition:name={`blog-card-${post.id}`}
+        transition:animate={blogZoom}
+    >
         <div class="card-header">
-            <h2>{post.data.title}</h2>
+            <h2 transition:name={`blog-title-${post.id}`} style="contain: layout;">{post.data.title}</h2>
             <p>{post.data.pubDate.toLocaleDateString()}</p>
         </div>
         <div class="card-content">

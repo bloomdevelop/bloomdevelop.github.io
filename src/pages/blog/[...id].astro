@@ -2,6 +2,18 @@
 import { getCollection, render } from 'astro:content';
 import BaseLayout from '../../layouts/base-layout.astro';
 import Tag from '../../components/tag.astro';
+import { fade } from "astro:transitions";
+
+const blogZoom = {
+	forwards: {
+		old: { name: "vt-blog-zoom-out", duration: "420ms", easing: "cubic-bezier(0.22, 1, 0.36, 1)", fillMode: "both" },
+		new: { name: "vt-blog-zoom-in", duration: "420ms", easing: "cubic-bezier(0.22, 1, 0.36, 1)", fillMode: "both" },
+	},
+	backwards: {
+		old: { name: "vt-blog-zoom-out", duration: "360ms", easing: "cubic-bezier(0.22, 1, 0.36, 1)", fillMode: "both" },
+		new: { name: "vt-blog-zoom-in", duration: "360ms", easing: "cubic-bezier(0.22, 1, 0.36, 1)", fillMode: "both" },
+	},
+};
 
 export async function getStaticPaths() {
   const posts = await getCollection("blog");
@@ -18,15 +30,20 @@ const { Content } = await render(post);
 ---
 
 <BaseLayout>
-    <nav>
+    <nav transition:animate={fade({ duration: "0.22s" })}>
         <a href="/" data-component="button" data-color>
           <span class="md-symbols">arrow_back</span>
           Back to home page
         </a>
     </nav>
-    <article id="main-content">
+    <article
+        id="main-content"
+        data-blog-rkey={post.id}
+        transition:name={`blog-card-${post.id}`}
+        transition:animate={blogZoom}
+    >
         <div class="post-details">
-            <h1>{post.data.title}</h1>
+            <h1 transition:name={`blog-title-${post.id}`} style="contain: layout;">{post.data.title}</h1>
             <p>Published on {post.data.pubDate.toLocaleDateString()}</p>
             {post.data.draft && import.meta.env.DEV && (
               <div data-component="alert">
@@ -39,7 +56,9 @@ const { Content } = await render(post);
             </div>
         </div>
 
-        <Content />
+        <div transition:animate={fade({ duration: "0.28s" })}>
+            <Content />
+        </div>
     </article>
 </BaseLayout>
 
