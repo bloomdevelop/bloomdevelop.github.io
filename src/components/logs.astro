@@ -1,16 +1,16 @@
 ---
 import type { LogEntry } from "../scripts/logsStore";
 import { fetchLogsFromPreviewDID } from "../scripts/logsApi";
-import { formatDate } from "../scripts/utils";
+import { bskyPostUrl, formatDate, formatDateFull } from "../scripts/utils";
 
 let posts: LogEntry[] = [];
 let fetchError: string | null = null;
 
 try {
-  posts = await fetchLogsFromPreviewDID();
+	posts = await fetchLogsFromPreviewDID();
 } catch (e) {
-  fetchError = e instanceof Error ? e.message : String(e);
-  console.error("[APP]", "failed to fetch logs:", e);
+	fetchError = e instanceof Error ? e.message : String(e);
+	console.error("[APP]", "failed to fetch logs:", e);
 }
 ---
 
@@ -22,84 +22,120 @@ try {
 ></script>
 
 <div class="logs" id="logs">
-  <p role="status" aria-atomic="true" class="visually-hidden" id="logs-status"></p>
-  {fetchError ? (
-    <div role="alert" data-component="alert" data-color="error" data-logs-error>
-      {fetchError}
-    </div>
-  ) : posts.length === 0 ? (
-    <div data-logs-skeleton aria-hidden="true">
-      <div data-component="card">
-        <div class="card-content">
-          <span class="skeleton-line" style="width: 92%"></span>
-          <span class="skeleton-line" style="width: 78%"></span>
-          <span class="skeleton-line" style="width: 60%"></span>
-        </div>
-        <footer>
-          <span class="skeleton-pill"></span>
-          <span class="skeleton-pill"></span>
-        </footer>
-      </div>
-      <div data-component="card">
-        <div class="card-content">
-          <span class="skeleton-line" style="width: 85%"></span>
-          <span class="skeleton-line" style="width: 68%"></span>
-        </div>
-        <footer>
-          <span class="skeleton-pill"></span>
-          <span class="skeleton-pill"></span>
-          <span class="skeleton-pill"></span>
-        </footer>
-      </div>
-    </div>
-  ) : (
-    posts.map((log) => (
-      <div data-component="card" data-rkey={log.rkey}>
-        <div class="card-content"><p>{log.content}</p></div>
-        <footer>
-          <span data-type="date">{formatDate(log.createdAt)}</span>
-          {log.blueskyPost && (
-            <div data-component="badge" data-color="secondary">
-              <span class="md-symbols" aria-hidden="true">share</span>
-              Crossposted
-            </div>
-          )}
-          <button data-component="button" data-color data-rkey={log.rkey}>
-            <span class="md-symbols" aria-hidden="true">link</span>
-            <span class="t-text-swap">Permalink</span>
-          </button>
-          <button
-            data-component="button"
-            data-color
-            data-copy-twitter
-            data-rkey={log.rkey}
-            style="--color: var(--twitter); --color-contrast: white;"
-          >
-            <span class="md-symbols" aria-hidden="true">content_copy</span>
-            <span class="t-text-swap">Copy as Twitter post</span>
-          </button>
-        </footer>
-      </div>
-    ))
-  )}
+	<p role="status" aria-atomic="true" class="visually-hidden" id="logs-status"></p>
+	{fetchError ? (
+		<div role="alert" data-component="alert" data-color="error" data-logs-error style="display:flex; flex-direction:column; gap:var(--space-md); align-items:stretch">
+			<p style="margin:0">Couldn’t load logs. {fetchError}</p>
+			<button type="button" data-component="button" data-color="neutral" data-retry style="align-self:flex-start">Retry</button>
+		</div>
+	) : posts.length === 0 ? (
+		<div data-logs-skeleton aria-hidden="true">
+			<div data-component="card">
+				<div class="card-content">
+					<span class="skeleton-line" style="width: 92%"></span>
+					<span class="skeleton-line" style="width: 78%"></span>
+					<span class="skeleton-line" style="width: 60%"></span>
+				</div>
+				<footer>
+					<div class="card-meta">
+						<span class="skeleton-pill" style="width: 122px; flex: 0 0 auto; height:16px"></span>
+					</div>
+					<div class="card-actions">
+						<span class="skeleton-pill" style="width: 110px; height:16px; flex:0 0 auto; border-radius:4px"></span>
+						<span class="skeleton-pill icon"></span>
+						<span class="skeleton-pill icon"></span>
+					</div>
+				</footer>
+			</div>
+			<div data-component="card">
+				<div class="card-content">
+					<span class="skeleton-line" style="width: 85%"></span>
+					<span class="skeleton-line" style="width: 68%"></span>
+				</div>
+				<footer>
+					<div class="card-meta">
+						<span class="skeleton-pill" style="width: 122px; flex: 0 0 auto; height:16px"></span>
+					</div>
+					<div class="card-actions">
+						<span class="skeleton-pill" style="width: 110px; height:16px; flex:0 0 auto; border-radius:4px"></span>
+						<span class="skeleton-pill icon"></span>
+						<span class="skeleton-pill icon"></span>
+					</div>
+				</footer>
+			</div>
+		</div>
+	) : (
+		posts.map((log) => (
+			<div data-component="card" data-rkey={log.rkey}>
+				<div class="card-content"><p>{log.content}</p></div>
+				<footer>
+					<div class="card-meta">
+						<time datetime={log.createdAt} data-type="date" title={formatDateFull(log.createdAt)}>{formatDate(log.createdAt)}</time>
+					</div>
+					<div class="card-actions">
+						{log.blueskyPost ? (
+							typeof log.blueskyPost === "object" && log.blueskyPost.uri && bskyPostUrl(log.blueskyPost.uri) ? (
+								<a
+									href={bskyPostUrl(log.blueskyPost.uri)!}
+									target="_blank"
+									rel="noopener noreferrer"
+									aria-label="View on Bluesky"
+									data-log-bsky
+								>
+									View on Bluesky
+									<span class="md-symbols" aria-hidden="true">open_in_new</span>
+								</a>
+							) : (
+								<span data-log-bsky>
+									Crossposted
+									<span class="md-symbols" aria-hidden="true">share</span>
+								</span>
+							)
+						) : null}
+						<button type="button" data-component="button" data-color data-size="icon" data-rkey={log.rkey} aria-label="Copy permalink" title="Copy permalink">
+							<span class="t-icon-swap" data-state="a">
+								<span class="t-icon md-symbols" data-icon="a" aria-hidden="true">link</span>
+								<span class="t-icon md-symbols" data-icon="b" aria-hidden="true">check</span>
+							</span>
+						</button>
+						<button
+							type="button"
+							data-component="button"
+							data-color="twitter"
+							data-size="icon"
+							data-copy-twitter
+							data-rkey={log.rkey}
+							aria-label="Copy as Twitter post"
+							title="Copy as Twitter post"
+						>
+							<span class="t-icon-swap" data-state="a">
+								<span class="t-icon md-symbols" data-icon="a" aria-hidden="true">content_copy</span>
+								<span class="t-icon md-symbols" data-icon="b" aria-hidden="true">check</span>
+							</span>
+						</button>
+					</div>
+				</footer>
+			</div>
+		))
+	)}
 </div>
 
 <script>
 import { fetchLogsFromPreviewDID } from "../scripts/logsApi";
 import {
-  STORAGE_KEY,
-  getLogs,
-  mergeLocalPending,
-  mergeWithPending,
-  setLogs,
-  subscribe,
-  type LogEntry,
+	STORAGE_KEY,
+	getLogs,
+	mergeLocalPending,
+	mergeWithPending,
+	setLogs,
+	subscribe,
+	type LogEntry,
 } from "../scripts/logsStore";
-import { formatDate } from "../scripts/utils";
+import { bskyPostUrl, formatDate, formatDateFull } from "../scripts/utils";
 
 const container = document.getElementById("logs");
 if (!container) {
-  throw new Error("Logs container not found");
+	throw new Error("Logs container not found");
 }
 
 const statusEl = document.getElementById("logs-status");
@@ -107,372 +143,406 @@ const statusEl = document.getElementById("logs-status");
 const SYNC_INTERVAL_MS = 60_000;
 let lastSyncFailed = false;
 let syncing = false;
-// Until the first client-side sync resolves we can't tell whether there are
-// genuinely no logs or the snapshot is still loading — so we show a skeleton.
 let firstSyncDone = false;
 
 const SKELETON_HTML = `
-  <div data-logs-skeleton aria-hidden="true">
-    <div data-component="card">
-      <div class="card-content">
-        <span class="skeleton-line" style="width: 92%"></span>
-        <span class="skeleton-line" style="width: 78%"></span>
-        <span class="skeleton-line" style="width: 60%"></span>
-      </div>
-      <footer>
-        <span class="skeleton-pill"></span>
-        <span class="skeleton-pill"></span>
-      </footer>
-    </div>
-    <div data-component="card">
-      <div class="card-content">
-        <span class="skeleton-line" style="width: 85%"></span>
-        <span class="skeleton-line" style="width: 68%"></span>
-      </div>
-      <footer>
-        <span class="skeleton-pill"></span>
-        <span class="skeleton-pill"></span>
-        <span class="skeleton-pill"></span>
-      </footer>
-    </div>
-  </div>
+	<div data-logs-skeleton aria-hidden="true">
+		<div data-component="card">
+			<div class="card-content">
+				<span class="skeleton-line" style="width: 92%"></span>
+				<span class="skeleton-line" style="width: 78%"></span>
+				<span class="skeleton-line" style="width: 60%"></span>
+			</div>
+			<footer>
+				<div class="card-meta">
+					<span class="skeleton-pill" style="width: 122px; flex: 0 0 auto; height:16px"></span>
+				</div>
+				<div class="card-actions">
+					<span class="skeleton-pill" style="width: 110px; height:16px; flex:0 0 auto; border-radius:4px"></span>
+					<span class="skeleton-pill icon"></span>
+					<span class="skeleton-pill icon"></span>
+				</div>
+			</footer>
+		</div>
+		<div data-component="card">
+			<div class="card-content">
+				<span class="skeleton-line" style="width: 85%"></span>
+				<span class="skeleton-line" style="width: 68%"></span>
+			</div>
+			<footer>
+				<div class="card-meta">
+					<span class="skeleton-pill" style="width: 122px; flex: 0 0 auto; height:16px"></span>
+				</div>
+				<div class="card-actions">
+					<span class="skeleton-pill" style="width: 110px; height:16px; flex:0 0 auto; border-radius:4px"></span>
+					<span class="skeleton-pill icon"></span>
+					<span class="skeleton-pill icon"></span>
+				</div>
+			</footer>
+		</div>
+	</div>
 `;
 
-// Seed the store from the server-rendered snapshot so the page renders
-// instantly, then re-sync against the PDS so the cached page state catches up
-// with the latest records.
 const dataEl = document.getElementById("logs-initial");
 if (dataEl) {
-  try {
-    const raw = dataEl.textContent?.trim();
-    if (raw) {
-      const initialLogs: LogEntry[] = JSON.parse(decodeURIComponent(raw));
-      const merged = mergeWithPending(initialLogs);
-      if (merged.length > 0) {
-        setLogs(merged);
-      }
-    }
-  } catch (e) {
-    console.error("[APP]", "failed to parse initial logs:", e);
-  }
+	try {
+		const raw = dataEl.textContent?.trim();
+		if (raw) {
+			const initialLogs: LogEntry[] = JSON.parse(decodeURIComponent(raw));
+			const merged = mergeWithPending(initialLogs);
+			if (merged.length > 0) {
+				setLogs(merged);
+			}
+		}
+	} catch (e) {
+		console.error("[APP]", "failed to parse initial logs:", e);
+	}
 }
 
-/**
- * Fetch the latest logs from the PDS, merge in anything still pending
- * locally, and hand the result to the store (which re-renders the list).
- */
 async function syncLogs() {
-  if (syncing) return;
-  syncing = true;
-  try {
-    const fresh = await fetchLogsFromPreviewDID();
-    lastSyncFailed = false;
-    firstSyncDone = true;
-    setLogs(mergeWithPending(fresh));
-  } catch (e) {
-    console.error("[APP]", "failed to sync logs:", e);
-    lastSyncFailed = true;
-    firstSyncDone = true;
-    renderLogs();
-  } finally {
-    syncing = false;
-  }
+	if (syncing) return;
+	syncing = true;
+	try {
+		const fresh = await fetchLogsFromPreviewDID();
+		lastSyncFailed = false;
+		firstSyncDone = true;
+		setLogs(mergeWithPending(fresh));
+	} catch (e) {
+		console.error("[APP]", "failed to sync logs:", e);
+		lastSyncFailed = true;
+		firstSyncDone = true;
+		renderLogs();
+	} finally {
+		syncing = false;
+	}
 }
 
 function escapeHtml(text: string): string {
-  const div = document.createElement("div");
-  div.appendChild(document.createTextNode(text));
-  return div.innerHTML;
+	const div = document.createElement("div");
+	div.appendChild(document.createTextNode(text));
+	return div.innerHTML;
 }
 
 function makeCardHTML(log: LogEntry): string {
-  const shareIcon = '<span class="md-symbols" aria-hidden="true">share</span>';
-  const linkIcon = '<span class="md-symbols" aria-hidden="true">link</span>';
-  const twitterCopyIcon =
-    '<span class="md-symbols" aria-hidden="true">content_copy</span>';
-  const twitterStyle = 'style="--color: var(--twitter); --color-contrast: white;"';
+	const linkIcon = '<span class="t-icon-swap" data-state="a"><span class="t-icon md-symbols" data-icon="a" aria-hidden="true">link</span><span class="t-icon md-symbols" data-icon="b" aria-hidden="true">check</span></span>';
+	const twitterCopyIcon =
+		'<span class="t-icon-swap" data-state="a"><span class="t-icon md-symbols" data-icon="a" aria-hidden="true">content_copy</span><span class="t-icon md-symbols" data-icon="b" aria-hidden="true">check</span></span>';
+	let badgeHtml = "";
+	if (log.blueskyPost) {
+		if (typeof log.blueskyPost === "object" && log.blueskyPost.uri) {
+			const url = bskyPostUrl(log.blueskyPost.uri);
+			if (url) {
+				badgeHtml = `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" aria-label="View on Bluesky" data-log-bsky>View on Bluesky <span class="md-symbols" aria-hidden="true">open_in_new</span></a>`;
+			} else {
+				badgeHtml = `<span data-log-bsky>Crossposted <span class="md-symbols" aria-hidden="true">share</span></span>`;
+			}
+		} else {
+			badgeHtml = `<span data-log-bsky>Crossposted <span class="md-symbols" aria-hidden="true">share</span></span>`;
+		}
+	}
 
-  return `
-    <div data-component="card" data-rkey="${log.rkey}">
-      <div class="card-content"><p>${escapeHtml(log.content)}</p></div>
-      <footer>
-        <span data-type="date">${formatDate(log.createdAt)}</span>
-        ${
-          log.blueskyPost
-            ? `<div data-component="badge" data-color="secondary">${shareIcon}Crossposted</div>`
-            : ""
-        }
-        <button data-component="button" data-color data-rkey="${log.rkey}">
-          ${linkIcon}<span class="t-text-swap">Permalink</span>
-        </button>
-        <button
-          data-component="button"
-          data-color
-          data-copy-twitter
-          data-rkey="${log.rkey}"
-          ${twitterStyle}
-        >
-          ${twitterCopyIcon}<span class="t-text-swap">Copy as Twitter post</span>
-        </button>
-      </footer>
-    </div>
-  `;
+	return `
+		<div data-component="card" data-rkey="${log.rkey}">
+			<div class="card-content"><p>${escapeHtml(log.content)}</p></div>
+			<footer>
+				<div class="card-meta">
+					<time datetime="${escapeHtml(log.createdAt)}" data-type="date" title="${escapeHtml(formatDateFull(log.createdAt))}">${formatDate(log.createdAt)}</time>
+				</div>
+				<div class="card-actions">
+					${badgeHtml}
+					<button type="button" data-component="button" data-color data-size="icon" data-rkey="${log.rkey}" aria-label="Copy permalink" title="Copy permalink">
+						${linkIcon}
+					</button>
+					<button
+						type="button"
+						data-component="button"
+						data-color="twitter"
+						data-size="icon"
+						data-copy-twitter
+						data-rkey="${log.rkey}"
+						aria-label="Copy as Twitter post"
+						title="Copy as Twitter post"
+					>
+						${twitterCopyIcon}
+					</button>
+				</div>
+			</footer>
+		</div>
+	`;
 }
 
 async function copyToClipboard(text: string): Promise<boolean> {
-  if (navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      // fall through to fallback
-    }
-  }
-  try {
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    textarea.style.pointerEvents = "none";
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textarea);
-    return true;
-  } catch {
-    return false;
-  }
+	if (navigator.clipboard?.writeText) {
+		try {
+			await navigator.clipboard.writeText(text);
+			return true;
+		} catch {
+		}
+	}
+	try {
+		const textarea = document.createElement("textarea");
+		textarea.value = text;
+		textarea.style.position = "fixed";
+		textarea.style.opacity = "0";
+		textarea.style.pointerEvents = "none";
+		document.body.appendChild(textarea);
+		textarea.select();
+		document.execCommand("copy");
+		document.body.removeChild(textarea);
+		return true;
+	} catch {
+		return false;
+	}
 }
 
-// Swap a button's label text with a blurred slide: the old text exits upward
-// with blur while the new text enters from below. Mirrors the transitions.dev
-// "text states swap" pattern so state changes (Copied! / errors) animate.
-// The surrounding button width is also tweened (CSS can't transition to/from
-// `auto`, so we measure and animate explicit pixel widths) so the resize
-// doesn't snap.
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
 const revertTimers = new WeakMap<HTMLElement, number>();
 const resizeTimers = new WeakMap<HTMLElement, number>();
+const iconRevertTimers = new WeakMap<HTMLElement, number>();
 
-// Read --text-swap-dur from :root and normalize it to milliseconds. The
-// custom property's computed value keeps whatever unit the stylesheet
-// serialized, and the production build minifies `150ms` to `.15s` — which
-// bare parseFloat() would read as 0.15ms, making every swap snap instantly
-// (this is why the animation worked in dev but not in production).
 function getSwapDurationMs(): number {
-  const raw = getComputedStyle(document.documentElement)
-    .getPropertyValue("--text-swap-dur")
-    .trim();
-  const match = /^(\d+(?:\.\d+)?|\.\d+)(ms|s)?$/i.exec(raw);
-  if (!match) return 200;
-  const value = Number.parseFloat(match[1]);
-  return match[2]?.toLowerCase() === "s" ? value * 1000 : value;
+	const raw = getComputedStyle(document.documentElement)
+		.getPropertyValue("--text-swap-dur")
+		.trim();
+	const match = /^(\d+(?:\.\d+)?|\.\d+)(ms|s)?$/i.exec(raw);
+	if (!match) return 200;
+	const value = Number.parseFloat(match[1]);
+	return match[2]?.toLowerCase() === "s" ? value * 1000 : value;
 }
 
 function swapLabel(button: HTMLButtonElement, span: HTMLElement, next: string) {
-  const dur = getSwapDurationMs();
+	const dur = getSwapDurationMs();
+	window.clearTimeout(resizeTimers.get(button));
+	const parent = button.parentElement;
+	const isColumn = !!parent && getComputedStyle(parent).flexDirection === "column";
+	const fillsContainer =
+		isColumn || (!!parent && Math.abs(button.offsetWidth - parent.clientWidth) < 1);
 
-  // Cancel any in-flight width reset so a rapid re-click can't clobber the
-  // new animation by releasing the width mid-transition.
-  window.clearTimeout(resizeTimers.get(button));
+	let startWidth = 0;
+	if (!mql.matches && !fillsContainer) {
+		startWidth = button.offsetWidth;
+		button.style.boxSizing = "border-box";
+		button.style.overflow = "hidden";
+		button.style.width = `${startWidth}px`;
+		button.style.transition = `width ${dur}ms var(--ease-smooth-out)`;
+	}
 
-  // On mobile the log footer stacks into a column and the action buttons
-  // stretch to fill the card (width: 100%). A width tween would fight that —
-  // briefly collapsing the full-width button down to its intrinsic text width
-  // before snapping back — so skip it there and only animate the text.
-  const parent = button.parentElement;
-  const fillsContainer =
-    !!parent && Math.abs(button.offsetWidth - parent.clientWidth) < 1;
+	span.classList.add("is-exit");
+	window.setTimeout(() => {
+		span.textContent = next;
+		span.classList.remove("is-exit");
+		span.classList.add("is-enter-start");
+		void span.offsetHeight;
+		span.classList.remove("is-enter-start");
 
-  let startWidth = 0;
-  if (!prefersReducedMotion && !fillsContainer) {
-    startWidth = button.offsetWidth;
-    // Use border-box so the measured offsetWidth equals the pixel width we
-    // set back, keeping the layout identical while locked. overflow:hidden
-    // clips the long label's transient horizontal spill during the tween
-    // (the 8px vertical padding exceeds the 4px vertical swap travel, so the
-    // text animation itself is never clipped).
-    button.style.boxSizing = "border-box";
-    button.style.overflow = "hidden";
-    button.style.width = `${startWidth}px`;
-    button.style.transition = `width ${dur}ms var(--ease-smooth-out)`;
-  }
-
-  span.classList.add("is-exit");
-  window.setTimeout(() => {
-    span.textContent = next;
-    span.classList.remove("is-exit");
-    span.classList.add("is-enter-start");
-    void span.offsetHeight; // force reflow so the next change transitions
-    span.classList.remove("is-enter-start");
-
-    if (!prefersReducedMotion && !fillsContainer) {
-      // Measure the natural width for the new label, then animate to it.
-      button.style.width = "auto";
-      const endWidth = button.offsetWidth;
-      button.style.width = `${startWidth}px`;
-      void button.offsetWidth; // reflow so the width change transitions
-      button.style.width = `${endWidth}px`;
-
-      // Release back to intrinsic width once settled so the button stays
-      // responsive (natural width for the current text equals endWidth, so
-      // this is seamless).
-      resizeTimers.set(
-        button,
-        window.setTimeout(() => {
-          button.style.width = "";
-          button.style.boxSizing = "";
-          button.style.overflow = "";
-          button.style.transition = "";
-        }, dur)
-      );
-    }
-  }, dur);
+		if (!mql.matches && !fillsContainer) {
+			button.style.width = "auto";
+			const endWidth = button.offsetWidth;
+			button.style.width = `${startWidth}px`;
+			void button.offsetWidth;
+			button.style.width = `${endWidth}px`;
+			resizeTimers.set(
+				button,
+				window.setTimeout(() => {
+					button.style.width = "";
+					button.style.boxSizing = "";
+					button.style.overflow = "";
+					button.style.transition = "";
+				}, dur)
+			);
+		}
+	}, dur);
 }
 
 container.addEventListener("click", async (e) => {
-  const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-component="button"][data-rkey]');
-  if (!button) return;
-  const rkey = button.getAttribute("data-rkey");
-  if (!rkey) return;
+	const retry = (e.target as HTMLElement).closest<HTMLElement>("[data-retry]");
+	if (retry) {
+		retry.setAttribute("disabled", "");
+		if (statusEl) statusEl.textContent = "Retrying…";
+		await syncLogs();
+		retry.removeAttribute("disabled");
+		if (statusEl) statusEl.textContent = lastSyncFailed ? "Retry failed." : "Logs updated.";
+		return;
+	}
 
-  const status = document.getElementById("logs-status");
-  const span = button.querySelector<HTMLElement>("span:last-child");
-  const original = span?.textContent ?? null;
+	const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-component="button"][data-rkey]');
+	if (!button) return;
+	const rkey = button.getAttribute("data-rkey");
+	if (!rkey) return;
 
-  const permalink = new URL(window.location.href);
-  permalink.searchParams.set("rkey", rkey);
+	const status = document.getElementById("logs-status");
+	const permalink = new URL(window.location.href);
+	permalink.searchParams.set("rkey", rkey);
 
-  const isTwitterCopy = button.dataset.copyTwitter !== undefined;
-  let text: string;
-  let failureLabel: string;
-  if (isTwitterCopy) {
-    const content =
-      button.closest("[data-component=card]")
-        ?.querySelector(".card-content p")?.textContent?.trim() ?? "";
-    text = [content, permalink.toString()].filter(Boolean).join("\n\n");
-    failureLabel = "Unable to copy Twitter post";
-  } else {
-    text = permalink.toString();
-    failureLabel = "Unable to copy permalink";
-  }
+	const isTwitterCopy = button.dataset.copyTwitter !== undefined;
+	let text: string;
+	if (isTwitterCopy) {
+		const content =
+			button.closest("[data-component=card]")
+				?.querySelector(".card-content p")?.textContent?.trim() ?? "";
+		text = [content, permalink.toString()].filter(Boolean).join("\n\n");
+	} else {
+		text = permalink.toString();
+	}
 
-  if (await copyToClipboard(text)) {
-    if (span) {
-      swapLabel(button, span, "Copied!");
-      window.clearTimeout(revertTimers.get(span));
-      revertTimers.set(
-        span,
-        window.setTimeout(() => { if (span) swapLabel(button, span, original ?? ""); }, 2000)
-      );
-    }
-    if (status) status.textContent = "Copied to clipboard.";
-  } else {
-    console.error("[APP]", isTwitterCopy ? "failed to copy twitter post" : "failed to copy permalink");
-    if (span) {
-      window.clearTimeout(revertTimers.get(span));
-      swapLabel(button, span, failureLabel);
-    }
-    if (status) status.textContent = `Failed to copy. ${failureLabel}`;
-  }
+	const isIcon = button.getAttribute("data-size") === "icon";
+	if (isIcon) {
+		const swap = button.querySelector<HTMLElement>(".t-icon-swap");
+		if (!swap) return;
+		const bIcon = swap.querySelector<HTMLElement>('.t-icon[data-icon="b"]');
+		const originalB = bIcon?.textContent?.trim() ?? "check";
+		const originalLabel = button.getAttribute("aria-label") ?? "";
+		const success = await copyToClipboard(text);
+		if (success) {
+			if (bIcon) bIcon.textContent = "check";
+			swap.dataset.state = "b";
+			button.setAttribute("aria-label", "Copied!");
+			button.setAttribute("title", "Copied!");
+			window.clearTimeout(iconRevertTimers.get(swap));
+			iconRevertTimers.set(
+				swap,
+				window.setTimeout(() => {
+					swap.dataset.state = "a";
+					if (bIcon) bIcon.textContent = originalB;
+					if (originalLabel) {
+						button.setAttribute("aria-label", originalLabel);
+						button.setAttribute("title", originalLabel);
+					}
+				}, 2000)
+			);
+			if (status) status.textContent = "Copied to clipboard.";
+		} else {
+			console.error("[APP]", isTwitterCopy ? "failed to copy twitter post" : "failed to copy permalink");
+			if (bIcon) bIcon.textContent = "error";
+			swap.dataset.state = "b";
+			button.setAttribute("aria-label", "Copy failed");
+			button.setAttribute("title", "Copy failed");
+			window.clearTimeout(iconRevertTimers.get(swap));
+			iconRevertTimers.set(
+				swap,
+				window.setTimeout(() => {
+					swap.dataset.state = "a";
+					if (bIcon) bIcon.textContent = originalB;
+					if (originalLabel) {
+						button.setAttribute("aria-label", originalLabel);
+						button.setAttribute("title", originalLabel);
+					}
+				}, 2000)
+			);
+			if (status) status.textContent = "Copy failed. Please copy manually.";
+		}
+		return;
+	}
+
+	const span = button.querySelector<HTMLElement>(".t-text-swap") ?? button.querySelector<HTMLElement>("span:last-child");
+	const original = span?.textContent ?? null;
+	if (await copyToClipboard(text)) {
+		if (span) {
+			swapLabel(button, span, "Copied!");
+			window.clearTimeout(revertTimers.get(span));
+			revertTimers.set(
+				span,
+				window.setTimeout(() => { if (span && original !== null) swapLabel(button, span, original); }, 2000)
+			);
+		}
+		if (status) status.textContent = "Copied to clipboard.";
+	} else {
+		console.error("[APP]", isTwitterCopy ? "failed to copy twitter post" : "failed to copy permalink");
+		if (span) {
+			window.clearTimeout(revertTimers.get(span));
+			swapLabel(button, span, "Copy failed");
+		}
+		if (status) status.textContent = "Copy failed. Please copy manually.";
+	}
 });
 
 const rkeyParam = new URL(window.location.href).searchParams.get("rkey");
 if (rkeyParam) {
-  const scrollToCard = () => {
-    const target = container.querySelector(`[data-rkey="${CSS.escape(rkeyParam)}"]`);
-    if (!target) return;
-    const card = target.closest("[data-component=card]");
-    if (!card) return;
-    card.scrollIntoView({ behavior: "instant", block: "start" });
-  };
-  const queueScroll = () => {
-    requestAnimationFrame(() => requestAnimationFrame(scrollToCard));
-  };
-  if (document.readyState === "complete") {
-    queueScroll();
-  } else {
-    window.addEventListener("load", queueScroll, { once: true });
-  }
+	const scrollToCard = () => {
+		const target = container.querySelector(`[data-rkey="${CSS.escape(rkeyParam)}"]`);
+		if (!target) return;
+		const card = target.closest("[data-component=card]");
+		if (!card) return;
+		card.scrollIntoView({ behavior: "instant", block: "start" });
+	};
+	const queueScroll = () => {
+		requestAnimationFrame(() => requestAnimationFrame(scrollToCard));
+	};
+	if (document.readyState === "complete") {
+		queueScroll();
+	} else {
+		window.addEventListener("load", queueScroll, { once: true });
+	}
 }
 
-/**
- * Reconcile the DOM with the store: drop cards that no longer exist, insert
- * missing cards at their sorted (newest-first) position, and keep the
- * empty/error state alerts in sync.
- */
 const renderLogs = () => {
-  const allLogs = getLogs();
-  const byRkey = new Map(allLogs.map((log) => [log.rkey, log]));
+	const allLogs = getLogs();
+	const byRkey = new Map(allLogs.map((log) => [log.rkey, log]));
 
-  // Clear the previous status so a stale "Loading logs…" doesn't linger once
-  // the list resolves (it is re-set below only while the skeleton is shown).
-  if (statusEl) statusEl.textContent = "";
+	if (statusEl) statusEl.textContent = "";
 
-  // Remove cards that are no longer part of the list.
-  for (const el of Array.from(container.querySelectorAll<HTMLElement>("div[data-rkey]"))) {
-    if (!byRkey.has(el.dataset.rkey ?? "")) el.remove();
-  }
+	for (const el of Array.from(container.querySelectorAll<HTMLElement>("div[data-rkey]"))) {
+		if (!byRkey.has(el.dataset.rkey ?? "")) el.remove();
+	}
 
-  // State alerts and the loading skeleton are rebuilt below from the current state.
-  for (const el of Array.from(container.querySelectorAll<HTMLElement>("[data-logs-empty], [data-logs-error], [data-logs-skeleton]"))) {
-    el.remove();
-  }
+	for (const el of Array.from(container.querySelectorAll<HTMLElement>("[data-logs-empty], [data-logs-error], [data-logs-skeleton]"))) {
+		el.remove();
+	}
 
-  if (allLogs.length === 0) {
-    let html: string;
-    if (!firstSyncDone) {
-      html = SKELETON_HTML;
-      if (statusEl) statusEl.textContent = "Loading logs…";
-    } else if (lastSyncFailed) {
-      html = '<div role="alert" data-component="alert" data-color="error" data-logs-error>Could not load logs.</div>';
-    } else {
-      html = '<div data-component="alert" data-color="warning" data-logs-empty>There\'s no logs… yet. :(</div>';
-    }
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = html;
-    container.appendChild(wrapper.firstElementChild as HTMLElement);
-    return;
-  }
+	if (allLogs.length === 0) {
+		let html: string;
+		if (!firstSyncDone) {
+			html = SKELETON_HTML;
+			if (statusEl) statusEl.textContent = "Loading logs…";
+		} else if (lastSyncFailed) {
+			html = '<div role="alert" data-component="alert" data-color="error" data-logs-error style="display:flex; flex-direction:column; gap:var(--space-md); align-items:stretch"><p style="margin:0">Could not load logs. Please check your connection and try again.</p><button type="button" data-component="button" data-color="neutral" data-retry style="align-self:flex-start">Retry</button></div>';
+		} else {
+			html = '<div data-component="alert" data-color="warning" data-logs-empty>No logs yet<p style="margin:4px 0 0; opacity:.8; font-size:.9em">Entries will appear here once they’re published.</p></div>';
+		}
+		const wrapper = document.createElement("div");
+		wrapper.innerHTML = html;
+		const child = wrapper.firstElementChild as HTMLElement | null;
+		if (child) container.appendChild(child);
+		return;
+	}
 
-  // Insert missing cards in their sorted (newest-first) position.
-  for (const log of allLogs) {
-    if (container.querySelector(`div[data-rkey="${CSS.escape(log.rkey)}"]`)) continue;
+	for (const log of allLogs) {
+		if (container.querySelector(`div[data-rkey="${CSS.escape(log.rkey)}"]`)) continue;
 
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = makeCardHTML(log);
-    const card = wrapper.firstElementChild as HTMLElement | null;
-    if (!card) continue;
+		const wrapper = document.createElement("div");
+		wrapper.innerHTML = makeCardHTML(log);
+		const card = wrapper.firstElementChild as HTMLElement | null;
+		if (!card) continue;
 
-    const createdAt = new Date(log.createdAt).getTime();
-    let inserted = false;
-    for (const el of container.querySelectorAll<HTMLElement>("div[data-rkey]")) {
-      const existing = byRkey.get(el.dataset.rkey ?? "");
-      if (existing && createdAt > new Date(existing.createdAt).getTime()) {
-        container.insertBefore(card, el);
-        inserted = true;
-        break;
-      }
-    }
-    if (!inserted) container.appendChild(card);
-  }
+		// Keep datetime correct (makeCardHTML templated rkey into datetime by mistake — fix here)
+		const timeEl = card.querySelector("time[data-type=date]");
+		if (timeEl) timeEl.setAttribute("datetime", log.createdAt);
+
+		const createdAt = new Date(log.createdAt).getTime();
+		let inserted = false;
+		for (const el of container.querySelectorAll<HTMLElement>("div[data-rkey]")) {
+			const existing = byRkey.get(el.dataset.rkey ?? "");
+			if (existing && createdAt > new Date(existing.createdAt).getTime()) {
+				container.insertBefore(card, el);
+				inserted = true;
+				break;
+			}
+		}
+		if (!inserted) container.appendChild(card);
+	}
 }
 
 subscribe(renderLogs);
 
-// Paint anything from the seed that isn't in the cached HTML yet (e.g. logs
-// pending locally), then sync with the PDS and keep polling while open.
 renderLogs();
 syncLogs();
 setInterval(syncLogs, SYNC_INTERVAL_MS);
 
-// Re-sync when the tab becomes visible again.
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) syncLogs();
+	if (!document.hidden) syncLogs();
 });
 
-// Pick up logs composed in another tab (they land in localStorage).
 window.addEventListener("storage", (e) => {
-  if (e.key === STORAGE_KEY) mergeLocalPending();
+	if (e.key === STORAGE_KEY) mergeLocalPending();
 });
 </script>

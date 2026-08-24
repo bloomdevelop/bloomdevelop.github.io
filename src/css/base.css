@@ -54,10 +54,20 @@
 		--blur-large: 8px;
 
 		/* Text states swap (transitions.dev) */
-		--text-swap-dur: var(--duration-quick);
-		--text-swap-translate-y: var(--distance-micro);
-		--text-swap-blur: var(--blur-small);
-		--text-swap-ease: var(--ease-in-out);
+		--text-swap-dur: 200ms;
+		--text-swap-translate-y: 8px;
+		--text-swap-blur: 2px;
+		--text-swap-ease: ease-out;
+
+		/* Icon swap (transitions.dev) */
+		--icon-swap-dur: 200ms;
+		--icon-swap-blur: 2px;
+		--icon-swap-start-scale: 0.25;
+		--icon-swap-ease: ease-in-out;
+
+		/* Card resize (transitions.dev) */
+		--resize-dur: 300ms;
+		--resize-ease: cubic-bezier(0.22, 1, 0.36, 1);
 
 		/* Toggle (transitions.dev) */
 		--toggle-dur: var(--duration-medium);

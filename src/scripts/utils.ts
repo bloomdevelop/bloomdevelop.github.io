@@ -24,12 +24,31 @@ export function extractRkeyFromPlainAtURI(uri: string) {
 }
 
 export function formatDate(date: string) {
-	const formatter = new Intl.DateTimeFormat("en-US", {
-		timeStyle: "long",
-		dateStyle: "short",
-	});
+	const d = new Date(date);
+	const datePart = new Intl.DateTimeFormat("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	}).format(d);
+	const timePart = new Intl.DateTimeFormat("en-US", {
+		hour: "numeric",
+		minute: "2-digit",
+	}).format(d);
+	return `${datePart} · ${timePart}`;
+}
 
-	return formatter.format(new Date(date));
+export function formatDateFull(date: string) {
+	return new Intl.DateTimeFormat("en-US", {
+		dateStyle: "medium",
+		timeStyle: "long",
+	}).format(new Date(date));
+}
+
+export function bskyPostUrl(uri: string): string | null {
+	const match = /^at:\/\/([^/]+)\/app\.bsky\.feed\.post\/([^/]+)$/.exec(uri);
+	if (!match) return null;
+	const [, did, rkey] = match;
+	return `https://bsky.app/profile/${did}/post/${rkey}`;
 }
 
 export async function retry<T>(

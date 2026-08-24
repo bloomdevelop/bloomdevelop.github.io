@@ -2,14 +2,20 @@
 	.logs {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-lg);
+		gap: var(--space-xl);
+	}
+
+	@media (max-width: 579px) {
+		.logs {
+			gap: var(--space-lg);
+		}
 	}
 
 	/* Loading skeleton shown while the client re-syncs the initial snapshot */
 	[data-logs-skeleton] {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-lg);
+		gap: var(--space-xl);
 
 		& .skeleton-line,
 		& .skeleton-pill {
@@ -26,9 +32,57 @@
 		}
 
 		& .skeleton-pill {
-			width: 104px;
-			height: 34px;
+			min-width: 104px;
+			height: 32px;
+			flex: 1 1 120px;
 			border-radius: 999px;
+		}
+
+		& .skeleton-pill.icon {
+			min-width: 32px;
+			width: 32px;
+			height: 32px;
+			flex: 0 0 32px;
+			border-radius: 999px;
+		}
+
+		& [data-component="card"] footer {
+			justify-content: space-between;
+		}
+
+		& .card-meta,
+		& .card-actions {
+			display: inline-flex;
+			align-items: center;
+			gap: var(--space-md);
+			flex-wrap: wrap;
+		}
+
+		& .card-actions {
+			justify-content: flex-end;
+		}
+
+		@media (max-width: 579px) {
+			gap: var(--space-lg);
+
+			& [data-component="card"] footer {
+				flex-direction: column;
+				align-items: stretch;
+			}
+
+			& .card-meta {
+				width: 100%;
+			}
+
+			& .card-actions {
+				width: 100%;
+				justify-content: flex-end;
+				flex-wrap: nowrap;
+
+				& .skeleton-pill:first-child {
+					margin-right: auto;
+				}
+			}
 		}
 
 		& .skeleton-line::after,
