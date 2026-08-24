@@ -51,11 +51,18 @@ async function beforeLogin(identifier: string): Promise<boolean> {
 		identifier,
 	);
 
+	const trimmed = identifier.trim();
+	if (!trimmed) {
+		console.warn("[OAUTH]", "Missing handle");
+		isDidAllowed.value = false;
+		return false;
+	}
+
 	const res = await fetch(
 		constructApiUrl(
 			"com.atproto.identity.resolveHandle",
 			{
-				handle: identifier,
+				handle: trimmed,
 			},
 			"https://api.bsky.app",
 		),
@@ -103,15 +110,17 @@ export async function setupOAuth() {
 			console.info("[OAUTH]", "Restored session", session.sub);
 		}
 
+		agent = new Agent(session);
+
 		if (!ALLOWED_DIDS.includes(session.did)) {
 			console.warn("[OAUTH]", "DID", session.did, "is not allowed!");
 			isDidAllowed.value = false;
+			sharedAgent.value = agent;
+			isInitialized.value = true;
 			return;
 		}
 
 		isDidAllowed.value = true;
-
-		agent = new Agent(session);
 
 		const res = await agent.com.atproto.server.getSession();
 		if (!res.success) {
@@ -143,7 +152,7 @@ export async function startLoginFlow(identifier: string) {
 		}
 		if (!(await beforeLogin(identifier))) return;
 
-		await oauthClient.signIn(identifier, {
+		await oauthClient.signIn(identifier.trim(), {
 			state: window.crypto.randomUUID(),
 			signal: new AbortController().signal,
 		});
@@ -156,9 +165,10 @@ export async function startLoginFlow(identifier: string) {
  * Revoke the current oauth session and reload the page.
  */
 export function revokeSession() {
-	if (!agent?.did) return; // do not revoke if we aren't logged in lol
+	const did = agent?.did ?? sharedAgent.value?.did;
+	if (!did) return; // do not revoke if we aren't logged in lol
 
-	oauthClient.revoke(agent.did);
+	oauthClient.revoke(did);
 	window.location.reload();
 }
 

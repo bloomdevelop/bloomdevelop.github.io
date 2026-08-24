@@ -25,7 +25,7 @@ function isLoggedIn() {
 onMounted(async () => {
     await setupOAuth();
 
-    if (!isInitialized.value) return;
+    if (!isInitialized.value || !isDidAllowed.value) return;
 
     const profile = await agent.value?.getProfile({
         actor: agent.value?.did as string,
@@ -45,7 +45,7 @@ function logout() {
 watch(
     isInitialized,
     async (initialized) => {
-        if (!initialized || !agent.value?.did) return;
+        if (!initialized || !agent.value?.did || !isDidAllowed.value) return;
 
         try {
             if (await shouldMigrate(agent.value.did)) {
@@ -85,6 +85,19 @@ function closeCompose() {
 </script>
 
 <template>
+    <div
+        v-if="isInitialized && !isDidAllowed"
+        class="unauthorized-banner"
+        role="alert"
+        data-component="alert"
+        data-color="warning"
+    >
+        <div class="unauthorized-banner-content">
+            <span class="md-symbols" aria-hidden="true">warning</span>
+            <span>You're logged in with an unauthorized account. You don't have permission to post logs.</span>
+        </div>
+        <button data-component="button" data-color="neutral" @click="logout">Logout</button>
+    </div>
     <div
         role="toolbar"
         class="toolbar-hover-zone"
@@ -423,6 +436,43 @@ function closeCompose() {
         transform: none;
         opacity: 1;
         animation: none;
+    }
+}
+
+.unauthorized-banner {
+    position: fixed;
+    top: var(--space-lg);
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(620px, calc(100% - 2 * var(--space-xl)));
+    z-index: 10002;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    flex-wrap: wrap;
+    box-shadow: var(--shadow-lg);
+}
+
+.unauthorized-banner-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    .unauthorized-banner {
+        top: var(--space-md);
+        width: calc(100% - 2 * var(--space-md));
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .unauthorized-banner button {
+        align-self: flex-end;
     }
 }
 

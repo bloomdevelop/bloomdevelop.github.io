@@ -1,17 +1,28 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { isDidAllowed } from "../scripts/agent";
 import { startLoginFlow } from "../scripts/oauth";
 const handle = ref("");
 const loading = ref(false);
+const error = ref("");
 
 async function login() {
   if (loading.value) return;
+  error.value = "";
+  const trimmed = handle.value.trim();
+  if (!trimmed) {
+    error.value = "Please enter your handle.";
+    return;
+  }
   loading.value = true;
   try {
     // startLoginFlow either navigates away (redirect to the PDS) or returns
     // early on failure (e.g. an unauthorized DID); in the latter case the
     // finally block re-enables the button and swaps the label back.
-    await startLoginFlow(handle.value);
+    await startLoginFlow(trimmed);
+    if (!isDidAllowed.value) {
+      error.value = "This account is not authorized to post logs.";
+    }
   } finally {
     loading.value = false;
   }
@@ -47,8 +58,20 @@ async function login() {
         name="handle"
         autocomplete="username"
         placeholder="spring.furrest.net…"
+        :aria-invalid="!!error"
+        :aria-describedby="error ? 'oauth-error' : undefined"
+        @input="error = ''"
       />
     </label>
+    <div
+      v-if="error"
+      id="oauth-error"
+      role="alert"
+      data-component="alert"
+      data-color="error"
+    >
+      {{ error }}
+    </div>
     <footer>
       <button
         data-component="button"
