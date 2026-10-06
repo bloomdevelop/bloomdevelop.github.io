@@ -577,7 +577,7 @@ if (main) {
 			};
 			gravityProgress = 0;
 			if (collides(current.x, current.y, current.matrix))
-				endRun(false, "STACK TOPPED OUT");
+				endRun(false, "Game Over :(");
 		}
 
 		function insertGarbage(): boolean {
