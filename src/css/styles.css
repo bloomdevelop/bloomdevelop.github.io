@@ -1,3 +1,8 @@
+/* Layer order must be declared up front: the bundler hoists bare @layer
+   statements to the top of the output, which otherwise inverts the cascade
+   and lets base element styles beat every component override. */
+@layer base, colors, components;
+
 @import "./base.css";
 @import "./colors.css";
 @import "./components.css";

@@ -1,8 +1,17 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { startLoginFlow } from "../scripts/oauth";
+const dialog = ref<HTMLDialogElement | null>(null);
 const handle = ref("");
 const loading = ref(false);
+
+function open() {
+  dialog.value?.showModal();
+}
+
+function close() {
+  dialog.value?.close();
+}
 
 async function login() {
   if (loading.value) return;
@@ -16,58 +25,62 @@ async function login() {
     loading.value = false;
   }
 }
+
+defineExpose({ open, close });
 </script>
 
 <template>
-  <header>
-    <h1>Login via OAuth</h1>
+  <dialog ref="dialog" id="oauth" data-component="dialog">
+    <header>
+      <h1>Login via OAuth</h1>
 
-    <button
-      data-component="button"
-      type="button"
-      data-variant="ghost"
-      data-size="icon"
-      commandFor="oauth"
-      command="close"
-      aria-label="Close"
-    >
-      <span class="md-symbols" aria-hidden="true">close</span>
-    </button>
-  </header>
-  <form @submit.prevent="login">
-    <label>
-      <span>
-        <span class="md-symbols" aria-hidden="true">alternate_email</span>
-        Handle</span
-      >
-      <input
-        v-model="handle"
-        @keyup.enter="login"
-        type="text"
-        name="handle"
-        autocomplete="username"
-        placeholder="spring.furrest.net…"
-      />
-    </label>
-    <footer>
       <button
         data-component="button"
-        data-color
-        type="submit"
-        :disabled="loading"
-        :aria-busy="loading"
+        type="button"
+        data-variant="ghost"
+        data-size="icon"
+        commandFor="oauth"
+        command="close"
+        aria-label="Close"
       >
-        <!-- Text states swap (transitions.dev "text states swap"), mirrors the
-             Log buttons in logs.astro: the old label exits upward with blur
-             while the new label enters from below. -->
-        <Transition name="t-swap" mode="out-in">
-          <span :key="loading ? 'logging' : 'login'" class="t-text-swap">
-            {{ loading ? "Logging in…" : "Login" }}
-          </span>
-        </Transition>
+        <span class="md-symbols" aria-hidden="true">close</span>
       </button>
-    </footer>
-  </form>
+    </header>
+    <form @submit.prevent="login">
+      <label>
+        <span>
+          <span class="md-symbols" aria-hidden="true">alternate_email</span>
+          Handle</span
+        >
+        <input
+          v-model="handle"
+          @keyup.enter="login"
+          type="text"
+          name="handle"
+          autocomplete="username"
+          placeholder="spring.furrest.net…"
+        />
+      </label>
+      <footer>
+        <button
+          data-component="button"
+          data-color
+          type="submit"
+          :disabled="loading"
+          :aria-busy="loading"
+        >
+          <!-- Text states swap (transitions.dev "text states swap"), mirrors the
+               Log buttons in logs.astro: the old label exits upward with blur
+               while the new label enters from below. -->
+          <Transition name="t-swap" mode="out-in">
+            <span :key="loading ? 'logging' : 'login'" class="t-text-swap">
+              {{ loading ? "Logging in…" : "Login" }}
+            </span>
+          </Transition>
+        </button>
+      </footer>
+    </form>
+  </dialog>
 </template>
 
 <style scoped>

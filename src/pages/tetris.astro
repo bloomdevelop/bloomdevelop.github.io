@@ -1,0 +1,189 @@
+---
+import BaseLayout from "../layouts/base-layout.astro";
+import NavMenu from "../components/nav-menu.vue";
+---
+
+<BaseLayout>
+    <NavMenu client:only />
+    <main id="main-content" data-component="tetris">
+        <section class="tetris-game" aria-label="Terror Instinct game">
+            <aside class="tetris-column tetris-left" aria-label="Held piece, grade, and rules">
+                <section data-component="card" class="hold-card" aria-label="Held piece">
+                    <header class="card-header">
+                        <h2>Hold</h2>
+                        <kbd>C</kbd>
+                    </header>
+                    <div class="card-content piece-preview">
+                        <canvas id="hold-preview" width="148" height="74" aria-label="Held piece"></canvas>
+                    </div>
+                </section>
+
+                <section data-component="card" class="grade-card" aria-label="Grade">
+                    <header class="card-header">
+                        <h2>Grade</h2>
+                        <span class="grade-caption">Est.</span>
+                    </header>
+                    <div class="card-content">
+                        <p id="grade-value" class="grade-value">9</p>
+                        <div class="grade-meter" aria-hidden="true">
+                            <span id="grade-meter-fill"></span>
+                        </div>
+                        <dl class="meta-list">
+                            <div class="meta-row">
+                                <dt>Section</dt>
+                                <dd id="section-value">000–099</dd>
+                            </div>
+                            <div class="meta-row">
+                                <dt>Cool</dt>
+                                <dd id="cool-value">00</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </section>
+            </aside>
+
+            <div class="playfield-column">
+                <section data-component="card" class="mode-card" aria-label="Game mode">
+                    <header class="card-header">
+                        <h2>Mode</h2>
+                    </header>
+                    <div class="card-content">
+                        <div class="mode-options" role="group" aria-label="Game mode">
+                            <button
+                                type="button"
+                                data-component="button"
+                                class="mode-button"
+                                data-mode="easy"
+                                aria-pressed="false"
+                            >
+                                <span class="mode-name">Easy</span>
+                                <span class="mode-detail">Reach level 200</span>
+                            </button>
+                            <button
+                                type="button"
+                                data-component="button"
+                                class="mode-button"
+                                data-mode="master"
+                                aria-pressed="true"
+                            >
+                                <span class="mode-name">Master</span>
+                                <span class="mode-detail">Reach level 999</span>
+                            </button>
+                            <button
+                                type="button"
+                                data-component="button"
+                                class="mode-button"
+                                data-mode="shirase"
+                                aria-pressed="false"
+                            >
+                                <span class="mode-name">Shirase</span>
+                                <span class="mode-detail">20G · level 1300</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="playfield-frame">
+                    <canvas
+                        id="game-board"
+                        width="320"
+                        height="640"
+                        aria-label="Tetris playfield. Use the keyboard controls listed below."
+                    ></canvas>
+                    <div id="game-overlay" class="game-overlay" data-visible="true">
+                        <div class="overlay-content">
+                            <button
+                                type="button"
+                                id="start-button"
+                                class="start-button"
+                                data-component="button"
+                                data-color
+                            >
+                                Play
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <p id="game-message" class="game-message" aria-live="polite">
+                    Select a mode and press "Play" to start the game.
+                </p>
+            </div>
+
+            <aside class="tetris-column tetris-right" aria-label="Next pieces and statistics">
+                <section data-component="card" class="next-card" aria-label="Next pieces">
+                    <header class="card-header">
+                        <h2>Next</h2>
+                        <kbd>3</kbd>
+                    </header>
+                    <div class="card-content piece-preview">
+                        <canvas id="next-preview-0" width="148" height="66" aria-label="Next piece"></canvas>
+                        <canvas id="next-preview-1" width="148" height="66" aria-label="Second next piece"></canvas>
+                        <canvas id="next-preview-2" width="148" height="66" aria-label="Third next piece"></canvas>
+                    </div>
+                </section>
+
+                <section data-component="card" class="stats-card" aria-label="Run statistics">
+                    <header class="card-header">
+                        <h2>Stats</h2>
+                    </header>
+                    <div class="card-content">
+                        <dl class="stat-list">
+                            <div class="stat-row stat-level">
+                                <dt>Level</dt>
+                                <dd id="level-value">000</dd>
+                            </div>
+                            <div class="stat-row">
+                                <dt>Lines</dt>
+                                <dd id="lines-value">000</dd>
+                            </div>
+                            <div class="stat-row">
+                                <dt>Time</dt>
+                                <dd id="time-value">00:00</dd>
+                            </div>
+                            <div class="stat-row">
+                                <dt>Score</dt>
+                                <dd id="score-value">000000</dd>
+                            </div>
+                            <div class="stat-row">
+                                <dt>Combo</dt>
+                                <dd id="combo-value">-</dd>
+                            </div>
+                        </dl>
+                    </div>
+                </section>
+            </aside>
+        </section>
+
+        <div class="game-controls" aria-label="Keyboard controls">
+            <span><kbd>←</kbd><kbd>→</kbd> Move</span>
+            <span><kbd>↓</kbd> Soft drop</span>
+            <span><kbd>↑</kbd> / <kbd>X</kbd> Rotate</span>
+            <span><kbd>Z</kbd> Rotate back</span>
+            <span><kbd>Space</kbd> Hard drop</span>
+            <span><kbd>C</kbd> Hold</span>
+            <span><kbd>P</kbd> Pause</span>
+        </div>
+
+        <div class="touch-controls" aria-label="Touch controls">
+            <div class="touch-group">
+                <button type="button" data-action="left" aria-label="Move left">←</button>
+                <button type="button" data-action="down" aria-label="Soft drop">↓</button>
+                <button type="button" data-action="right" aria-label="Move right">→</button>
+            </div>
+            <div class="touch-group">
+                <button type="button" data-action="rotate-ccw" aria-label="Rotate counter-clockwise">↶</button>
+                <button type="button" data-action="rotate-cw" aria-label="Rotate clockwise">↻</button>
+                <button type="button" data-action="hold" aria-label="Hold piece">Hold</button>
+                <button type="button" data-action="hard-drop" aria-label="Hard drop">Drop</button>
+            </div>
+        </div>
+
+        <p class="tetris-footnote">
+            An independent fan-made tribute. Tetris and TGM are trademarks of their respective owners.
+        </p>
+    </main>
+</BaseLayout>
+
+<script>
+    import "../scripts/tetris";
+</script>
