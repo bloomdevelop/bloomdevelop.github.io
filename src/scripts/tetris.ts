@@ -666,7 +666,7 @@ if (main) {
 			resetRun();
 			status = "playing";
 			setOverlay(false);
-			setMessage("Stack clean. Keep the pace.");
+			setMessage("");
 			spawnPiece();
 			updateUI();
 			render();
@@ -712,14 +712,14 @@ if (main) {
 				if (sectionCoolReady) {
 					coolCount += 1;
 					gradeRank = Math.min(GRADE_NAMES.length - 1, gradeRank + 1);
-					setMessage("SECTION COOL!!", 2400);
+					setMessage("COOL!!", 2400);
 				} else {
 					const regretTime = MASTER_REGRET_TIMES[sectionIndex];
 					if (regretTime !== undefined && durationSeconds > regretTime) {
 						regretCount += 1;
 						if (gradeRank > 0) gradeRank -= 1;
 						gradePoints = 0;
-						setMessage("SECTION REGRET!", 2400);
+						setMessage("REGRET!", 2400);
 					}
 				}
 				sectionStartMs = totalTimeMs;
