@@ -1,0 +1,76 @@
+<svg width="314" height="308" viewBox="0 0 314 308" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+@keyframes kf_Vector_transform_0 {
+  0% {
+    transform: translateX(102px) translateY(54px) translate(55px, 100px) rotate(0rad) translate(-55px, -100px);
+  }
+  19.82% {
+    animation-timing-function: linear(0, 0.0188, 0.0679, 0.1374, 0.2195, 0.308, 0.3978, 0.4856, 0.5686, 0.6452, 0.7142, 0.7753, 0.8283, 0.8735, 0.9113, 0.9423, 0.9671, 0.9866, 1.0014, 1.0123, 1.0198, 1.0247, 1.0274, 1.0283, 1.0281, 1.0268, 1.025, 1.0227, 1.0202, 1.0177, 1.0152, 1.0128, 1.0106, 1.0085, 1.0068, 1.0052, 1.0039, 1.0028, 1.0018, 1.0011, 1.0005, 1, 0.9997, 0.9995, 0.9993, 0.9992, 0.9992, 0.9992, 0.9992, 0.9993, 0.9993);
+    transform: translateX(102px) translateY(54px) translate(55px, 100px) rotate(0rad) translate(-55px, -100px);
+  }
+  40.02% {
+    transform: translateX(102px) translateY(54px) translate(55px, 100px) rotate(1.571rad) translate(-55px, -100px);
+  }
+  60.1% {
+    transform: translateX(102px) translateY(54px) translate(55px, 100px) rotate(1.571rad) translate(-55px, -100px);
+  }
+  71.2% {
+    animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+    transform: translateX(102px) translateY(54px) translate(55px, 100px) rotate(1.571rad) translate(-55px, -100px);
+  }
+  79.92% {
+    transform: translateX(102px) translateY(54px) translate(55px, 100px) rotate(0rad) translate(-55px, -100px);
+  }
+  100% {
+    transform: translateX(102px) translateY(54px) translate(55px, 100px) rotate(0rad) translate(-55px, -100px);
+  }
+}
+@keyframes kf_Vector_opacity_0 {
+  0% {
+    animation-timing-function: linear;
+    opacity: 1;
+  }
+  19.82% {
+    animation-timing-function: linear;
+    opacity: 1;
+  }
+  40.02% {
+    animation-timing-function: linear;
+    opacity: 1;
+  }
+  60.1% {
+    animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+    opacity: 1;
+  }
+  71.25% {
+    animation-timing-function: linear;
+    opacity: 0;
+  }
+  79.94% {
+    animation-timing-function: cubic-bezier(0.5, 0, 0.5, 1);
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+#Vector {
+  transform-origin: 0 0;
+  animation:
+    kf_Vector_transform_0 5s linear infinite,
+    kf_Vector_opacity_0 5s linear infinite;
+}
+</style>
+<g id="Instruction_-_Light__Phone_" clip-path="url(#clip0_33_91)">
+<g id="Vector" transform="translate(102 54)">
+<path d="M67.0833 7C69.0163 7 70.5833 8.567 70.5833 10.5C70.5833 12.433 69.0163 14 67.0833 14H42.9167C40.9837 14 39.4167 12.433 39.4167 10.5C39.4167 8.567 40.9837 7 42.9167 7H67.0833Z" id="Vector_bg_0" fill="black">
+</path>
+<path d="M33 194H77M22 200H88C100.15 200 110 189.255 110 176V24C110 10.7452 100.15 0 88 0H55H22C9.84974 0 0 10.7452 0 24V176C0 189.255 9.84973 200 22 200ZM39.4167 10.5C39.4167 8.567 40.9837 7 42.9167 7H67.0833C69.0163 7 70.5833 8.567 70.5833 10.5C70.5833 12.433 69.0163 14 67.0833 14H42.9167C40.9837 14 39.4167 12.433 39.4167 10.5Z" stroke="black" stroke-width="2" stroke-linecap="round"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_33_91">
+<rect width="314" height="308" fill="white"/>
+</clipPath>
+</defs>
+</svg>

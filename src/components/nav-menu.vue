@@ -79,6 +79,9 @@ function closeCompose() {
                 </picture>
             </a>
             <div>
+                <a data-component="button" class="toolbar-btn" href="/tetris" aria-label="Tetris">
+                    <span class="md-symbols" aria-hidden="true">gamepad</span>
+                </a>
                 <button data-component="button" class="toolbar-btn" @click="aboutDialog?.open()" aria-label="About">
                     <span class="md-symbols" aria-hidden="true">info</span>
                 </button>

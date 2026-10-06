@@ -4,6 +4,13 @@
 		   translucent overlay; this base color composites with that overlay to
 		   the same board color, so frame and previews match in both themes. */
 		--board-bg: #0d121f;
+		/* The board is a fixed 1:2 canvas whose 640px height pushed the playfield
+		   off the bottom of shorter viewports. Cap its height by the viewport
+		   (the offset covers the nav gap, the mode card above the board and the
+		   status line below it) and derive the width from it, so the board keeps
+		   its ratio; the floor stops it collapsing on very short viewports. */
+		--board-max-height: clamp(340px, calc(100dvh - 400px), 640px);
+		--board-max-width: calc(var(--board-max-height) / 2);
 		/* Shared by the key chips and the panel header minimum, so headers stay
 		   the same height whether they carry a chip on the right or not. */
 		--kbd-size: calc(var(--space-xl) + var(--space-md));
@@ -12,6 +19,12 @@
 		box-sizing: border-box;
 		margin-block: var(--space-2xl);
 		color: var(--surface-contrast);
+	}
+
+	/* Shown only on phone-sized portrait screens (see the media query at the
+	   end of this file); hidden everywhere else. */
+	[data-component="tetris"] .rotate-hint {
+		display: none;
 	}
 
 	/* The shared card culls off-screen content; game panels must always render
@@ -44,7 +57,7 @@
 		display: grid;
 		grid-template-columns:
 			minmax(180px, 220px)
-			minmax(260px, 320px)
+			minmax(min(260px, var(--board-max-width)), var(--board-max-width))
 			minmax(170px, 210px);
 		align-items: start;
 		justify-content: center;
@@ -417,6 +430,66 @@
 		[data-component="tetris"] .touch-controls button {
 			min-width: 40px;
 			padding-inline: var(--space-md);
+		}
+	}
+
+	/* Touch devices get the on-screen pad instead of the keyboard legend at any
+	   width, so a phone still has controls after the rotate prompt sends it to
+	   landscape (where the viewport is wider than the <=620px block). */
+	@media (pointer: coarse) {
+		[data-component="tetris"] .game-controls {
+			display: none;
+		}
+
+		[data-component="tetris"] .touch-controls {
+			display: flex;
+		}
+	}
+
+	/* The 1:2 playfield plus the HUD cannot fit a phone in portrait, so replace
+	   the game with a rotate prompt. Orientation media queries re-evaluate when
+	   the device rotates, so no script is needed to swap the views back. */
+	@media (max-width: 620px) and (orientation: portrait) and (pointer: coarse) {
+		[data-component="tetris"] .rotate-hint {
+			display: grid;
+			justify-items: center;
+			gap: var(--space-lg);
+			margin-block: clamp(var(--space-2xl), 12vh, 96px);
+			text-align: center;
+		}
+
+		[data-component="tetris"] .tetris-game,
+		[data-component="tetris"] .game-controls,
+		[data-component="tetris"] .touch-controls,
+		[data-component="tetris"] .tetris-footnote {
+			display: none;
+		}
+
+		[data-component="tetris"] .rotate-hint-art {
+			display: block;
+			width: min(60vw, 220px);
+		}
+
+		[data-component="tetris"] .rotate-hint-art img {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+
+		/* The [role] holds this at the panel-heading specificity so Biome's
+		   descending-specificity rule stays quiet (the two never co-match). */
+		[data-component="tetris"] .rotate-hint[role="note"] h2 {
+			margin: 0;
+			font-family: var(--google-sans-flex);
+			font-size: 2rem;
+			font-weight: 800;
+			letter-spacing: 0.1em;
+		}
+
+		[data-component="tetris"] .rotate-hint p {
+			margin: 0;
+			color: color-mix(in oklch, var(--surface-contrast), transparent 45%);
+			font-size: 0.85rem;
 		}
 	}
 

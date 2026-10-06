@@ -6,6 +6,23 @@ import NavMenu from "../components/nav-menu.vue";
 <BaseLayout>
     <NavMenu client:only />
     <main id="main-content" data-component="tetris">
+        <div class="rotate-hint" role="note" aria-label="Rotate your device to landscape">
+            <picture class="rotate-hint-art">
+                <source
+                    srcset="/Instruction%20-%20Dark%20(Phone).svg"
+                    media="(prefers-color-scheme: dark)"
+                />
+                <img
+                    src="/Instruction%20-%20Light%20(Phone).svg"
+                    alt=""
+                    width="314"
+                    height="308"
+                />
+            </picture>
+            <h2>Turn your device sideways to play.</h2>
+            <p>Please note that the game isn't quite ready for mobile</p>
+        </div>
+
         <section class="tetris-game" aria-label="Terror Instinct game">
             <aside class="tetris-column tetris-left" aria-label="Held piece, grade, and rules">
                 <section data-component="card" class="hold-card" aria-label="Held piece">
