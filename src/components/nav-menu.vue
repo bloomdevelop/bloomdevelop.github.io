@@ -72,8 +72,11 @@ function closeCompose() {
 <template>
     <div role="toolbar" class="toolbar-dock">
         <nav class="full-width-toolbar">
-            <a href="/">
-                <h1>Logomark</h1>
+            <a href="/" class="logomark-link">
+                <picture>
+                    <source srcset="/logomark-dark.svg" media="(prefers-color-scheme: dark)" />
+                    <img src="/logomark-light.svg" alt="Spring's Website Logo" width="135" height="44" />
+                </picture>
             </a>
             <div>
                 <button data-component="button" class="toolbar-btn" @click="aboutDialog?.open()" aria-label="About">
@@ -133,6 +136,18 @@ function closeCompose() {
         align-items: center;
         gap: var(--space-md);
     }
+}
+
+.logomark-link {
+    display: flex;
+    align-items: center;
+}
+
+.logomark-link img {
+    display: block;
+    height: 44px;
+    width: auto;
+    margin: var(--space-lg) 0;
 }
 
 .toolbar-btn {
