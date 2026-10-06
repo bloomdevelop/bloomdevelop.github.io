@@ -123,22 +123,25 @@ function closeCompose() {
 }
 
 .full-width-toolbar {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    justify-content: space-evenly;
     gap: var(--space-md);
-    width: 100%;
     min-height: 32px;
     padding: var(--space-sm) max(var(--space-xl), env(safe-area-inset-left)) var(--space-md) max(var(--space-xl), env(safe-area-inset-right));
 
     & div {
+        grid-column: 3;
         display: flex;
         align-items: center;
+        justify-content: flex-end;
         gap: var(--space-md);
     }
 }
 
 .logomark-link {
+    grid-column: 2;
+    justify-self: center;
     display: flex;
     align-items: center;
 }
@@ -148,6 +151,22 @@ function closeCompose() {
     height: 44px;
     width: auto;
     margin: var(--space-lg) 0;
+}
+
+/* On narrow screens the centered logo would crowd the buttons, so pin it left. */
+@media (max-width: 640px) {
+    .full-width-toolbar {
+        grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .logomark-link {
+        grid-column: 1;
+        justify-self: start;
+    }
+
+    .full-width-toolbar div {
+        grid-column: 2;
+    }
 }
 
 .toolbar-btn {

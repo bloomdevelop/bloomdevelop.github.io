@@ -58,6 +58,11 @@ const BLUR_LEVELS_PX = [1, 2, 4, 8, 16, 32, 64];
             }
         }
 
+        /* Keep the surface gradient above every blur layer so it blends on top. */
+        & > .gradient {
+            z-index: 20;
+        }
+
         &[data-position="bottom"] > .layer:nth-child(1) {
             mask-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 40%);
             -webkit-mask-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 1) 10%, rgba(0, 0, 0, 1) 30%, rgba(0, 0, 0, 0) 40%);
