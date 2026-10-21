@@ -33,7 +33,7 @@ import ProgressiveBlur from "../components/progressive-blur.astro";
 
     </head>
     <body>
-        <ProgressiveBlur position="top" height="104px" />
+        <ProgressiveBlur position="top" height="var(--top-blur-height)" />
         <ProgressiveBlur position="bottom" />
         <a href="#main-content" class="skip-link">Skip to main content</a>
         <main>
@@ -50,6 +50,10 @@ import ProgressiveBlur from "../components/progressive-blur.astro";
 </html>
 
 <style>
+    main {
+        padding-top: calc(var(--top-blur-height) + var(--space-lg));
+    }
+
     .skip-link {
         opacity: 0;
         position: fixed;

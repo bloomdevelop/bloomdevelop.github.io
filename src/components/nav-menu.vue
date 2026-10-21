@@ -151,7 +151,7 @@ function closeCompose() {
 
 .logomark-link img {
     display: block;
-    height: 44px;
+    height: var(--nav-logo-size);
     width: auto;
     margin: var(--space-lg) 0;
 }
@@ -195,10 +195,6 @@ function closeCompose() {
 .toolbar-btn:active {
     background: var(--surface-primary);
     color: constrast-color(var(--surface-primary));
-}
-
-:global(main) {
-    padding-top: calc(var(--space-3xl) + 64px + env(safe-area-inset-top));
 }
 
 @media (prefers-reduced-motion: reduce) {

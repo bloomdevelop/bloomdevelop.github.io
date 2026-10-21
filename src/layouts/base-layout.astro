@@ -35,7 +35,7 @@ import ProgressiveBlur from "../components/progressive-blur.astro";
 
     </head>
     <body>
-        <ProgressiveBlur position="top" height="104px" />
+        <ProgressiveBlur position="top" height="var(--top-blur-height)" />
         <ProgressiveBlur position="bottom" />
         <a href="#main-content" class="skip-link">Skip to main content</a>
         <slot />
