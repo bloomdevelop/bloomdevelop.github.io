@@ -32,7 +32,7 @@ import ProgressiveBlur from "../components/progressive-blur.astro";
         <Font cssVariable="--maple-mono" preload />
 
     </head>
-    <body data-sky="sunrise">
+    <body>
         <ProgressiveBlur position="top" height="104px" />
         <ProgressiveBlur position="bottom" />
         <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -46,20 +46,6 @@ import ProgressiveBlur from "../components/progressive-blur.astro";
         }}>
             Designed by Bloom Perez in Dominican Republic. &copy; {new Date().getFullYear()}
         </footer>
-
-        <script>
-            import { initSky } from "../scripts/sky.ts";
-            initSky();
-
-            // Refresh at the top of the next hour so the sky stays current
-            // without polling.
-            const untilNextHour =
-                (60 - new Date().getMinutes()) * 60_000 -
-                new Date().getSeconds() * 1_000;
-            setTimeout(() => {
-                location.reload();
-            }, untilNextHour);
-        </script>
     </body>
 </html>
 
