@@ -21,6 +21,12 @@ try {
     set:html={encodeURIComponent(JSON.stringify(posts))}
 ></script>
 
+<noscript>
+  <div data-component="alert" data-color="error">
+    Please enable Javascript, otherwise some features will not work!
+  </div>
+</noscript>
+
 <div class="logs" id="logs">
   <p role="status" aria-atomic="true" class="visually-hidden" id="logs-status"></p>
   {fetchError ? (
