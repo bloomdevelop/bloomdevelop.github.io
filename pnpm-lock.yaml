@@ -26,6 +26,12 @@ importers:
       '@fontsource-variable/google-sans-flex':
         specifier: ^5.2.3
         version: 5.2.3
+      '@scritto/core':
+        specifier: ^0.1.0
+        version: 0.1.0
+      '@scritto/vue':
+        specifier: ^0.1.0
+        version: 0.1.0(vue@3.5.39(typescript@6.0.3))
       astro:
         specifier: ^7.0.4
         version: 7.0.4(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.1)(yaml@2.9.0)
@@ -1008,6 +1014,14 @@ packages:
     peerDependenciesMeta:
       rollup:
         optional: true
+
+  '@scritto/core@0.1.0':
+    resolution: {integrity: sha512-8itfD3jc+DvoDcMYAcWJHyLXZvBNaorlL091Fp/4Toe4trGErbQOtyptO9Qexyb/qvGO0S1WRWDrGO/2KURnxg==}
+
+  '@scritto/vue@0.1.0':
+    resolution: {integrity: sha512-24eO2mvXzz8Sy5qhj+4ZxmJTRrvEbz6sbzvuIxEAtTasJSBK793Jyc0/705R8cXiO/Ficn/nJJ7Od0qaQYPuJw==}
+    peerDependencies:
+      vue: ^3
 
   '@shikijs/core@4.3.0':
     resolution: {integrity: sha512-EooU3i9F6IAE8kEu+AnGf9DFZWkQBZ+hJn3tLVbsH+61mtQiva5biai66fAA6nvFPXkLgvrh7BrR7YcJU83xQQ==}
@@ -3362,6 +3376,13 @@ snapshots:
       '@types/estree': 1.0.9
       estree-walker: 2.0.2
       picomatch: 4.0.4
+
+  '@scritto/core@0.1.0': {}
+
+  '@scritto/vue@0.1.0(vue@3.5.39(typescript@6.0.3))':
+    dependencies:
+      '@scritto/core': 0.1.0
+      vue: 3.5.39(typescript@6.0.3)
 
   '@shikijs/core@4.3.0':
     dependencies:

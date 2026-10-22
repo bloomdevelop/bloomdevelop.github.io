@@ -54,12 +54,6 @@
 		--blur-medium: 3px;
 		--blur-large: 8px;
 
-		/* Text states swap (transitions.dev) */
-		--text-swap-dur: var(--duration-quick);
-		--text-swap-translate-y: var(--distance-micro);
-		--text-swap-blur: var(--blur-small);
-		--text-swap-ease: var(--ease-in-out);
-
 		/* Toggle (transitions.dev) */
 		--toggle-dur: var(--duration-medium);
 		--toggle-travel: 14.66px;

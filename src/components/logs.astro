@@ -72,7 +72,7 @@ try {
           )}
           <button data-component="button" data-color data-rkey={log.rkey}>
             <span class="md-symbols" aria-hidden="true">link</span>
-            <span class="t-text-swap">Permalink</span>
+            <scritto-text>Permalink</scritto-text>
           </button>
           <button
             data-component="button"
@@ -82,7 +82,7 @@ try {
             style="--color: var(--twitter); --color-contrast: white;"
           >
             <span class="md-symbols" aria-hidden="true">content_copy</span>
-            <span class="t-text-swap">Copy as Twitter post</span>
+            <scritto-text>Copy as Twitter post</scritto-text>
           </button>
         </footer>
       </div>
@@ -91,6 +91,8 @@ try {
 </div>
 
 <script>
+import "@scritto/core";
+import type { Scritto } from "@scritto/core";
 import { fetchLogsFromPreviewDID } from "../scripts/logsApi";
 import {
   STORAGE_KEY,
@@ -109,6 +111,31 @@ if (!container) {
 }
 
 const statusEl = document.getElementById("logs-status");
+
+// The custom element does not adopt its text content, so seed it from the
+// server-rendered fallback and drop that fallback text to avoid duplication.
+// Keeping the empty plain text node the element appends preserves its
+// accessible value.
+function hydrateLabels(root: ParentNode) {
+  for (const el of root.querySelectorAll<Scritto>("scritto-text")) {
+    if (el.value) continue;
+    const text = el.textContent ?? "";
+    if (!text) continue;
+    for (const node of [...el.childNodes]) {
+      if (node.nodeType === Node.TEXT_NODE && node.nodeValue) node.remove();
+    }
+    el.update(text, false);
+    el.setAttribute("role", "img");
+    el.setAttribute("aria-label", text);
+  }
+}
+
+function setLabel(el: Scritto, text: string) {
+  el.update(text);
+  el.setAttribute("aria-label", text);
+}
+
+hydrateLabels(container);
 
 const SYNC_INTERVAL_MS = 60_000;
 let lastSyncFailed = false;
@@ -209,7 +236,7 @@ function makeCardHTML(log: LogEntry): string {
             : ""
         }
         <button data-component="button" data-color data-rkey="${log.rkey}">
-          ${linkIcon}<span class="t-text-swap">Permalink</span>
+          ${linkIcon}<scritto-text>Permalink</scritto-text>
         </button>
         <button
           data-component="button"
@@ -218,7 +245,7 @@ function makeCardHTML(log: LogEntry): string {
           data-rkey="${log.rkey}"
           ${twitterStyle}
         >
-          ${twitterCopyIcon}<span class="t-text-swap">Copy as Twitter post</span>
+          ${twitterCopyIcon}<scritto-text>Copy as Twitter post</scritto-text>
         </button>
       </footer>
     </div>
@@ -250,91 +277,7 @@ async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
-// Swap a button's label text with a blurred slide: the old text exits upward
-// with blur while the new text enters from below. Mirrors the transitions.dev
-// "text states swap" pattern so state changes (Copied! / errors) animate.
-// The surrounding button width is also tweened (CSS can't transition to/from
-// `auto`, so we measure and animate explicit pixel widths) so the resize
-// doesn't snap.
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const revertTimers = new WeakMap<HTMLElement, number>();
-const resizeTimers = new WeakMap<HTMLElement, number>();
-
-// Read --text-swap-dur from :root and normalize it to milliseconds. The
-// custom property's computed value keeps whatever unit the stylesheet
-// serialized, and the production build minifies `150ms` to `.15s` — which
-// bare parseFloat() would read as 0.15ms, making every swap snap instantly
-// (this is why the animation worked in dev but not in production).
-function getSwapDurationMs(): number {
-  const raw = getComputedStyle(document.documentElement)
-    .getPropertyValue("--text-swap-dur")
-    .trim();
-  const match = /^(\d+(?:\.\d+)?|\.\d+)(ms|s)?$/i.exec(raw);
-  if (!match) return 200;
-  const value = Number.parseFloat(match[1]);
-  return match[2]?.toLowerCase() === "s" ? value * 1000 : value;
-}
-
-function swapLabel(button: HTMLButtonElement, span: HTMLElement, next: string) {
-  const dur = getSwapDurationMs();
-
-  // Cancel any in-flight width reset so a rapid re-click can't clobber the
-  // new animation by releasing the width mid-transition.
-  window.clearTimeout(resizeTimers.get(button));
-
-  // On mobile the log footer stacks into a column and the action buttons
-  // stretch to fill the card (width: 100%). A width tween would fight that —
-  // briefly collapsing the full-width button down to its intrinsic text width
-  // before snapping back — so skip it there and only animate the text.
-  const parent = button.parentElement;
-  const fillsContainer =
-    !!parent && Math.abs(button.offsetWidth - parent.clientWidth) < 1;
-
-  let startWidth = 0;
-  if (!prefersReducedMotion && !fillsContainer) {
-    startWidth = button.offsetWidth;
-    // Use border-box so the measured offsetWidth equals the pixel width we
-    // set back, keeping the layout identical while locked. overflow:hidden
-    // clips the long label's transient horizontal spill during the tween
-    // (the 8px vertical padding exceeds the 4px vertical swap travel, so the
-    // text animation itself is never clipped).
-    button.style.boxSizing = "border-box";
-    button.style.overflow = "hidden";
-    button.style.width = `${startWidth}px`;
-    button.style.transition = `width ${dur}ms var(--ease-smooth-out)`;
-  }
-
-  span.classList.add("is-exit");
-  window.setTimeout(() => {
-    span.textContent = next;
-    span.classList.remove("is-exit");
-    span.classList.add("is-enter-start");
-    void span.offsetHeight; // force reflow so the next change transitions
-    span.classList.remove("is-enter-start");
-
-    if (!prefersReducedMotion && !fillsContainer) {
-      // Measure the natural width for the new label, then animate to it.
-      button.style.width = "auto";
-      const endWidth = button.offsetWidth;
-      button.style.width = `${startWidth}px`;
-      void button.offsetWidth; // reflow so the width change transitions
-      button.style.width = `${endWidth}px`;
-
-      // Release back to intrinsic width once settled so the button stays
-      // responsive (natural width for the current text equals endWidth, so
-      // this is seamless).
-      resizeTimers.set(
-        button,
-        window.setTimeout(() => {
-          button.style.width = "";
-          button.style.boxSizing = "";
-          button.style.overflow = "";
-          button.style.transition = "";
-        }, dur)
-      );
-    }
-  }, dur);
-}
+const revertTimers = new WeakMap<Scritto, number>();
 
 container.addEventListener("click", async (e) => {
   const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-component="button"][data-rkey]');
@@ -343,8 +286,8 @@ container.addEventListener("click", async (e) => {
   if (!rkey) return;
 
   const status = document.getElementById("logs-status");
-  const span = button.querySelector<HTMLElement>("span:last-child");
-  const original = span?.textContent ?? null;
+  const label = button.querySelector<Scritto>("scritto-text");
+  const original = label ? String(label.value) : null;
 
   const permalink = new URL(window.location.href);
   permalink.searchParams.set("rkey", rkey);
@@ -364,20 +307,20 @@ container.addEventListener("click", async (e) => {
   }
 
   if (await copyToClipboard(text)) {
-    if (span) {
-      swapLabel(button, span, "Copied!");
-      window.clearTimeout(revertTimers.get(span));
+    if (label && original !== null) {
+      setLabel(label, "Copied!");
+      window.clearTimeout(revertTimers.get(label));
       revertTimers.set(
-        span,
-        window.setTimeout(() => { if (span) swapLabel(button, span, original ?? ""); }, 2000)
+        label,
+        window.setTimeout(() => setLabel(label, original), 2000)
       );
     }
     if (status) status.textContent = "Copied to clipboard.";
   } else {
     console.error("[APP]", isTwitterCopy ? "failed to copy twitter post" : "failed to copy permalink");
-    if (span) {
-      window.clearTimeout(revertTimers.get(span));
-      swapLabel(button, span, failureLabel);
+    if (label) {
+      window.clearTimeout(revertTimers.get(label));
+      setLabel(label, failureLabel);
     }
     if (status) status.textContent = `Failed to copy. ${failureLabel}`;
   }
@@ -437,6 +380,7 @@ const renderLogs = () => {
     }
     const wrapper = document.createElement("div");
     wrapper.innerHTML = html;
+    hydrateLabels(wrapper);
     container.appendChild(wrapper.firstElementChild as HTMLElement);
     return;
   }
@@ -447,6 +391,7 @@ const renderLogs = () => {
 
     const wrapper = document.createElement("div");
     wrapper.innerHTML = makeCardHTML(log);
+    hydrateLabels(wrapper);
     const card = wrapper.firstElementChild as HTMLElement | null;
     if (!card) continue;
 

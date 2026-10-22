@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, type Ref } from "vue";
+import Scritto from "@scritto/vue";
 import { createLog } from "../scripts/oauth";
 import { prependLog } from "../scripts/logsStore";
 
@@ -63,7 +64,9 @@ async function submit() {
         ></textarea>
 
         <div class="compose-footer">
-            <span class="compose-counter">{{ count }} Characters</span>
+            <span class="compose-counter">
+                <Scritto :value="count" :transition="{ duration: 120 }" /> Characters
+            </span>
         </div>
         <div
             v-if="isCrosspostEnabled && content.trim().length > 300"

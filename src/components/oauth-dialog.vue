@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import Scritto from "@scritto/vue";
 import { startLoginFlow } from "../scripts/oauth";
 const dialog = ref<HTMLDialogElement | null>(null);
 const handle = ref("");
@@ -69,14 +70,10 @@ defineExpose({ open, close });
           :disabled="loading"
           :aria-busy="loading"
         >
-          <!-- Text states swap (transitions.dev "text states swap"), mirrors the
-               Log buttons in logs.astro: the old label exits upward with blur
-               while the new label enters from below. -->
-          <Transition name="t-swap" mode="out-in">
-            <span :key="loading ? 'logging' : 'login'" class="t-text-swap">
-              {{ loading ? "Logging in…" : "Login" }}
-            </span>
-          </Transition>
+          <Scritto
+            :value="loading ? 'Logging in…' : 'Login'"
+            :transition="{ duration: 150, easing: 'ease-in-out' }"
+          />
         </button>
       </footer>
     </form>
@@ -109,44 +106,6 @@ form {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-  }
-}
-
-/* Text states swap (transitions.dev "text states swap"). The "Login" label
-   exits upward with blur while "Logging in…" enters from below — same visual
-   as the Log buttons in logs.astro. nowrap keeps the label on one line so the
-   width tween never wraps and changes the button's height. */
-.t-text-swap {
-  display: inline-block;
-  white-space: nowrap;
-  will-change: transform, filter, opacity;
-}
-
-.t-swap-enter-active,
-.t-swap-leave-active {
-  transition:
-    transform var(--text-swap-dur) var(--text-swap-ease),
-    filter var(--text-swap-dur) var(--text-swap-ease),
-    opacity var(--text-swap-dur) var(--text-swap-ease);
-}
-
-.t-swap-enter-from {
-  transform: translateY(var(--text-swap-translate-y));
-  filter: blur(var(--text-swap-blur));
-  opacity: 0;
-  transition: none;
-}
-
-.t-swap-leave-to {
-  transform: translateY(calc(var(--text-swap-translate-y) * -1));
-  filter: blur(var(--text-swap-blur));
-  opacity: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .t-swap-enter-active,
-  .t-swap-leave-active {
-    transition: none !important;
   }
 }
 </style>

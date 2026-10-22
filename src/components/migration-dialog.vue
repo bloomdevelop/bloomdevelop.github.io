@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import Scritto from "@scritto/vue";
 import { agent } from "../scripts/agent";
 import { revokeSession } from "../scripts/oauth";
 import { startMigration } from "../scripts/migration";
@@ -84,10 +85,14 @@ defineExpose({ open, close });
       data-color="warning"
     >
       <p>
-        {{ progress ? `${progress.processed} / ${progress.total}` : "preparing…" }}
+        <Scritto
+          :value="progress ? `${progress.processed} / ${progress.total}` : 'preparing…'"
+        />
         entries
       </p>
-      <p v-if="progress">Batch {{ progress.batch }} of {{ progress.batchCount }}</p>
+      <p v-if="progress">
+        <Scritto :value="`Batch ${progress.batch} of ${progress.batchCount}`" />
+      </p>
       <progress
         v-if="progress"
         :value="progress.processed"
@@ -102,7 +107,10 @@ defineExpose({ open, close });
         :aria-busy="isMigrating"
         @click="start"
       >
-        {{ isMigrating ? "Migrating, please wait…" : "Ok" }}
+        <Scritto
+          :value="isMigrating ? 'Migrating, please wait…' : 'Ok'"
+          :transition="{ duration: 150 }"
+        />
       </button>
       <button
         data-component="button"

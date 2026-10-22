@@ -19,6 +19,8 @@
     "@atproto/api": "^0.20.23",
     "@atproto/oauth-client-browser": "^0.4.3",
     "@fontsource-variable/google-sans-flex": "^5.2.3",
+    "@scritto/core": "^0.1.0",
+    "@scritto/vue": "^0.1.0",
     "astro": "^7.0.4",
     "solid-js": "^1.9.13",
     "vue": "^3.5.39"
