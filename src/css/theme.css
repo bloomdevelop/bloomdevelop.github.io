@@ -1,0 +1,66 @@
+/* Bridges the tokens declared in colors.css and base.css onto Tailwind's theme
+   namespaces. `inline` keeps the values as references instead of copying them,
+   which is required for light-dark() and contrast-color() to stay dynamic. */
+@theme inline {
+	--color-primary: var(--primary);
+	--color-primary-contrast: var(--primary-contrast);
+
+	--color-secondary: var(--secondary);
+	--color-secondary-contrast: var(--secondary-contrast);
+
+	--color-info: var(--info);
+	--color-info-contrast: var(--info-contrast);
+	--color-info-surface: var(--info-surface);
+	--color-info-surface-contrast: var(--info-surface-contrast);
+
+	--color-warning: var(--warning);
+	--color-warning-contrast: var(--warning-contrast);
+
+	--color-error: var(--error);
+	--color-error-contrast: var(--error-contrast);
+
+	--color-surface: var(--surface);
+	--color-surface-contrast: var(--surface-contrast);
+	--color-surface-1: var(--surface-1);
+	--color-surface-1-contrast: var(--surface-1-contrast);
+	--color-surface-2: var(--surface-2);
+	--color-surface-2-contrast: var(--surface-2-contrast);
+	--color-surface-primary: var(--surface-primary);
+	--color-surface-primary-contrast: var(--surface-primary-contrast);
+	--color-surface-primary-2: var(--surface-primary-2);
+	--color-surface-primary-2-contrast: var(--surface-primary-2-contrast);
+
+	--color-ink: var(--ink);
+	--color-paper: var(--paper);
+	--color-border: var(--border);
+	--color-border-primary: var(--border-primary);
+
+	--color-twitter: var(--twitter);
+	--color-bluesky: var(--bluesky);
+	--color-github: var(--github);
+	--color-discord: var(--discord);
+	--color-fluxer: var(--fluxer);
+
+	--font-sans: var(--inter);
+	--font-mono: var(--maple-mono);
+	--font-display: var(--google-sans-flex);
+
+	--spacing-sm: var(--space-sm);
+	--spacing-md: var(--space-md);
+	--spacing-lg: var(--space-lg);
+	--spacing-xl: var(--space-xl);
+	--spacing-2xl: var(--space-2xl);
+	--spacing-3xl: var(--space-3xl);
+
+	--radius-sm: var(--rounded-sm);
+	--radius-md: var(--rounded-md);
+	--radius-lg: var(--rounded-lg);
+	--radius-xl: var(--rounded-xl);
+	--radius-2xl: var(--rounded-2xl);
+
+	/* Named separately from --shadow-sm to avoid colliding with Tailwind's own
+	   --shadow-sm key, which the existing tokens already shadow. */
+	--shadow-card: var(--shadow-sm);
+	--shadow-float: var(--shadow-md);
+	--shadow-overlay: var(--shadow-lg);
+}

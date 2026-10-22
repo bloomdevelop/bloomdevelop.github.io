@@ -1,5 +1,6 @@
 // @ts-check
 
+import tailwindcss from "@tailwindcss/vite";
 import vue from "@astrojs/vue";
 import { defineConfig, fontProviders } from "astro/config";
 
@@ -7,6 +8,7 @@ import { defineConfig, fontProviders } from "astro/config";
 export default defineConfig({
   integrations: [vue()],
   vite: {
+    plugins: [tailwindcss()],
     optimizeDeps: {
       include: ["@atproto/oauth-client-browser"],
     },

@@ -18,14 +18,14 @@ const { Content } = await render(post);
 ---
 
 <BaseLayout>
-    <nav>
+    <nav class="sticky z-[200]">
         <a href="/" data-component="button" data-color>
           <span class="md-symbols">arrow_back</span>
           Back to home page
         </a>
     </nav>
-    <article id="main-content">
-        <div class="post-details">
+    <article id="main-content" class="mx-auto max-w-[68ch]">
+        <div class="post-details flex flex-col gap-sm">
             <h1>{post.data.title}</h1>
             <p>Published on {post.data.pubDate.toLocaleDateString()}</p>
             {post.data.draft && import.meta.env.DEV && (
@@ -42,21 +42,3 @@ const { Content } = await render(post);
         <Content />
     </article>
 </BaseLayout>
-
-<style>
-nav {
-  position: sticky;
-  z-index: 200 !important;
-}
-
-article {
-  margin-inline: auto;
-  max-width: 68ch;
-}
-
-.post-details {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-}
-</style>

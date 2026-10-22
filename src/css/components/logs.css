@@ -1,8 +1,6 @@
 @layer components {
 	.logs {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-lg);
+		@apply flex flex-col gap-lg;
 	}
 
 	/* Loading skeleton shown while the client re-syncs the initial snapshot */
