@@ -22,7 +22,7 @@ try {
 ></script>
 
 <noscript>
-  <div data-component="alert" data-color="error">
+  <div class="alert alert--error">
     Please enable Javascript, otherwise some features will not work!
   </div>
 </noscript>
@@ -30,12 +30,12 @@ try {
 <div class="logs" id="logs">
   <p role="status" aria-atomic="true" class="visually-hidden" id="logs-status"></p>
   {fetchError ? (
-    <div role="alert" data-component="alert" data-color="error" data-logs-error>
+    <div role="alert" class="alert alert--error logs-error">
       {fetchError}
     </div>
   ) : posts.length === 0 ? (
-    <div data-logs-skeleton aria-hidden="true">
-      <div data-component="card">
+    <div class="logs-skeleton" aria-hidden="true">
+      <div class="card">
         <div class="card-content">
           <span class="skeleton-line" style="width: 92%"></span>
           <span class="skeleton-line" style="width: 78%"></span>
@@ -46,7 +46,7 @@ try {
           <span class="skeleton-pill"></span>
         </footer>
       </div>
-      <div data-component="card">
+      <div class="card">
         <div class="card-content">
           <span class="skeleton-line" style="width: 85%"></span>
           <span class="skeleton-line" style="width: 68%"></span>
@@ -60,23 +60,22 @@ try {
     </div>
   ) : (
     posts.map((log) => (
-      <div data-component="card" data-rkey={log.rkey}>
+      <div class="card" data-rkey={log.rkey}>
         <div class="card-content"><p>{log.content}</p></div>
         <footer>
-          <span data-type="date">{formatDate(log.createdAt)}</span>
+          <span class="card-date">{formatDate(log.createdAt)}</span>
           {log.blueskyPost && (
-            <div data-component="badge" data-color="secondary">
+            <div class="badge badge--secondary">
               <span class="md-symbols" aria-hidden="true">share</span>
               Crossposted
             </div>
           )}
-          <button data-component="button" data-color data-rkey={log.rkey}>
+          <button class="button button--primary" data-rkey={log.rkey}>
             <span class="md-symbols" aria-hidden="true">link</span>
             <scritto-text>Permalink</scritto-text>
           </button>
           <button
-            data-component="button"
-            data-color
+            class="button button--primary"
             data-copy-twitter
             data-rkey={log.rkey}
             style="--color: var(--twitter); --color-contrast: white;"
@@ -145,8 +144,8 @@ let syncing = false;
 let firstSyncDone = false;
 
 const SKELETON_HTML = `
-  <div data-logs-skeleton aria-hidden="true">
-    <div data-component="card">
+  <div class="logs-skeleton" aria-hidden="true">
+    <div class="card">
       <div class="card-content">
         <span class="skeleton-line" style="width: 92%"></span>
         <span class="skeleton-line" style="width: 78%"></span>
@@ -157,7 +156,7 @@ const SKELETON_HTML = `
         <span class="skeleton-pill"></span>
       </footer>
     </div>
-    <div data-component="card">
+    <div class="card">
       <div class="card-content">
         <span class="skeleton-line" style="width: 85%"></span>
         <span class="skeleton-line" style="width: 68%"></span>
@@ -226,21 +225,20 @@ function makeCardHTML(log: LogEntry): string {
   const twitterStyle = 'style="--color: var(--twitter); --color-contrast: white;"';
 
   return `
-    <div data-component="card" data-rkey="${log.rkey}">
+    <div class="card" data-rkey="${log.rkey}">
       <div class="card-content"><p>${escapeHtml(log.content)}</p></div>
       <footer>
-        <span data-type="date">${formatDate(log.createdAt)}</span>
+        <span class="card-date">${formatDate(log.createdAt)}</span>
         ${
           log.blueskyPost
-            ? `<div data-component="badge" data-color="secondary">${shareIcon}Crossposted</div>`
+            ? `<div class="badge badge--secondary">${shareIcon}Crossposted</div>`
             : ""
         }
-        <button data-component="button" data-color data-rkey="${log.rkey}">
+        <button class="button button--primary" data-rkey="${log.rkey}">
           ${linkIcon}<scritto-text>Permalink</scritto-text>
         </button>
         <button
-          data-component="button"
-          data-color
+          class="button button--primary"
           data-copy-twitter
           data-rkey="${log.rkey}"
           ${twitterStyle}
@@ -280,7 +278,7 @@ async function copyToClipboard(text: string): Promise<boolean> {
 const revertTimers = new WeakMap<Scritto, number>();
 
 container.addEventListener("click", async (e) => {
-  const button = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-component="button"][data-rkey]');
+  const button = (e.target as HTMLElement).closest<HTMLButtonElement>('.button[data-rkey]');
   if (!button) return;
   const rkey = button.getAttribute("data-rkey");
   if (!rkey) return;
@@ -297,8 +295,10 @@ container.addEventListener("click", async (e) => {
   let failureLabel: string;
   if (isTwitterCopy) {
     const content =
-      button.closest("[data-component=card]")
-        ?.querySelector(".card-content p")?.textContent?.trim() ?? "";
+      button
+        .closest(".card")
+        ?.querySelector(".card-content p")
+        ?.textContent?.trim() ?? "";
     text = [content, permalink.toString()].filter(Boolean).join("\n\n");
     failureLabel = "Unable to copy Twitter post";
   } else {
@@ -331,7 +331,7 @@ if (rkeyParam) {
   const scrollToCard = () => {
     const target = container.querySelector(`[data-rkey="${CSS.escape(rkeyParam)}"]`);
     if (!target) return;
-    const card = target.closest("[data-component=card]");
+    const card = target.closest(".card");
     if (!card) return;
     card.scrollIntoView({ behavior: "instant", block: "start" });
   };
@@ -364,7 +364,7 @@ const renderLogs = () => {
   }
 
   // State alerts and the loading skeleton are rebuilt below from the current state.
-  for (const el of Array.from(container.querySelectorAll<HTMLElement>("[data-logs-empty], [data-logs-error], [data-logs-skeleton]"))) {
+  for (const el of Array.from(container.querySelectorAll<HTMLElement>(".logs-empty, .logs-error, .logs-skeleton"))) {
     el.remove();
   }
 
@@ -374,9 +374,9 @@ const renderLogs = () => {
       html = SKELETON_HTML;
       if (statusEl) statusEl.textContent = "Loading logs…";
     } else if (lastSyncFailed) {
-      html = '<div role="alert" data-component="alert" data-color="error" data-logs-error>Could not load logs.</div>';
+      html = '<div role="alert" class="alert alert--error logs-error">Could not load logs.</div>';
     } else {
-      html = '<div data-component="alert" data-color="warning" data-logs-empty>There\'s no logs… yet. :(</div>';
+      html = '<div class="alert alert--warning logs-empty">There\'s no logs… yet. :(</div>';
     }
     const wrapper = document.createElement("div");
     wrapper.innerHTML = html;

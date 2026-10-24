@@ -13,7 +13,7 @@ const blogPosts = (await getCollection("blog"))
 
 {blogPosts.length === 0 && <p>No posts yet. :(</p>}
 {blogPosts.map((post) => (
-    <a data-component="card" href={`/blog/${post.id}`}>
+    <a class="card" href={`/blog/${post.id}`}>
         <div class="card-header">
             <h3>{post.data.title}</h3>
             <p>{post.data.pubDate.toLocaleDateString()}</p>
@@ -22,7 +22,7 @@ const blogPosts = (await getCollection("blog"))
             <p>{post.data.description}</p>
         </div>
         <footer>
-            <div data-component="tags">
+            <div class="tags">
                 {post.data.tags?.map((tag) => <Tag tag={tag} />)}
             </div>
         </footer>

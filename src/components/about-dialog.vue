@@ -16,83 +16,39 @@ defineExpose({ open, close });
 </script>
 
 <template>
-	<dialog
-		ref="dialog"
-		aria-labelledby="about-title"
-		id="about"
-		data-component="dialog"
-	>
+	<dialog ref="dialog" aria-labelledby="about-title" id="about" class="dialog">
 		<header>
 			<h1 id="about-title">About</h1>
 			<button
-				data-component="button"
+				class="button button--icon"
 				type="button"
-				data-variant="ghost"
-				data-size="icon"
 				aria-label="Close about dialog"
 				@click="close"
 			>
 				<span class="md-symbols" aria-hidden="true">close</span>
 			</button>
 		</header>
-		<div class="about">
+		<div class="flex items-center justify-center gap-4 my-lg">
 			<img
 				:src="isDev ? '/favicon-dev.svg' : '/favicon.svg'"
 				alt="Website Logo"
 				width="64"
 				height="64"
-				class="about-logo"
+				class="rounded-full"
 			/>
-			<div class="about-text">
-				<h1 class="about-name">Spring's Website</h1>
-				<p class="about-tagline">
-					Fairly minimal website built with Astro and Vue
-				</p>
+			<div class="flex flex-col items-start justify-center gap-2">
+				<h1 class="m-0 text-[1.375rem] font-semibold tracking-normal">Spring's Website</h1>
+				<p class="m-0">Fairly minimal website built with Astro and Vue</p>
 			</div>
 		</div>
 		<footer>
 			<a
 				href="https://github.com/bloomdevelop/bloomdevelop.github.io"
 				target="_blank"
-				data-component="button"
-				data-color="neutral"
+				class="button button--neutral"
 			>
 				View Source
 			</a>
 		</footer>
 	</dialog>
 </template>
-
-<style scoped>
-.about {
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	justify-content: center;
-	gap: 1rem;
-	margin-block: var(--space-lg);
-}
-
-.about-logo {
-	border-radius: 50%;
-}
-
-.about-text {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	justify-content: center;
-	gap: 0.5rem;
-}
-
-.about-name {
-	margin: 0;
-	font-size: 1.375rem;
-	font-weight: 600;
-	letter-spacing: normal;
-}
-
-.about-tagline {
-	margin: 0;
-}
-</style>

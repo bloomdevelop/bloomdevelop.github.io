@@ -83,6 +83,7 @@
 		text-wrap: balance;
 		line-height: 1.1;
 		font-weight: 700;
+		margin-block: var(--space-2xl) var(--space-lg);
 	}
 
 	h1 {
@@ -117,6 +118,31 @@
 
 	p {
 		text-wrap: pretty;
+		margin-block: var(--space-lg);
+	}
+
+	/* Markdown pages (blog posts and the DNI page) render inside <article> or
+	   <main>. Preflight zeroes the UA spacing and list markers, so restore a
+	   readable rhythm for prose without leaking it into the components. */
+	:is(article, main) {
+		& :is(p, ul, ol, blockquote, pre, figure, table) {
+			margin-block: var(--space-lg);
+		}
+
+		& :is(ul, ol) {
+			padding-inline-start: var(--space-2xl);
+			list-style: disc;
+		}
+
+		& ol {
+			list-style: decimal;
+		}
+
+		& a {
+			color: var(--info);
+			text-decoration: underline;
+			text-underline-offset: 2px;
+		}
 	}
 
 	html,

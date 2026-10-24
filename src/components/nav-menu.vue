@@ -79,24 +79,24 @@ function closeCompose() {
                 </picture>
             </a>
             <div>
-                <a data-component="button" class="toolbar-btn" href="/tetris" aria-label="Tetris">
+                <a class="button toolbar-btn" href="/tetris" aria-label="Tetris">
                     <span class="md-symbols" aria-hidden="true">gamepad</span>
                 </a>
-                <button data-component="button" class="toolbar-btn" @click="aboutDialog?.open()" aria-label="About">
+                <button class="button toolbar-btn" @click="aboutDialog?.open()" aria-label="About">
                     <span class="md-symbols" aria-hidden="true">info</span>
                 </button>
 
-                <button data-component="button" v-if="isLoggedIn() && isDidAllowed" class="toolbar-btn"
+                <button v-if="isLoggedIn() && isDidAllowed" class="button toolbar-btn"
                     @click="openCompose()" aria-label="New Log">
                     <span class="md-symbols" aria-hidden="true">add</span>
                 </button>
 
-                <button data-component="button" v-if="isLoggedIn()" class="toolbar-btn"
+                <button v-if="isLoggedIn()" class="button toolbar-btn"
                     @click="logoutDialog?.open()" aria-label="Logout">
                     <span class="md-symbols" aria-hidden="true">logout</span>
                 </button>
 
-                <button data-component="button" v-if="!isLoggedIn()" class="toolbar-btn"
+                <button v-if="!isLoggedIn()" class="button toolbar-btn"
                     @click="oauthDialog?.open()" aria-label="Login">
                     <span class="md-symbols" aria-hidden="true">login</span>
                 </button>
@@ -106,7 +106,7 @@ function closeCompose() {
 
     <!-- Click-through dimmer; non-modal dialogs get no ::backdrop. -->
     <div v-if="isComposeOpen" class="compose-backdrop" aria-hidden="true"></div>
-    <dialog ref="composeDialog" id="compose" data-component="dialog" @close="isComposeOpen = false"
+    <dialog ref="composeDialog" id="compose" class="dialog compose-dialog" @close="isComposeOpen = false"
         @keydown.escape="closeCompose()">
         <Compose />
     </dialog>
@@ -115,104 +115,3 @@ function closeCompose() {
     <AboutDialog ref="aboutDialog" />
     <MigrationDialog ref="migrationDialog" />
 </template>
-
-<style scoped>
-.toolbar-dock {
-    position: fixed;
-    top: 0;
-    inset-inline: 0;
-    z-index: 10000;
-    padding-top: env(safe-area-inset-top);
-}
-
-.full-width-toolbar {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    align-items: center;
-    gap: var(--space-md);
-    min-height: 32px;
-    padding: var(--space-sm) max(var(--space-xl), env(safe-area-inset-left)) var(--space-md) max(var(--space-xl), env(safe-area-inset-right));
-
-    & div {
-        grid-column: 3;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        gap: var(--space-md);
-    }
-}
-
-.logomark-link {
-    grid-column: 2;
-    justify-self: center;
-    display: flex;
-    align-items: center;
-}
-
-.logomark-link img {
-    display: block;
-    height: var(--nav-logo-size);
-    width: auto;
-    margin: var(--space-lg) 0;
-}
-
-/* On narrow screens the centered logo would crowd the buttons, so pin it left. */
-@media (max-width: 640px) {
-    .full-width-toolbar {
-        grid-template-columns: auto minmax(0, 1fr);
-    }
-
-    .logomark-link {
-        grid-column: 1;
-        justify-self: start;
-    }
-
-    .full-width-toolbar div {
-        grid-column: 2;
-    }
-}
-
-.toolbar-btn {
-    --size: 42px;
-    display: grid;
-    place-content: center;
-    width: var(--size);
-    height: var(--size);
-    border: none;
-    background: transparent;
-    border-radius: var(--rounded-md);
-    cursor: pointer;
-    color: var(--surface-contrast);
-    font-size: 1.2rem;
-    flex: 0 1 64px;
-}
-
-.toolbar-btn:hover {
-    background: color-mix(in oklch, var(--surface-1), transparent 40%);
-    color: var(--surface-1-contrast);
-}
-
-.toolbar-btn:active {
-    background: var(--surface-primary);
-    color: constrast-color(var(--surface-primary));
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .toolbar-btn {
-        transition: none;
-    }
-}
-
-/* Above the toolbar, below extension-injected UI — on purpose. */
-.compose-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 10000;
-    pointer-events: none;
-    background-color: color-mix(in oklch, black, transparent 80%);
-}
-
-dialog#compose {
-    z-index: 10001;
-}
-</style>

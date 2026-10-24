@@ -31,15 +31,13 @@ defineExpose({ open, close });
 </script>
 
 <template>
-  <dialog ref="dialog" id="oauth" data-component="dialog">
+  <dialog ref="dialog" id="oauth" class="dialog">
     <header>
       <h1>Login via OAuth</h1>
 
       <button
-        data-component="button"
+        class="button button--icon"
         type="button"
-        data-variant="ghost"
-        data-size="icon"
         commandFor="oauth"
         command="close"
         aria-label="Close"
@@ -47,9 +45,9 @@ defineExpose({ open, close });
         <span class="md-symbols" aria-hidden="true">close</span>
       </button>
     </header>
-    <form @submit.prevent="login">
-      <label>
-        <span>
+    <form class="flex flex-col gap-lg" @submit.prevent="login">
+      <label class="flex flex-col gap-sm">
+        <span class="inline-flex items-center gap-sm">
           <span class="md-symbols" aria-hidden="true">alternate_email</span>
           Handle</span
         >
@@ -62,10 +60,9 @@ defineExpose({ open, close });
           placeholder="spring.furrest.net…"
         />
       </label>
-      <footer>
+      <footer class="flex items-center justify-end">
         <button
-          data-component="button"
-          data-color
+          class="button button--primary w-min"
           type="submit"
           :disabled="loading"
           :aria-busy="loading"
@@ -79,33 +76,3 @@ defineExpose({ open, close });
     </form>
   </dialog>
 </template>
-
-<style scoped>
-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-
-  & span {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-  }
-
-  & label {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
-  }
-
-  & button {
-    width: min-content;
-  }
-
-  & footer {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-  }
-}
-</style>

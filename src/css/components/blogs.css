@@ -1,6 +1,0 @@
-@layer components {
-	.blogs {
-		/* Automatically fits as many card columns as possible */
-		@apply grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-xl;
-	}
-}

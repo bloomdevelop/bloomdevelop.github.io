@@ -1,7 +1,0 @@
-@layer components {
-	[data-component="tags"] {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-lg);
-	}
-}

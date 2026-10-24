@@ -29,12 +29,12 @@
 
 	/* The shared card culls off-screen content; game panels must always render
 	   or the board would be replaced by the placeholder size while scrolling. */
-	[data-component="tetris"] [data-component="card"] {
+	[data-component="tetris"] .card {
 		content-visibility: visible;
 	}
 
 	/* Panel titles are compact HUD labels, not prose headings. */
-	[data-component="tetris"] [data-component="card"] .card-header h2 {
+	[data-component="tetris"] .card .card-header h2 {
 		color: color-mix(in oklch, var(--surface-contrast), transparent 25%);
 		font-family: var(--google-sans-flex);
 		font-size: 1rem;
@@ -42,11 +42,11 @@
 		text-transform: uppercase;
 	}
 
-	[data-component="tetris"] [data-component="card"] .card-header {
+	[data-component="tetris"] .card .card-header {
 		min-height: var(--kbd-size);
 	}
 
-	[data-component="tetris"] [data-component="card"] .card-content {
+	[data-component="tetris"] .card .card-content {
 		/* Card content defaults to pre-wrap for prose; the game panels lay out
 		   elements, so stray source whitespace would become visible line breaks. */
 		white-space: normal;

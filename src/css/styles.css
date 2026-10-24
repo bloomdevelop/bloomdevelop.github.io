@@ -4,13 +4,13 @@
    layers are declared here too so `utilities` always comes last. */
 @layer theme, base, colors, components, utilities;
 
-/* Preflight is intentionally omitted: its UA resets (paragraph margins, list
-   markers, border-box) would change the existing plain-CSS rendering before
-   the remaining components are migrated. Add it once every component owns its
-   own spacing. */
 @import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
 @import "tailwindcss/utilities.css" layer(utilities);
 @import "./theme.css";
 @import "./base.css";
 @import "./colors.css";
 @import "./components.css";
+/* The game keeps its own stylesheet: it is a self-contained UI rather than a
+   shared component, and it overrides the shared card rules, so it loads last. */
+@import "./components/tetris.css";

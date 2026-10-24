@@ -42,10 +42,8 @@ async function submit() {
         <h1>New Log</h1>
 
         <button
-            data-component="button"
+            class="button button--icon"
             type="button"
-            data-variant="ghost"
-            data-size="icon"
             commandFor="compose"
             command="close"
             aria-label="Close"
@@ -53,36 +51,35 @@ async function submit() {
             <span class="md-symbols" aria-hidden="true">close</span>
         </button>
     </header>
-    <form style="margin-top: 5px;" @submit.prevent="submit" class="compose">
-        <label for="compose-textarea"> Content </label>
+    <form class="compose" @submit.prevent="submit">
+        <label for="compose-textarea" class="text-sm text-surface-1-contrast"> Content </label>
         <textarea
             id="compose-textarea"
             v-model="content"
-            class="compose-textarea"
+            class="min-h-28"
             placeholder="Write anything…"
             rows="4"
         ></textarea>
 
-        <div class="compose-footer">
-            <span class="compose-counter">
+        <div class="flex justify-end">
+            <span class="text-xs text-surface-1-contrast tabular-nums opacity-60">
                 <Scritto :value="count" :transition="{ duration: 120 }" /> Characters
             </span>
         </div>
         <div
             v-if="isCrosspostEnabled && content.trim().length > 300"
             aria-live="polite"
-            data-component="alert"
-            data-color="warning"
+            class="alert alert--warning"
         >
             <p>Looks like your content is over 300 characters…</p>
             <p>It will be truncated when submitted.</p>
         </div>
-        <div v-if="errorRef" role="alert" data-component="alert" data-color="error">
+        <div v-if="errorRef" role="alert" class="alert alert--error">
             {{ errorRef.message }}
         </div>
 
-        <div data-type="footer">
-            <label>
+        <div class="actions">
+            <label class="flex items-center gap-sm text-sm text-surface-1-contrast select-none">
                 <input
                     type="checkbox"
                     v-model="isCrosspostEnabled"
@@ -92,53 +89,12 @@ async function submit() {
                 <span>Crosspost?</span>
             </label>
             <button
-                data-component="button"
+                class="button button--primary"
                 :disabled="isEmpty || isSubmitting"
                 type="submit"
-                data-color
             >
                 Submit
             </button>
         </div>
     </form>
 </template>
-
-<style scoped>
-.compose {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-}
-
-.compose-textarea {
-    min-height: 7rem;
-}
-
-.compose-footer {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.compose-counter {
-    font-family: var(--body);
-    font-size: 0.75rem;
-    color: var(--surface-1-contrast);
-    opacity: 0.6;
-    font-variant-numeric: tabular-nums;
-}
-
-label {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    font-family: var(--body);
-    font-size: 0.875rem;
-    color: var(--surface-1-contrast);
-
-    & span {
-        user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-    }
-}
-</style>

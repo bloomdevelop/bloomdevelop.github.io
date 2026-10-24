@@ -55,11 +55,7 @@ defineExpose({ open, close });
 </script>
 
 <template>
-  <dialog
-    ref="dialog"
-    aria-labelledby="migration-title"
-    data-component="dialog"
-  >
+  <dialog ref="dialog" aria-labelledby="migration-title" class="dialog">
     <header>
       <h1 id="migration-title">Migration required</h1>
     </header>
@@ -68,22 +64,11 @@ defineExpose({ open, close });
       entries to be invalid.
     </p>
     <p>We ask you to migrate your entries to this new lexicon.</p>
-    <div
-      v-if="error"
-      role="alert"
-      data-component="alert"
-      data-color="error"
-    >
+    <div v-if="error" role="alert" class="alert alert--error">
       <p>Migration was interrupted by an error:</p>
       <p>{{ error }}</p>
     </div>
-    <div
-      v-if="isMigrating"
-      role="status"
-      aria-live="polite"
-      data-component="alert"
-      data-color="warning"
-    >
+    <div v-if="isMigrating" role="status" aria-live="polite" class="alert alert--warning">
       <p>
         <Scritto
           :value="progress ? `${progress.processed} / ${progress.total}` : 'preparing…'"
@@ -99,10 +84,9 @@ defineExpose({ open, close });
         :max="progress.total"
       ></progress>
     </div>
-    <div data-type="footer">
+    <div class="actions">
       <button
-        data-component="button"
-        data-color
+        class="button button--primary"
         :disabled="isMigrating"
         :aria-busy="isMigrating"
         @click="start"
@@ -113,9 +97,7 @@ defineExpose({ open, close });
         />
       </button>
       <button
-        data-component="button"
-        class="danger"
-        data-color="neutral"
+        class="button button--neutral"
         :disabled="isMigrating"
         @click="cancelAndLogout"
       >

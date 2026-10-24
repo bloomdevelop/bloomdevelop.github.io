@@ -7,13 +7,12 @@ import Blogs from "../components/blogs.astro";
 
 <BaseLayout>
     <NavMenu client:only />
-    <main id="main-content" data-has-nav>
+    <main id="main-content" class="has-nav">
         <section>
             <h2>Links</h2>
-            <div data-component="links">
+            <div class="links">
                 <a
-                    data-component="link"
-                    data-type="twitter"
+                    class="link link--twitter"
                     href="https://twitter.com/spring_meowmeow"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -21,8 +20,7 @@ import Blogs from "../components/blogs.astro";
                     Twitter
                 </a>
                 <a
-                    data-component="link"
-                    data-type="bluesky"
+                    class="link link--bluesky"
                     href="https://bsky.app/profile/spring.furrest.net"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -30,8 +28,7 @@ import Blogs from "../components/blogs.astro";
                     Bluesky
                 </a>
                 <a
-                    data-component="link"
-                    data-type="github"
+                    class="link link--github"
                     href="https://github.com/bloomdevelop"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -49,26 +46,14 @@ import Blogs from "../components/blogs.astro";
                 </p>
                 <p>They're chill here, no worries btw.</p>
             </div>
-            <div
-                class="my-3"
-                data-component="alert"
-                data-color="warning"
-            >
+            <div class="my-3 alert alert--warning">
                 <p>Please follow the rules first when joining please...</p>
             </div>
-            <div data-component="links">
-                <a
-                    data-component="link"
-                    data-type="discord"
-                    href="https://discord.gg/r6B9YDyCe6"
-                >
+            <div class="links">
+                <a class="link link--discord" href="https://discord.gg/r6B9YDyCe6">
                     Discord
                 </a>
-                <a
-                    data-component="link"
-                    data-type="fluxer"
-                    href="https://fluxer.gg/zhQgXWsq"
-                >
+                <a class="link link--fluxer" href="https://fluxer.gg/zhQgXWsq">
                     Fluxer
                 </a>
             </div>
@@ -79,7 +64,7 @@ import Blogs from "../components/blogs.astro";
         </section>
         <section>
             <h2 class="flex items-center gap-2">
-                Logs <span data-component="badge" data-color>
+                Logs <span class="badge badge--primary">
                     Powered by ATProto
                 </span>
             </h2>

@@ -5,7 +5,7 @@ import NavMenu from "../components/nav-menu.vue";
 
 <BaseLayout>
     <NavMenu client:only />
-    <main id="main-content" data-has-nav data-component="tetris">
+    <main id="main-content" class="has-nav" data-component="tetris">
         <div class="rotate-hint" role="note" aria-label="Rotate your device to landscape">
             <picture class="rotate-hint-art">
                 <source
@@ -25,7 +25,7 @@ import NavMenu from "../components/nav-menu.vue";
 
         <section class="tetris-game" aria-label="Terror Instinct game">
             <aside class="tetris-column tetris-left" aria-label="Held piece, grade, and rules">
-                <section data-component="card" class="hold-card" aria-label="Held piece">
+                <section class="card hold-card" aria-label="Held piece">
                     <header class="card-header">
                         <h2>Hold</h2>
                         <kbd>C</kbd>
@@ -35,7 +35,7 @@ import NavMenu from "../components/nav-menu.vue";
                     </div>
                 </section>
 
-                <section data-component="card" class="grade-card" aria-label="Grade">
+                <section class="card grade-card" aria-label="Grade">
                     <header class="card-header">
                         <h2>Grade</h2>
                         <span class="grade-caption">Est.</span>
@@ -58,7 +58,7 @@ import NavMenu from "../components/nav-menu.vue";
                     </div>
                 </section>
 
-                <section data-component="card" class="mode-card" aria-label="Game mode">
+                <section class="card mode-card" aria-label="Game mode">
                     <header class="card-header">
                         <h2>Mode</h2>
                     </header>
@@ -66,8 +66,7 @@ import NavMenu from "../components/nav-menu.vue";
                         <div class="mode-options" role="group" aria-label="Game mode">
                             <button
                                 type="button"
-                                data-component="button"
-                                class="mode-button"
+                                class="button mode-button"
                                 data-mode="easy"
                                 aria-pressed="false"
                             >
@@ -76,8 +75,7 @@ import NavMenu from "../components/nav-menu.vue";
                             </button>
                             <button
                                 type="button"
-                                data-component="button"
-                                class="mode-button"
+                                class="button mode-button"
                                 data-mode="master"
                                 aria-pressed="true"
                             >
@@ -86,8 +84,7 @@ import NavMenu from "../components/nav-menu.vue";
                             </button>
                             <button
                                 type="button"
-                                data-component="button"
-                                class="mode-button"
+                                class="button mode-button"
                                 data-mode="shirase"
                                 aria-pressed="false"
                             >
@@ -112,9 +109,7 @@ import NavMenu from "../components/nav-menu.vue";
                             <button
                                 type="button"
                                 id="start-button"
-                                class="start-button"
-                                data-component="button"
-                                data-color
+                                class="button button--primary start-button"
                             >
                                 Play
                             </button>
@@ -127,7 +122,7 @@ import NavMenu from "../components/nav-menu.vue";
             </div>
 
             <aside class="tetris-column tetris-right" aria-label="Next pieces and statistics">
-                <section data-component="card" class="next-card" aria-label="Next pieces">
+                <section class="card next-card" aria-label="Next pieces">
                     <header class="card-header">
                         <h2>Next</h2>
                         <kbd>3</kbd>
@@ -139,7 +134,7 @@ import NavMenu from "../components/nav-menu.vue";
                     </div>
                 </section>
 
-                <section data-component="card" class="stats-card" aria-label="Run statistics">
+                <section class="card stats-card" aria-label="Run statistics">
                     <header class="card-header">
                         <h2>Stats</h2>
                     </header>
