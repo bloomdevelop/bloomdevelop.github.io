@@ -20,15 +20,13 @@ defineExpose({ open, close });
 		ref="dialog"
 		aria-labelledby="about-title"
 		id="about"
-		data-component="dialog"
+		class="dialog"
 	>
 		<header>
 			<h1 id="about-title">About</h1>
 			<button
-				data-component="button"
+				class="ui-button ui-button--ghost ui-button--icon"
 				type="button"
-				data-variant="ghost"
-				data-size="icon"
 				aria-label="Close about dialog"
 				@click="close"
 			>
@@ -54,8 +52,7 @@ defineExpose({ open, close });
 			<a
 				href="https://github.com/bloomdevelop/bloomdevelop.github.io"
 				target="_blank"
-				data-component="button"
-				data-color="neutral"
+				class="ui-button ui-button--colored ui-button--neutral"
 			>
 				View Source
 			</a>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import "../scripts/scrittoFix";
 import Scritto from "@scritto/vue";
 import { agent } from "../scripts/agent";
 import { revokeSession } from "../scripts/oauth";
@@ -58,7 +59,7 @@ defineExpose({ open, close });
   <dialog
     ref="dialog"
     aria-labelledby="migration-title"
-    data-component="dialog"
+    class="dialog"
   >
     <header>
       <h1 id="migration-title">Migration required</h1>
@@ -71,8 +72,7 @@ defineExpose({ open, close });
     <div
       v-if="error"
       role="alert"
-      data-component="alert"
-      data-color="error"
+      class="alert alert--error"
     >
       <p>Migration was interrupted by an error:</p>
       <p>{{ error }}</p>
@@ -81,8 +81,7 @@ defineExpose({ open, close });
       v-if="isMigrating"
       role="status"
       aria-live="polite"
-      data-component="alert"
-      data-color="warning"
+      class="alert alert--warning"
     >
       <p>
         <Scritto
@@ -99,10 +98,9 @@ defineExpose({ open, close });
         :max="progress.total"
       ></progress>
     </div>
-    <div data-type="footer">
+    <div class="footer">
       <button
-        data-component="button"
-        data-color
+        class="ui-button ui-button--colored"
         :disabled="isMigrating"
         :aria-busy="isMigrating"
         @click="start"
@@ -113,9 +111,8 @@ defineExpose({ open, close });
         />
       </button>
       <button
-        data-component="button"
-        class="danger"
-        data-color="neutral"
+        class="ui-button ui-button--colored ui-button--neutral danger"
+
         :disabled="isMigrating"
         @click="cancelAndLogout"
       >

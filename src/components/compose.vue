@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, type Ref } from "vue";
+import "../scripts/scrittoFix";
 import Scritto from "@scritto/vue";
 import { createLog } from "../scripts/oauth";
 import { prependLog } from "../scripts/logsStore";
@@ -42,10 +43,8 @@ async function submit() {
         <h1>New Log</h1>
 
         <button
-            data-component="button"
+            class="ui-button ui-button--ghost ui-button--icon"
             type="button"
-            data-variant="ghost"
-            data-size="icon"
             commandFor="compose"
             command="close"
             aria-label="Close"
@@ -71,17 +70,16 @@ async function submit() {
         <div
             v-if="isCrosspostEnabled && content.trim().length > 300"
             aria-live="polite"
-            data-component="alert"
-            data-color="warning"
+            class="alert alert--warning"
         >
             <p>Looks like your content is over 300 characters…</p>
             <p>It will be truncated when submitted.</p>
         </div>
-        <div v-if="errorRef" role="alert" data-component="alert" data-color="error">
+        <div v-if="errorRef" role="alert" class="alert alert--error">
             {{ errorRef.message }}
         </div>
 
-        <div data-type="footer">
+        <div class="footer">
             <label>
                 <input
                     type="checkbox"
@@ -92,10 +90,9 @@ async function submit() {
                 <span>Crosspost?</span>
             </label>
             <button
-                data-component="button"
+                class="ui-button ui-button--colored"
                 :disabled="isEmpty || isSubmitting"
                 type="submit"
-                data-color
             >
                 Submit
             </button>

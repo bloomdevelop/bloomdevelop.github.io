@@ -1,8 +1,18 @@
 /* Layer order must be declared up front: the bundler hoists bare @layer
    statements to the top of the output, which otherwise inverts the cascade
-   and lets base element styles beat every component override. */
-@layer base, colors, components;
+   and lets base element styles beat every component override. Tailwind's own
+   layers are declared here too so `utilities` always comes last and can win
+   over anything still written as component CSS.
 
+   Preflight is deliberately not imported: the site relies on browser default
+   element styles (heading and paragraph margins, list markers) for its
+   layout, and resetting them would change every page. */
+@layer theme, base, colors, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@import "./theme.css";
 @import "./base.css";
 @import "./colors.css";
 @import "./components.css";

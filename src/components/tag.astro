@@ -17,4 +17,4 @@ const background = `oklch(${lightness} ${chroma} ${hue})`;
 const color = lightness > 0.6 ? "var(--ink)" : "var(--paper)";
 ---
 
-<span data-component="badge" style={`--color: ${background}; color: ${color}`}>{tag}</span>
+<span class="badge" style={`--color: ${background}; color: ${color}`}>{tag}</span>

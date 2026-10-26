@@ -19,7 +19,7 @@ const { Content } = await render(post);
 
 <BaseLayout>
     <nav>
-        <a href="/" data-component="button" data-color>
+        <a href="/" class="ui-button ui-button--colored">
           <span class="md-symbols">arrow_back</span>
           Back to home page
         </a>
@@ -29,12 +29,12 @@ const { Content } = await render(post);
             <h1>{post.data.title}</h1>
             <p>Published on {post.data.pubDate.toLocaleDateString()}</p>
             {post.data.draft && import.meta.env.DEV && (
-              <div data-component="alert">
+              <div class="alert">
                     <p>This post is a draft and may not be published yet. Please revise the content and publish when ready.</p>
               </div>
             )}
 
-            <div data-component="tags">
+            <div class="tags">
                 {post.data.tags?.map((tag) => <Tag tag={tag} />)}
             </div>
         </div>

@@ -332,7 +332,7 @@ const GRADE_DECAY_FRAMES = [
 const MASTER_COOL_TIMES = [52, 52, 49, 45, 45, 42, 42, 38, 38];
 const MASTER_REGRET_TIMES = [90, 75, 75, 68, 60, 60, 50, 50, 50, 50];
 
-const main = document.querySelector<HTMLElement>('[data-component="tetris"]');
+const main = document.querySelector<HTMLElement>(".tetris");
 if (main) {
 	const get = <T extends HTMLElement>(selector: string): T => {
 		const element = main.querySelector<T>(selector);
@@ -629,7 +629,8 @@ if (main) {
 		}
 
 		function setOverlay(visible: boolean, buttonText = ""): void {
-			overlay.dataset.visible = String(visible);
+			if (visible) overlay.classList.remove("is-hidden");
+			else overlay.classList.add("is-hidden");
 			if (buttonText) startButton.textContent = buttonText;
 		}
 
@@ -637,9 +638,9 @@ if (main) {
 			currentMessage = message;
 			messageUntil = totalTimeMs + durationMs;
 			messageElement.textContent = message;
-			messageElement.dataset.emphasis = String(
-				/TETRIS|COOL|REGRET|CLEAR/.test(message),
-			);
+			if (/TETRIS|COOL|REGRET|CLEAR/.test(message))
+				messageElement.classList.add("emphasized");
+			else messageElement.classList.remove("emphasized");
 		}
 
 		function formatTime(milliseconds: number): string {
@@ -1035,7 +1036,7 @@ if (main) {
 			} else current.lockMs = 0;
 			if (totalTimeMs >= messageUntil) {
 				messageElement.textContent = currentMessage;
-				messageElement.dataset.emphasis = "false";
+				messageElement.classList.remove("emphasized");
 			}
 			if (mode === "master" && current) {
 				gradeDecayProgress += frameDelta;

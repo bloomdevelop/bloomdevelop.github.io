@@ -21,16 +21,16 @@ defineExpose({ open, close });
 </script>
 
 <template>
-	<dialog ref="dialog" id="logout-confirmation" data-component="dialog">
+	<dialog ref="dialog" id="logout-confirmation" class="dialog">
 		<header>
 			<h1>Logout?</h1>
 		</header>
 		<p>Are you sure you want to logout?</p>
-		<div data-type="footer">
-			<button data-component="button" data-color="neutral" @click="close">
+		<div class="footer">
+			<button class="ui-button ui-button--colored ui-button--neutral" @click="close">
 				Cancel
 			</button>
-			<button data-component="button" data-color="error" @click="logout">
+			<button class="ui-button ui-button--colored ui-button--error" @click="logout">
 				Logout
 			</button>
 		</div>

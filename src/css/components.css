@@ -1,15 +1,1502 @@
-@import "./components/nav.css";
-@import "./components/button.css";
-@import "./components/input.css";
-@import "./components/dialog.css";
-@import "./components/menu.css";
-@import "./components/alert.css";
-@import "./components/logs.css";
-@import "./components/blogs.css";
-@import "./components/card.css";
-@import "./components/badge.css";
-@import "./components/tags.css";
-@import "./components/links.css";
-@import "./components/link.css";
-@import "./components/checkbox.css";
-@import "./components/tetris.css";
+/* ===== nav.css ===== */
+@layer components {
+	.toolbar-button {
+		@apply grid h-10.5 w-10.5 flex-[0_1_64px] cursor-pointer place-content-center rounded-md border-0 bg-transparent no-underline text-[1.2rem] text-surface-contrast motion-reduce:transition-none;
+		&:hover {
+			background: color-mix(in oklch, var(--surface-1), transparent 40%);
+			color: var(--surface-1-contrast);
+		}
+
+		&:active {
+			background: var(--surface-primary);
+			color: var(--surface-primary-contrast);
+		}
+	}
+
+	:root {
+		--nav-logo-size: 44px;
+		--nav-height: calc(
+			var(--nav-logo-size) +
+			2 *
+			var(--space-lg) +
+			var(--space-sm) +
+			var(--space-md)
+		);
+	}
+
+	main.has-nav {
+		padding-top: calc(var(--nav-height) + env(safe-area-inset-top));
+	}
+
+	nav {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: var(--space-lg);
+
+		@media (max-width: 320px) {
+			& h1 {
+				font-size: 1.5rem;
+			}
+		}
+	}
+}
+
+/* ===== button.css ===== */
+@layer components {
+	.ui-button {
+		--duration: 250ms;
+		@media (prefers-reduced-motion: reduce) {
+			--duration: 0ms;
+		}
+
+		@apply p-0 m-0 border-0 bg-transparent cursor-pointer select-none no-underline text-surface-contrast;
+		-moz-user-select: none;
+		-webkit-user-select: none;
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		&.ui-button--ghost,
+		&.ui-button--icon,
+		&.ui-button--colored {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			gap: 0.5rem;
+			font-size: 13px;
+
+			padding: var(--space-lg) var(--space-xl);
+			font-family: var(--body);
+			font-weight: 400;
+			line-height: normal;
+			border-radius: var(--rounded-md);
+
+			transition:
+				background-color var(--duration),
+				background-image var(--duration),
+				color var(--duration),
+				box-shadow var(--duration),
+				padding-inline var(--duration),
+				width var(--duration);
+		}
+
+		&.ui-button--ghost {
+			background: transparent;
+
+			&:hover {
+				background: var(--surface-1);
+				color: var(--surface-1-contrast);
+			}
+
+			&:active {
+				background-color: light-dark(
+					color-mix(in oklch, var(--surface-1), black 10%),
+					color-mix(in oklch, var(--surface-1), white 10%)
+				);
+			}
+		}
+
+		&.ui-button--icon {
+			--size: 34px;
+			display: grid;
+			place-content: center;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+
+			font-size: 1.25rem;
+			min-width: var(--size);
+			min-height: var(--size);
+			padding: var(--space-md);
+			border-radius: var(--rounded-sm);
+
+			& span {
+				margin-top: 1px;
+			}
+		}
+
+		&[popovertarget] {
+			anchor-name: --popover;
+		}
+	}
+
+	/* biome-ignore lint/style/noDescendingSpecificity: colored surface intentionally follows base button */
+	.ui-button--colored,
+	.badge.ui-button--colored,
+	.badge[style^="--color"] {
+		--color: var(--primary);
+		--color-contrast: var(--primary-contrast);
+
+		background: linear-gradient(
+			color-mix(in oklch, var(--color), white 14%) 0%,
+			var(--color) 55%,
+			color-mix(in oklch, var(--color), black 8%) 100%
+		);
+		border: 1px solid color-mix(in oklch, var(--color), black 12%);
+		text-shadow: 0 1px 0 color-mix(in oklch, var(--color), black 25%);
+		color: var(--color-contrast);
+		box-shadow:
+			inset 0 1px 0 color-mix(in oklch, var(--color), white 22%),
+			0 1px 0 color-mix(in oklch, var(--color), black 28%),
+			0 6px 14px color-mix(in oklch, var(--color), transparent 72%);
+
+		& svg {
+			filter: drop-shadow(0 1px 0 color-mix(in oklch, var(--color), black 25%));
+		}
+	}
+
+	.ui-button--colored:active:not(:disabled) {
+		background: linear-gradient(
+			color-mix(in oklch, var(--color), black 8%) 0%,
+			color-mix(in oklch, var(--color), black 14%) 100%
+		);
+		box-shadow:
+			inset 0 1px 0 color-mix(in oklch, var(--color), black 18%),
+			inset 0 2px 6px color-mix(in oklch, var(--color), black 22%),
+			0 1px 0 color-mix(in oklch, var(--color), black 28%);
+	}
+
+	.ui-button--secondary,
+	.badge.ui-button--secondary {
+		--color: var(--secondary);
+		--color-contrast: var(--secondary-contrast);
+	}
+
+	.ui-button--neutral,
+	.badge.ui-button--neutral {
+		--color: var(--surface-1);
+		--color-contrast: var(--surface-1-contrast);
+	}
+
+	.ui-button--error,
+	.badge.ui-button--error {
+		--color: var(--error);
+		--color-contrast: var(--error-contrast);
+	}
+
+	.badge[style^="--color"] {
+		--color: var(--primary);
+		--color-contrast: var(--primary-contrast);
+	}
+}
+
+/* ===== input.css ===== */
+@layer components {
+	:is(input:not([type="checkbox"]), textarea) {
+		--duration: var(--duration-quick);
+
+		@media (prefers-reduced-motion: reduce) {
+			--duration: 0ms;
+		}
+
+		width: 100%;
+		font-family: var(--body);
+		font-size: 1rem;
+		line-height: 1.5;
+		border-radius: var(--rounded-md);
+		background: var(--surface);
+		border: 1px solid transparent;
+		transition:
+			box-shadow var(--duration) var(--ease-smooth-out),
+			background-color var(--duration) var(--ease-smooth-out),
+			border-color var(--duration) var(--ease-smooth-out);
+		box-shadow:
+			inset 0 1px 2px light-dark(rgba(0, 0, 0, 0.12), rgba(255, 255, 255, 0.06)),
+			inset 0 2px 8px light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.03)),
+			inset 0 -1px 2px
+			light-dark(rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.25)),
+			inset 0 0 0 1px
+			color-mix(in oklch, var(--surface-contrast), transparent 85%);
+		color: var(--surface-contrast);
+		padding: var(--space-lg) var(--space-xl);
+		box-sizing: border-box;
+
+		&::placeholder {
+			color: color-mix(in oklch, var(--surface-contrast), transparent 48%);
+			opacity: 1;
+		}
+
+		&:focus-visible {
+			border-color: color-mix(in oklch, var(--info), transparent 45%);
+			box-shadow: inset 0 1px 2px
+				light-dark(rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.04));
+		}
+
+		&:disabled {
+			opacity: 0.6;
+			cursor: not-allowed;
+		}
+	}
+
+	textarea {
+		resize: vertical;
+	}
+}
+
+/* ===== dialog.css ===== */
+@layer components {
+	.dialog:open {
+		opacity: 1;
+		transform: translateY(0px);
+	}
+
+	.dialog {
+		--duration: var(--duration-fast);
+		--rounded-size: var(--rounded-xl);
+		--padding: calc(var(--space-lg) + 5px);
+		/* Breathing room on every side. iOS Display Zoom reports a smaller
+		   viewport, so without a gutter the dialog would hug (or overflow)
+		   the screen edges; the safe-area insets also keep it clear of the
+		   notch / home indicator once viewport-fit=cover is used. */
+		--dialog-inset: max(
+			12px,
+			env(safe-area-inset-top),
+			env(safe-area-inset-right),
+			env(safe-area-inset-bottom),
+			env(safe-area-inset-left)
+		);
+
+		@media (prefers-reduced-motion: reduce) {
+			--duration: 0ms;
+		}
+
+		/* Explicit, deterministic centering. The browser's default modal
+		   centering can place a transformed top-layer <dialog> off-screen
+		   under iOS Display Zoom; pinning position/inset/margin makes the
+		   box resolve against the (zoomed) layout viewport every time. */
+		box-sizing: border-box;
+		position: fixed;
+		inset: 0;
+		margin: auto;
+
+		border-radius: var(--rounded-size);
+		border: 1px solid
+			color-mix(in oklch, var(--surface-contrast), transparent 90%);
+		background: linear-gradient(
+			color-mix(in oklch, var(--surface), white 6%) 0%,
+			var(--surface) 45%,
+			var(--surface) 65%,
+			color-mix(in oklch, var(--surface), white 4%) 100%
+		);
+		box-shadow:
+			inset 0 1px 0 color-mix(in oklch, white, transparent 75%),
+			0 18px 48px color-mix(in oklch, black, transparent 72%),
+			0 3px 10px color-mix(in oklch, black, transparent 82%);
+		overscroll-behavior: contain;
+
+		width: 100%;
+		/* Cap the *total* (border-box) width at 320px and always leave the
+		   gutter, so the dialog never overflows the smaller viewport that
+		   Display Zoom reports. */
+		max-width: min(320px, calc(100% - 2 * var(--dialog-inset)));
+		/* When Larger Text inflates the contents, keep the dialog inside the
+		   visible viewport and let it scroll instead of clipping the header
+		   (close button) or the footer actions. */
+		max-height: calc(100dvh - 2 * var(--dialog-inset));
+		overflow-y: auto;
+
+		padding: var(--padding);
+
+		opacity: 0;
+		transform: translateY(-6px);
+		transform-origin: center;
+
+		transition:
+			opacity var(--duration) var(--ease-smooth-out),
+			transform var(--duration) var(--ease-smooth-out),
+			overlay var(--duration) allow-discrete,
+			display var(--duration) allow-discrete;
+
+		& .footer {
+			display: flex;
+			gap: var(--space-md);
+			justify-content: flex-end;
+			align-items: center;
+		}
+
+		& header {
+			display: flex;
+			gap: var(--space-md);
+			justify-content: space-between;
+			align-items: center;
+			margin-bottom: var(--space-lg);
+
+			& h1 {
+				flex: 1 1 auto;
+				min-width: 0;
+				margin: 0;
+				font-size: 1.375rem;
+				font-weight: 600;
+				letter-spacing: normal;
+				line-height: 1.2;
+				overflow-wrap: break-word;
+			}
+
+			& .ui-button.ui-button--icon {
+				--size: 2rem;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				width: var(--size);
+				height: var(--size);
+				font-size: calc(var(--size) / 2);
+				padding: 0;
+				border-radius: max(0px, calc(var(--rounded-size) - var(--padding)));
+			}
+		}
+
+		& .footer {
+			gap: var(--space-lg);
+			flex-wrap: wrap;
+		}
+
+		& .footer .ui-button {
+			border-radius: max(0px, calc(var(--rounded-size) - var(--padding)));
+		}
+
+		& .footer p {
+			margin: 0;
+		}
+
+		/* Footer links that look like buttons use the neutral button
+       classes. Keep the compact height; hover comes from the shared
+       button :hover overlay. */
+		& .footer a.ui-button.ui-button--neutral {
+			max-height: 32px;
+		}
+	}
+
+	.dialog::backdrop {
+		--duration: var(--duration-fast);
+
+		@media (prefers-reduced-motion: reduce) {
+			--duration: 0ms;
+		}
+
+		background-color: transparent;
+		transition:
+			display var(--duration) allow-discrete,
+			overlay var(--duration) allow-discrete,
+			background-color var(--duration) var(--ease-smooth-out);
+	}
+
+	.dialog:open::backdrop {
+		background-color: color-mix(in oklch, black, transparent 76%);
+	}
+
+	@starting-style {
+		.dialog::backdrop {
+			background-color: transparent;
+		}
+	}
+
+	@starting-style {
+		.dialog:open {
+			opacity: 0;
+			transform: translateY(-6px);
+		}
+	}
+}
+
+/* ===== menu.css ===== */
+@layer components {
+	.menu:popover-open {
+		opacity: 1;
+		transform: translateY(0px);
+	}
+
+	.menu {
+		--rounded-size: var(--rounded-lg);
+		--padding: var(--space-md);
+		--duration: var(--duration-quick);
+
+		@media (prefers-reduced-motion: reduce) {
+			--duration: 0ms;
+		}
+
+		opacity: 0;
+		transform: translateY(-10px);
+
+		transition:
+			opacity var(--duration) var(--ease-smooth-out),
+			transform var(--duration) var(--ease-smooth-out),
+			overlay var(--duration) allow-discrete,
+			display var(--duration) allow-discrete;
+
+		position: absolute;
+		position-anchor: --popover;
+		position-area: bottom;
+		margin-top: 5px;
+		width: max-content;
+		background: linear-gradient(
+			color-mix(in oklch, var(--surface), white 6%) 0%,
+			var(--surface) 45%,
+			var(--surface) 65%,
+			color-mix(in oklch, var(--surface), white 4%) 100%
+		);
+		border: none;
+		padding: var(--padding);
+		border-radius: var(--rounded-size);
+		box-shadow:
+			inset 0 2px 6px light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.1)),
+			inset 0 0 0 1px
+			color-mix(in oklch, var(--surface-contrast), transparent 85%),
+			var(--shadow-lg);
+		overscroll-behavior: contain;
+
+		& .ui-button {
+			width: 100%;
+			font-size: 16px;
+			cursor: pointer;
+			padding: 0.5rem 1rem;
+			padding-left: 0.7rem;
+
+			display: flex;
+			justify-content: start;
+			align-items: center;
+			gap: 0.5rem;
+
+			user-select: none;
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			border-radius: max(0px, calc(var(--rounded-size) - var(--padding)));
+
+			&:hover {
+				background-color: light-dark(
+					color-mix(in oklch, var(--surface-2), black 5%),
+					color-mix(in oklch, var(--surface-2), white 5%)
+				);
+			}
+
+			&:active {
+				background: linear-gradient(
+					color-mix(in oklch, var(--primary), white 25%),
+					var(--primary),
+					color-mix(in oklch, var(--primary), white 20%)
+				);
+				box-shadow: inset 0 0 0 1px
+					color-mix(in oklch, var(--primary), white 20%);
+				color: var(--primary-contrast);
+			}
+		}
+	}
+
+	@starting-style {
+		.menu:popover-open {
+			opacity: 0;
+			transform: translateY(-10px);
+		}
+	}
+}
+
+/* ===== alert.css ===== */
+@layer components {
+	.alert {
+		display: flex;
+		align-items: center;
+		gap: var(--space-md);
+
+		padding: var(--space-lg) var(--space-xl);
+		border-radius: var(--rounded-md);
+		box-shadow:
+			inset 0 1px 2px light-dark(rgba(0, 0, 0, 0.06), rgba(255, 255, 255, 0.04)),
+			inset 0 0 0 1px
+			color-mix(in oklch, var(--surface-contrast), transparent 80%);
+
+		&.alert--colored {
+			--color: var(--info);
+			--color-contrast: var(--info-surface-contrast);
+
+			background-color: var(--info-surface);
+			color: var(--color-contrast);
+			box-shadow:
+				inset 0 1px 2px color-mix(in oklch, var(--color), transparent 85%),
+				inset 0 0 0 1px color-mix(in oklch, var(--color), transparent 70%);
+		}
+
+		&.alert--error {
+			--color: var(--error);
+			--color-contrast: var(--error-contrast);
+			background-color: color-mix(in oklch, var(--color), transparent 75%);
+			box-shadow:
+				inset 0 1px 2px color-mix(in oklch, var(--color), transparent 75%),
+				inset 0 0 0 1px color-mix(in oklch, var(--color), transparent 50%);
+		}
+
+		&.alert--warning {
+			--color: var(--warning);
+			--color-contrast: var(--surface-1-contrast);
+			background-color: color-mix(in oklch, var(--color), transparent 75%);
+			box-shadow:
+				inset 0 2px 4px color-mix(in oklch, var(--color), transparent 60%),
+				inset 0 0 0 1px color-mix(in oklch, var(--color), transparent 50%);
+		}
+
+		& p {
+			margin: 0;
+			padding: 0;
+		}
+	}
+}
+
+/* ===== logs.css ===== */
+@layer components {
+	.logs {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-lg);
+	}
+
+	/* Loading skeleton shown while the client re-syncs the initial snapshot */
+	.logs-skeleton {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-lg);
+
+		& .skeleton-line,
+		& .skeleton-pill {
+			display: block;
+			position: relative;
+			overflow: hidden;
+			border-radius: var(--rounded-md);
+			background: color-mix(in oklch, var(--surface-contrast), transparent 90%);
+		}
+
+		& .skeleton-line {
+			height: 0.85em;
+			margin-block: 0.4em;
+		}
+
+		& .skeleton-pill {
+			width: 104px;
+			height: 34px;
+			border-radius: 999px;
+		}
+
+		& .skeleton-line::after,
+		& .skeleton-pill::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			transform: translateX(-100%);
+			background: linear-gradient(
+				90deg,
+				transparent,
+				color-mix(in oklch, var(--surface-contrast), transparent 78%),
+				transparent
+			);
+			animation: skeleton-shimmer 1.5s ease-in-out infinite;
+		}
+	}
+}
+
+@keyframes skeleton-shimmer {
+	100% {
+		transform: translateX(100%);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.logs-skeleton .skeleton-line::after,
+	.logs-skeleton .skeleton-pill::after {
+		animation: none;
+	}
+}
+
+/* ===== blogs.css ===== */
+@layer components {
+	.blogs {
+		display: grid;
+		/* Automatically fits as many card columns as possible */
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+		gap: var(--space-xl);
+	}
+}
+
+/* ===== card.css ===== */
+@layer components {
+	.card {
+		--rounded-size: var(--rounded-lg);
+		--padding: var(--space-lg);
+
+		content-visibility: auto;
+		contain-intrinsic-size: 300px 200px;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+
+		padding: var(--padding);
+		background: color-mix(
+			in oklch,
+			var(--surface),
+			light-dark(black, white) 3%
+		);
+		border: 1px solid var(--border);
+		border-radius: var(--rounded-size);
+		box-shadow: var(--shadow-sm);
+
+		& .card-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			/* Cancel the card padding so the divider spans the full card, then
+			   restore the inset with the header's own padding. */
+			margin-inline: calc(-1 * var(--padding));
+			padding: var(--space-lg) var(--space-xl);
+			border-bottom: 1px solid var(--border);
+		}
+
+		& .card-content {
+			padding: var(--space-md) var(--space-lg);
+			white-space: pre-wrap;
+			overflow-wrap: break-word;
+
+			& p {
+				margin-block: 0;
+			}
+		}
+
+		& h2,
+		h3,
+		p {
+			margin: 0;
+		}
+
+		& footer {
+			display: flex;
+			justify-content: flex-end;
+			align-items: center;
+			gap: var(--space-sm);
+
+			& .ui-button {
+				border-radius: max(0px, calc(var(--rounded-size) - var(--padding)));
+			}
+
+			& .ui-button + .ui-button,
+			& .badge + .ui-button {
+				margin-inline-start: var(--space-md);
+			}
+
+			& span.date {
+				font-variant-numeric: tabular-nums;
+				font-family: var(--maple-mono);
+				margin-inline: var(--space-sm);
+			}
+
+			& div.badge {
+				border-radius: max(0px, calc(var(--rounded-size) - var(--padding)));
+			}
+
+			@media (max-width: 579px) {
+				flex-direction: column;
+				gap: var(--space-lg);
+
+				& .ui-button {
+					width: 100%;
+				}
+
+				& span.date {
+					font-size: 0.8em;
+				}
+			}
+		}
+	}
+
+	/* A card that is itself a link (e.g. blog post cards) */
+	a.card {
+		color: var(--surface-contrast);
+		text-decoration: none;
+	}
+}
+
+/* ===== badge.css ===== */
+@layer components {
+	.badge {
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		gap: 0.5rem;
+		padding: var(--space-lg) var(--space-xl);
+		border-radius: var(--rounded-2xl);
+		font-size: 13px;
+		font-family: var(--body);
+		font-weight: 400;
+		line-height: normal;
+
+		/* Colored fill uses the shared button/badge treatment — see the
+       modifier rules above. */
+	}
+}
+
+/* ===== tags.css ===== */
+@layer components {
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-lg);
+	}
+}
+
+/* ===== links.css ===== */
+@layer components {
+	.links {
+		display: grid;
+		/* Automatically fits as many columns as possible, stretching them to fill the space */
+		grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+		gap: var(--space-sm);
+
+		@media (max-width: 425px) {
+			/* Drops down to a single full-width column */
+			grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+		}
+
+		&:has(> :nth-last-child(2):first-child) {
+			@media (max-width: 507px) {
+				grid-template-columns: unset;
+			}
+		}
+	}
+}
+
+/* ===== link.css ===== */
+@layer components {
+	.link {
+		--duration: 250ms;
+
+		@media (prefers-reduced-motion: reduce) {
+			--duration: 0ms;
+		}
+
+		/* Kept flex here just to align internal text/icons side-by-side */
+		display: flex;
+		gap: var(--space-sm);
+		align-items: center;
+		justify-content: center;
+		text-decoration: none;
+
+		padding: var(--space-lg) var(--space-xl);
+		box-shadow: var(--shadow-sm);
+		border-radius: var(--rounded-md);
+		transition: color var(--duration) ease;
+		font-size: 1.4em;
+
+		/* NOTE: Removed 'flex-grow: 1' and 'width: 100%' @media (max-width: 600px)
+       because the parent Grid handles full-width stretching automatically.
+        */
+
+		&.link--twitter {
+			background-color: var(--twitter);
+			color: white;
+
+			@supports (contrast-color(var(--twitter))) {
+				color: contrast-color(var(--twitter));
+			}
+		}
+
+		&.link--bluesky {
+			background-color: var(--bluesky);
+			color: white;
+
+			@supports (contrast-color(var(--bluesky))) {
+				color: contrast-color(var(--bluesky));
+			}
+		}
+
+		&.link--github {
+			background-color: var(--github);
+			color: white;
+
+			@supports (contrast-color(var(--github))) {
+				color: contrast-color(var(--github));
+			}
+		}
+
+		&.link--discord {
+			background-color: var(--discord);
+			color: white;
+
+			@supports (contrast-color(var(--discord))) {
+				color: contrast-color(var(--discord));
+			}
+		}
+
+		&.link--fluxer {
+			background-color: var(--fluxer);
+			color: white;
+
+			@supports (contrast-color(var(--fluxer))) {
+				color: contrast-color(var(--fluxer));
+			}
+		}
+
+		@media (max-width: 507px) {
+			&:last-child {
+				grid-column: 1 / -1;
+			}
+		}
+	}
+}
+
+/* ===== checkbox.css ===== */
+@layer components {
+	input[type="checkbox"] {
+		--size: 1.45em;
+		--thumb-size: calc(var(--size) - 4px);
+		--gap: 2px;
+		--duration: var(--duration-quick);
+
+		/* Toggle (transitions.dev): the thumb travels across the track with a
+		   double-bounce overshoot. Travel is derived from --size; the rest
+		   follow the canonical toggle tuning from base.css. */
+		--toggle-travel: var(--size);
+
+		@media (prefers-reduced-motion: reduce) {
+			--duration: 0ms;
+			--toggle-dur: 0ms;
+		}
+
+		appearance: none;
+		-webkit-appearance: none;
+		border: none;
+		width: calc(var(--size) * 2);
+		height: var(--size);
+		border-radius: var(--rounded-2xl);
+		background: light-dark(
+			color-mix(in oklch, var(--surface-contrast), transparent 88%),
+			color-mix(in oklch, var(--surface-contrast), transparent 80%)
+		);
+		box-shadow:
+			inset 0 1px 2px light-dark(rgba(0, 0, 0, 0.12), rgba(255, 255, 255, 0.06)),
+			inset 0 0 0 0.5px
+			color-mix(in oklch, var(--surface-contrast), transparent 85%);
+		cursor: pointer;
+		position: relative;
+		transition:
+			background-color var(--duration) var(--ease-smooth-out),
+			box-shadow var(--duration) var(--ease-smooth-out);
+
+		&::after {
+			content: "";
+			position: absolute;
+			top: var(--gap);
+			left: var(--gap);
+			width: var(--thumb-size);
+			height: var(--thumb-size);
+			border-radius: var(--rounded-2xl);
+			background: light-dark(white, oklch(0.4 0 0));
+			box-shadow:
+				0 1px 2px light-dark(rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.3)),
+				inset 0 1px 1px
+				light-dark(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.08));
+			transform: translateX(0);
+			will-change: transform;
+			transition:
+				transform var(--duration) var(--ease-smooth-out),
+				background-color var(--duration) var(--ease-smooth-out);
+		}
+
+		&:checked {
+			background: linear-gradient(
+				color-mix(in oklch, var(--primary), white 15%) 0%,
+				var(--primary) 60%,
+				var(--primary) 70%,
+				color-mix(in oklch, var(--primary), white 10%) 100%
+			);
+			box-shadow:
+				inset 0 1px 2px color-mix(in oklch, var(--primary), black 25%),
+				inset 0 -1px 2px color-mix(in oklch, var(--primary), white 15%),
+				0 1px 4px color-mix(in oklch, var(--primary), transparent 50%);
+
+			&::after {
+				transform: translateX(var(--toggle-travel));
+				background: var(--primary-contrast);
+				box-shadow:
+					0 1px 3px color-mix(in oklch, var(--primary), black 40%),
+					inset 0 1px 1px rgba(255, 255, 255, 0.4);
+			}
+		}
+
+		/* Toggle double-bounce (transitions.dev). Gated behind .is-init so the
+		   keyframes only play on user interaction — without it an already-checked
+		   box would bounce on load and an unchecked box would slide in from the
+		   far end. `backwards` fill lets the resting transform (and the :active
+		   press nudge) take over once the bounce settles. */
+		&.is-init:checked::after {
+			animation: t-toggle-on var(--toggle-dur) var(--toggle-ease) backwards;
+		}
+
+		&.is-init:not(:checked)::after {
+			animation: t-toggle-off var(--toggle-dur) var(--toggle-ease) backwards;
+		}
+
+		&:hover:not(:checked) {
+			background: light-dark(
+				color-mix(in oklch, var(--surface-contrast), transparent 82%),
+				color-mix(in oklch, var(--surface-contrast), transparent 72%)
+			);
+		}
+
+		&:active::after {
+			width: calc(var(--thumb-size) + 2px);
+		}
+
+		&:checked:active::after {
+			transform: translateX(calc(var(--toggle-travel) - 2px));
+		}
+
+		&:disabled {
+			opacity: 0.5;
+			cursor: not-allowed;
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--info);
+			outline-offset: 2px;
+		}
+	}
+
+	@keyframes t-toggle-on {
+		0% {
+			transform: translateX(0);
+		}
+		55% {
+			transform: translateX(calc(var(--toggle-travel) + var(--toggle-ov1)));
+		}
+		80% {
+			transform: translateX(calc(var(--toggle-travel) - var(--toggle-ov2)));
+		}
+		100% {
+			transform: translateX(var(--toggle-travel));
+		}
+	}
+
+	@keyframes t-toggle-off {
+		0% {
+			transform: translateX(var(--toggle-travel));
+		}
+		55% {
+			transform: translateX(calc(0px - var(--toggle-ov1)));
+		}
+		80% {
+			transform: translateX(var(--toggle-ov2));
+		}
+		100% {
+			transform: translateX(0);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		input[type="checkbox"].is-init::after {
+			animation: none;
+		}
+	}
+}
+
+/* ===== tetris.css ===== */
+@layer components {
+	.tetris {
+		/* The renderer paints a fixed dark playfield and draws previews over a
+		   translucent overlay; this base color composites with that overlay to
+		   the same board color, so frame and previews match in both themes. */
+		--board-bg: #0d121f;
+		/* The board is a fixed 1:2 canvas whose 640px height pushed the playfield
+		   off the bottom of shorter viewports. Cap its height by the viewport
+		   (the offset covers the nav gap and the status line below the board) and
+		   derive the width from it, so the board keeps its ratio; the floor stops
+		   it collapsing on very short viewports. */
+		--board-max-height: clamp(340px, calc(100dvh - 240px), 640px);
+		--board-max-width: calc(var(--board-max-height) / 2);
+		/* Shared by the key chips and the panel header minimum, so headers stay
+		   the same height whether they carry a chip on the right or not. */
+		--kbd-size: calc(var(--space-xl) + var(--space-md));
+		width: min(100% - var(--space-2xl), 1100px);
+		max-width: none;
+		box-sizing: border-box;
+		margin-block: var(--space-2xl);
+		color: var(--surface-contrast);
+	}
+
+	/* Shown only on phone-sized portrait screens (see the media query at the
+	   end of this file); hidden everywhere else. */
+	.tetris .rotate-hint {
+		display: none;
+	}
+
+	/* The shared card culls off-screen content; game panels must always render
+	   or the board would be replaced by the placeholder size while scrolling. */
+	.tetris .card {
+		content-visibility: visible;
+	}
+
+	/* Panel titles are compact HUD labels, not prose headings. */
+	.tetris .card .card-header h2 {
+		color: color-mix(in oklch, var(--surface-contrast), transparent 25%);
+		font-family: var(--google-sans-flex);
+		font-size: 1rem;
+		font-weight: 600;
+		text-transform: uppercase;
+	}
+
+	.tetris .card .card-header {
+		min-height: var(--kbd-size);
+	}
+
+	.tetris .card .card-content {
+		/* Card content defaults to pre-wrap for prose; the game panels lay out
+		   elements, so stray source whitespace would become visible line breaks. */
+		white-space: normal;
+	}
+
+	.tetris .tetris-game {
+		display: grid;
+		grid-template-columns:
+			minmax(180px, 220px)
+			minmax(min(260px, var(--board-max-width)), var(--board-max-width))
+			minmax(170px, 210px);
+		align-items: start;
+		justify-content: center;
+		gap: var(--space-xl);
+	}
+
+	.tetris .tetris-column {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-lg);
+		min-width: 0;
+	}
+
+	.tetris .playfield-column {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-lg);
+	}
+
+	.tetris .mode-options {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-sm);
+	}
+
+	.tetris .mode-button {
+		display: flex;
+		flex-direction: column;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--space-lg);
+		padding: var(--space-md) var(--space-lg);
+		border: 1px solid transparent;
+		border-radius: var(--rounded-md);
+		background: transparent;
+		color: var(--surface-contrast);
+		text-align: left;
+		transition:
+			background-color var(--duration-quick) var(--ease-out),
+			border-color var(--duration-quick) var(--ease-out);
+	}
+
+	.tetris .mode-button:hover {
+		background: color-mix(in oklch, var(--surface-1), transparent 60%);
+	}
+
+	.tetris .mode-button[aria-pressed="true"] {
+		border-color: color-mix(in oklch, var(--primary), transparent 55%);
+		background: var(--surface-primary);
+	}
+
+	.tetris .mode-name {
+		font-family: var(--google-sans-flex);
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	.tetris .mode-detail {
+		color: color-mix(in oklch, currentcolor, transparent 40%);
+		font-size: 0.75rem;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.tetris .grade-caption {
+		color: color-mix(in oklch, var(--surface-contrast), transparent 45%);
+		font-family: var(--maple-mono);
+		font-size: 0.7rem;
+		font-weight: 600;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.tetris .grade-value {
+		margin: 0 0 var(--space-lg);
+		font-family: var(--maple-mono);
+		font-size: clamp(1.75rem, 3vw, 2.5rem);
+		font-variant-numeric: tabular-nums;
+		font-weight: 700;
+		letter-spacing: -0.04em;
+		line-height: 1;
+	}
+
+	.tetris .grade-meter {
+		height: var(--space-lg);
+		overflow: hidden;
+		border-radius: 999px;
+		background: var(--surface-1);
+		box-shadow: inset 0 1px 2px
+			light-dark(rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.5));
+	}
+
+	.tetris .grade-meter span {
+		display: block;
+		width: 0;
+		height: 100%;
+		border-radius: inherit;
+		background: linear-gradient(
+			90deg,
+			var(--primary),
+			color-mix(in oklch, var(--primary), white 50%)
+		);
+		transition: width var(--duration-fast) var(--ease-smooth-out);
+	}
+
+	.tetris .meta-list,
+	.tetris .stat-list {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-md);
+		margin: 0;
+	}
+
+	.tetris .meta-list {
+		margin-top: var(--space-lg);
+		padding-top: var(--space-lg);
+		border-top: 1px solid var(--border);
+	}
+
+	.tetris .meta-row,
+	.tetris .stat-row {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-lg);
+	}
+
+	.tetris .meta-row dt,
+	.tetris .stat-row dt {
+		color: color-mix(in oklch, var(--surface-contrast), transparent 45%);
+		font-family: var(--maple-mono);
+		font-size: 0.7rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+	}
+
+	.tetris .meta-row dd,
+	.tetris .stat-row dd {
+		margin: 0;
+		font-family: var(--maple-mono);
+		font-size: 0.85rem;
+		font-variant-numeric: tabular-nums;
+		font-weight: 600;
+	}
+
+	.tetris .stat-level {
+		padding-bottom: var(--space-md);
+		border-bottom: 1px solid var(--border);
+	}
+
+	.tetris .stat-level dd {
+		color: var(--primary);
+		font-size: 1.25rem;
+	}
+
+	.tetris .playfield-frame {
+		position: relative;
+		overflow: hidden;
+		border: 1px solid var(--border);
+		border-radius: var(--rounded-lg);
+		background: var(--board-bg);
+		box-shadow: var(--shadow-sm);
+	}
+
+	.tetris #game-board {
+		display: block;
+		width: 100%;
+		height: auto;
+		image-rendering: pixelated;
+	}
+
+	.tetris .game-overlay {
+		position: absolute;
+		z-index: 1;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		padding: var(--space-xl);
+		background: color-mix(in oklch, var(--surface), transparent 15%);
+		backdrop-filter: blur(var(--blur-large));
+		opacity: 1;
+		transition: opacity var(--duration-quick) var(--ease-linear);
+	}
+
+	.tetris .game-overlay.is-hidden {
+		pointer-events: none;
+		opacity: 0;
+	}
+
+	.tetris .overlay-content {
+		display: grid;
+		justify-items: center;
+		gap: var(--space-md);
+		max-width: 280px;
+		text-align: center;
+	}
+
+	.tetris .start-button {
+		margin-top: var(--space-sm);
+	}
+
+	.tetris .game-message {
+		min-height: 1.4em;
+		margin: 0;
+		color: color-mix(in oklch, var(--surface-contrast), transparent 45%);
+		font-family: var(--maple-mono);
+		font-size: 0.75rem;
+		text-align: center;
+	}
+
+	.tetris .game-message.emphasized {
+		color: var(--primary);
+		font-weight: 600;
+	}
+
+	.tetris .piece-preview {
+		display: grid;
+		gap: var(--space-lg);
+	}
+
+	.tetris .piece-preview canvas {
+		display: block;
+		width: 100%;
+		height: auto;
+		border: 1px solid var(--border);
+		border-radius: var(--rounded-md);
+		background: var(--board-bg);
+	}
+
+	.tetris .game-controls {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: var(--space-lg) var(--space-xl);
+		margin-top: var(--space-2xl);
+		color: color-mix(in oklch, var(--surface-contrast), transparent 35%);
+		font-size: 0.8rem;
+	}
+
+	.tetris .game-controls span {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-md);
+	}
+
+	.tetris kbd {
+		box-sizing: border-box;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		min-width: var(--kbd-size);
+		height: var(--kbd-size);
+		padding-inline: var(--space-md);
+		border: 1px solid var(--border);
+		border-radius: var(--rounded-sm);
+		background: var(--surface-2);
+		color: var(--surface-2-contrast);
+		font-family: var(--maple-mono);
+		font-size: 0.7rem;
+		text-align: center;
+	}
+
+	.tetris .touch-controls {
+		display: none;
+		justify-content: center;
+		gap: var(--space-lg);
+		margin-top: var(--space-xl);
+		touch-action: none;
+		user-select: none;
+	}
+
+	.tetris .touch-group {
+		display: flex;
+		gap: var(--space-md);
+	}
+
+	.tetris .touch-button {
+		min-width: 44px;
+		min-height: 44px;
+		padding: 0 var(--space-lg);
+		border: 1px solid var(--border);
+		border-radius: var(--rounded-md);
+		background: var(--surface-2);
+		color: var(--surface-2-contrast);
+		font-family: var(--maple-mono);
+		font-size: 0.85rem;
+		font-weight: 600;
+		cursor: pointer;
+		touch-action: none;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	.tetris .touch-button:active {
+		background: var(--surface-primary);
+		color: var(--surface-contrast);
+	}
+
+	.tetris .tetris-footnote {
+		margin: var(--space-2xl) auto 0;
+		color: color-mix(in oklch, var(--surface-contrast), transparent 55%);
+		font-size: 0.8rem;
+		text-align: center;
+	}
+
+	@media (max-width: 900px) {
+		.tetris .tetris-game {
+			grid-template-columns: minmax(0, 340px) minmax(0, 200px);
+			max-width: 560px;
+			margin-inline: auto;
+		}
+
+		.tetris .tetris-left {
+			grid-column: 1 / -1;
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			align-items: start;
+		}
+
+		.tetris .mode-card {
+			grid-column: 1 / -1;
+		}
+	}
+
+	@media (max-width: 620px) {
+		.tetris {
+			width: 100%;
+			margin-block: var(--space-lg) var(--space-2xl);
+		}
+
+		.tetris .tetris-game {
+			grid-template-columns: minmax(0, 1fr);
+			max-width: 420px;
+		}
+
+		.tetris .tetris-left {
+			grid-column: auto;
+			grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+		}
+
+		.tetris .playfield-column {
+			width: min(100%, 340px);
+			margin-inline: auto;
+		}
+
+		.tetris .tetris-right {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			align-items: start;
+		}
+
+		.tetris .game-controls {
+			display: none;
+		}
+
+		.tetris .touch-controls {
+			display: flex;
+		}
+	}
+
+	@media (max-width: 390px) {
+		.tetris .tetris-left,
+		.tetris .tetris-right {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.tetris .touch-controls {
+			gap: var(--space-md);
+		}
+
+		.tetris .touch-group {
+			gap: var(--space-sm);
+		}
+
+		.tetris .touch-button {
+			min-width: 40px;
+			padding-inline: var(--space-md);
+		}
+	}
+
+	/* Touch devices get the on-screen pad instead of the keyboard legend at any
+	   width, so a phone still has controls after the rotate prompt sends it to
+	   landscape (where the viewport is wider than the <=620px block). */
+	@media (pointer: coarse) {
+		.tetris .game-controls {
+			display: none;
+		}
+
+		.tetris .touch-controls {
+			display: flex;
+		}
+	}
+
+	/* The 1:2 playfield plus the HUD cannot fit a phone in portrait, so replace
+	   the game with a rotate prompt. Orientation media queries re-evaluate when
+	   the device rotates, so no script is needed to swap the views back. */
+	@media (max-width: 620px) and (orientation: portrait) and (pointer: coarse) {
+		.tetris .rotate-hint {
+			display: grid;
+			justify-items: center;
+			gap: var(--space-lg);
+			margin-block: clamp(var(--space-2xl), 12vh, 96px);
+			text-align: center;
+		}
+
+		.tetris .tetris-game,
+		.tetris .game-controls,
+		.tetris .touch-controls,
+		.tetris .tetris-footnote {
+			display: none;
+		}
+
+		.tetris .rotate-hint-art {
+			display: block;
+			width: min(60vw, 220px);
+		}
+
+		.tetris .rotate-hint-art img {
+			display: block;
+			width: 100%;
+			height: auto;
+		}
+
+		/* The [role] holds this at the panel-heading specificity so Biome's
+		   descending-specificity rule stays quiet (the two never co-match). */
+		.tetris .rotate-hint[role="note"] h2 {
+			margin: 0;
+			font-family: var(--google-sans-flex);
+			font-size: 2rem;
+			font-weight: 800;
+			letter-spacing: 0.1em;
+		}
+
+		.tetris .rotate-hint p {
+			margin: 0;
+			color: color-mix(in oklch, var(--surface-contrast), transparent 45%);
+			font-size: 0.85rem;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.tetris {
+			--duration-quick: 0ms;
+			--duration-fast: 0ms;
+		}
+	}
+}

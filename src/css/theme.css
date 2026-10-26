@@ -1,0 +1,75 @@
+/* Bridges the design tokens declared in colors.css and base.css onto Tailwind's
+   theme namespaces. `inline` keeps the values as references instead of copying
+   them at build time, which is required for light-dark() and contrast-color()
+   to keep resolving per color scheme. */
+@theme inline {
+	--color-primary: var(--primary);
+	--color-primary-contrast: var(--primary-contrast);
+
+	--color-secondary: var(--secondary);
+	--color-secondary-contrast: var(--secondary-contrast);
+
+	--color-info: var(--info);
+	--color-info-contrast: var(--info-contrast);
+	--color-info-surface: var(--info-surface);
+	--color-info-surface-contrast: var(--info-surface-contrast);
+
+	--color-warning: var(--warning);
+	--color-warning-contrast: var(--warning-contrast);
+
+	--color-error: var(--error);
+	--color-error-contrast: var(--error-contrast);
+
+	--color-surface: var(--surface);
+	--color-surface-contrast: var(--surface-contrast);
+	--color-surface-1: var(--surface-1);
+	--color-surface-1-contrast: var(--surface-1-contrast);
+	--color-surface-2: var(--surface-2);
+	--color-surface-2-contrast: var(--surface-2-contrast);
+	--color-surface-primary: var(--surface-primary);
+	--color-surface-primary-contrast: var(--surface-primary-contrast);
+	--color-surface-primary-2: var(--surface-primary-2);
+	--color-surface-primary-2-contrast: var(--surface-primary-2-contrast);
+
+	--color-ink: var(--ink);
+	--color-paper: var(--paper);
+	--color-border: var(--border);
+	--color-border-primary: var(--border-primary);
+
+	--color-twitter: var(--twitter);
+	--color-bluesky: var(--bluesky);
+	--color-github: var(--github);
+	--color-discord: var(--discord);
+	--color-fluxer: var(--fluxer);
+
+	--font-sans: var(--inter);
+	--font-mono: var(--maple-mono);
+	--font-display: var(--google-sans-flex);
+	--font-symbols: var(--material-symbols-rounded);
+
+	/* Named so the pixel scale of the design cannot drift: p-lg is the same
+	   8px the stylesheets used before the migration. */
+	--spacing-sm: var(--space-sm);
+	--spacing-md: var(--space-md);
+	--spacing-lg: var(--space-lg);
+	--spacing-xl: var(--space-xl);
+	--spacing-2xl: var(--space-2xl);
+	--spacing-3xl: var(--space-3xl);
+
+	--radius-sm: var(--rounded-sm);
+	--radius-md: var(--rounded-md);
+	--radius-lg: var(--rounded-lg);
+	--radius-xl: var(--rounded-xl);
+	--radius-2xl: var(--rounded-2xl);
+
+	/* Named apart from --shadow-sm so the theme key does not shadow (and then
+	   reference) the identically named token in base.css. */
+	--shadow-card: var(--shadow-sm);
+	--shadow-float: var(--shadow-md);
+	--shadow-overlay: var(--shadow-lg);
+	--shadow-inset-raised: var(--inset-shadow-lg);
+
+	--ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-bounce: cubic-bezier(0.34, 1.36, 0.64, 1);
+	--ease-bounce-strong: cubic-bezier(0.34, 3.85, 0.64, 1);
+}
