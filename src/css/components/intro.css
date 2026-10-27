@@ -1,0 +1,151 @@
+@layer components {
+	[data-component="intro"] {
+		--intro-coral: light-dark(#ffa46f, #ffb287);
+		--intro-blue: var(--bluesky);
+		--intro-green: var(--secondary);
+		--intro-violet: var(--fluxer);
+		--intro-gold: var(--warning);
+		--intro-layer: 10001;
+	}
+
+	[data-component="intro"] [data-intro-canvas] {
+		position: fixed;
+		inset: 0;
+		z-index: var(--intro-layer);
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+	}
+
+	[data-component="intro"] [data-intro-veil] {
+		position: fixed;
+		inset: 0;
+		z-index: calc(var(--intro-layer) + 1);
+		background: var(--surface);
+		pointer-events: auto;
+		animation: intro-veil-failsafe 400ms var(--ease-out) 2600ms forwards;
+	}
+
+	[data-component="intro"] [data-intro-brand] {
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		z-index: calc(var(--intro-layer) + 2);
+		display: grid;
+		place-items: center;
+		width: min(62vw, 220px);
+		opacity: 0;
+		pointer-events: none;
+		transform: translate(-50%, -50%);
+	}
+
+	[data-component="intro"] [data-intro-brand] picture,
+	[data-component="intro"] [data-intro-brand] img {
+		position: relative;
+		z-index: 1;
+		display: block;
+		width: 100%;
+		height: auto;
+	}
+
+	[data-component="intro"] [data-intro-halo] {
+		position: absolute;
+		inset: -55%;
+		border-radius: 50%;
+		background:
+			radial-gradient(
+				circle,
+				color-mix(in oklch, var(--intro-coral), transparent 72%) 0%,
+				color-mix(in oklch, var(--intro-blue), transparent 88%) 38%,
+				transparent 70%
+			);
+		filter: blur(12px);
+	}
+
+	[data-component="intro"][data-playing] [data-intro-brand] {
+		animation: intro-brand 1.25s cubic-bezier(0.22, 0.8, 0.2, 1) both;
+	}
+
+	html[data-intro="running"] body > main,
+	html[data-intro="running"] body > footer,
+	html[data-intro="running"] [role="toolbar"],
+	html[data-intro="running"] .progressive-blur {
+		opacity: 0;
+	}
+
+	html[data-intro="running"] body > main {
+		transform: translateY(10px);
+	}
+
+	html[data-intro="running"] body > footer {
+		transform: translateY(6px);
+	}
+
+	html[data-intro="running"] [role="toolbar"] {
+		transform: translateY(-6px);
+	}
+
+	html[data-intro="revealing"] body > main,
+	html[data-intro="revealing"] body > footer,
+	html[data-intro="revealing"] [role="toolbar"] {
+		opacity: 1;
+		transform: none;
+		transition:
+			opacity 1250ms cubic-bezier(0.2, 0.7, 0.2, 1),
+			transform 1250ms cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	html[data-intro="revealing"] .progressive-blur {
+		opacity: 0;
+	}
+
+	html[data-intro="done"] .progressive-blur {
+		opacity: 1;
+		transition: opacity 850ms cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+
+	html:has([data-component="intro"]) body > main,
+	html:has([data-component="intro"]) body > footer {
+		position: relative;
+		z-index: 1;
+	}
+
+	@keyframes intro-brand {
+		0% {
+			opacity: 0;
+			filter: blur(10px);
+			transform: translate(-50%, -50%) scale(0.92);
+		}
+
+		16% {
+			opacity: 1;
+			filter: blur(0);
+			transform: translate(-50%, -50%) scale(1);
+		}
+
+		54% {
+			opacity: 1;
+			filter: blur(0);
+			transform: translate(-50%, -50%) scale(1.015);
+		}
+
+		100% {
+			opacity: 0;
+			filter: blur(7px);
+			transform: translate(-50%, -50%) scale(1.07);
+		}
+	}
+
+	@keyframes intro-veil-failsafe {
+		to {
+			visibility: hidden;
+			opacity: 0;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		[data-component="intro"] {
+			display: none;
+		}
+	}
+}

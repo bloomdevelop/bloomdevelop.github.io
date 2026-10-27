@@ -1,87 +1,78 @@
 @layer colors {
-	:root {
-		/* Required for dark mode to function properly */
-		color-scheme: light dark;
-
-		--primary: light-dark(oklch(0.665 0.179 48.7), oklch(0.66 0.177 48.7));
-		--primary-contrast: contrast-color(var(--primary));
-
-		--secondary: light-dark(oklch(0.7 0.17 150), oklch(0.73 0.16 150));
-		--secondary-contrast: contrast-color(var(--secondary));
-
-		--info: light-dark(oklch(0.55 0.155 250), oklch(0.62 0.17 250));
-		--info-contrast: contrast-color(var(--info));
-
-		--warning: light-dark(oklch(0.72 0.148 82), oklch(0.74 0.14 82));
-		--warning-contrast: contrast-color(var(--warning));
-
-		--error: light-dark(oklch(0.61 0.23 27), oklch(0.63 0.23 25));
-		--error-contrast: white; /* contrast-color() appears to create a bad contrast against that color. */
-
-		--border-primary: light-dark(
-			color-mix(in oklch, var(--primary), black 10%),
-			color-mix(in oklch, var(--primary), white 10%)
-		);
-
-		--border: light-dark(
-			color-mix(in oklch, var(--surface-1-contrast), transparent 86%),
-			color-mix(in oklch, var(--surface-1-contrast), transparent 82%)
-		);
-
-		--surface: light-dark(oklch(1 0 0), oklch(0 0 0));
-		--surface-contrast: contrast-color(var(--surface));
-
-		/* Absolute neutrals (mode-independent) — used where text color depends
-		   on a surface's own lightness, not the page theme (e.g. tag badges). */
-		--ink: oklch(0 0 0);
-		--paper: oklch(1 0 0);
-
-		--surface-1: light-dark(oklch(0.8917 0 0), oklch(0.3 0 0));
-		--surface-1-contrast: contrast-color(var(--surface-1));
-
-		--surface-2: light-dark(oklch(0.94 0 0), oklch(0.22 0 0));
-		--surface-2-contrast: contrast-color(var(--surface-2));
-
-		--surface-primary: light-dark(
-			color-mix(in oklch, var(--primary), transparent 75%),
-			color-mix(in oklch, var(--primary), transparent 75%)
-		);
-		--surface-primary-contrast: contrast-color(var(--surface-primary));
-
-		--surface-primary-2: light-dark(
-			color-mix(in oklch, var(--primary), transparent 80%),
-			color-mix(in oklch, var(--primary), transparent 78%)
-		);
-		--surface-primary-2-contrast: contrast-color(var(--surface-primary-2));
-
-		--info-surface: light-dark(
-			color-mix(in oklch, var(--info), transparent 88%),
-			color-mix(in oklch, var(--info), transparent 86%)
-		);
-		--info-surface-contrast: contrast-color(var(--info-surface));
-
-		/* Brand colors — shared between the social links and copy actions */
-		--twitter: oklch(0.681 0.161 244.82);
-		--bluesky: oklch(0.619 0.203 256.33);
-		--github: oklch(0.296 0.012 258.37);
-		--discord: oklch(0.577 0.209 273.85);
-		--fluxer: oklch(0.486 0.223 275.65);
-
-		/* Hourly sky colors */
-		--sunrise-t: oklch(70% 0.06 51.57);
-		--sunrise-m: oklch(82% 0.13 64.04);
-		--sunrise-b: oklch(72% 0.18 46.87);
-
-		--noon-t: oklch(61% 0.13 236.48);
-		--noon-m: oklch(76% 0.14 220.4);
-		--noon-b: oklch(91% 0.04 198.58);
-
-		--sunset-t: oklch(74% 0.03 25.4);
-		--sunset-m: oklch(84% 0.14 74.99);
-		--sunset-b: oklch(63% 0.25 23.22);
-
-		--night-t: oklch(15% 0.01 60.05);
-		--night-m: oklch(23% 0.07 255.82);
-		--night-b: oklch(28% 0.08 254.91);
-	}
+    :root {
+        color-scheme: light dark;
+        --madoromi-sumi: light-dark(#584a5c, #e1d1e7);
+        --madoromi-usuzumi1: light-dark(#6b5d70, #cdbed3);
+        --madoromi-usuzumi0: light-dark(#77697c, #b7a8bd);
+        --madoromi-kasure2: light-dark(#877b8c, #9f93a4);
+        --madoromi-kasure1: light-dark(#998d9e, #8a7e8f);
+        --madoromi-kasure0: light-dark(#a99cad, #756a7a);
+        --madoromi-nijimi2: light-dark(#b8acbd, #615665);
+        --madoromi-nijimi1: light-dark(#c8bccd, #4e4352);
+        --madoromi-nijimi0: light-dark(#d9ccdd, #392e3c);
+        --madoromi-kami: light-dark(#f6eff8, #241c26);
+        --madoromi-hyoshi: light-dark(#ece5ef, #1c151f);
+        --madoromi-chitsu: light-dark(#e2dbe5, #160f18);
+        --madoromi-sakura: light-dark(#aa6e89, #ffc5da);
+        --madoromi-nadeshiko: light-dark(#d64891, #ffadda);
+        --madoromi-botan: light-dark(#b25d9d, #fe8dc0);
+        --madoromi-fuji: light-dark(#6928bd, #ddb3ff);
+        --madoromi-kikyo: light-dark(#4760c0, #99b2f5);
+        --madoromi-beni: light-dark(#ce2700, #ff8b79);
+        --madoromi-akane: light-dark(#ee3244, #ffa2b5);
+        --madoromi-kaki: light-dark(#fd5217, #ffbb74);
+        --madoromi-yamabuki: light-dark(#bda343, #ffc849);
+        --madoromi-wakaba: light-dark(#5e8933, #c1dd4a);
+        --madoromi-tokiwa: light-dark(#009162, #7bd6b6);
+        --madoromi-sora: light-dark(#008bae, #88d9eb);
+        --madoromi-ruri: light-dark(#2678af, #60c9f3);
+        --madoromi-ai: light-dark(#1955bf, #6eadff);
+        --primary: var(--madoromi-kikyo);
+        --secondary: var(--madoromi-tokiwa);
+        --info: var(--madoromi-sora);
+        --warning: var(--madoromi-yamabuki);
+        --error: var(--madoromi-beni);
+        --surface: var(--madoromi-kami);
+        --surface-1: var(--madoromi-hyoshi);
+        --surface-2: var(--madoromi-chitsu);
+        --ink: var(--madoromi-sumi);
+        --paper: var(--madoromi-kami);
+        --twitter: var(--madoromi-ai);
+        --bluesky: var(--madoromi-ruri);
+        --github: var(--madoromi-sumi);
+        --discord: var(--madoromi-fuji);
+        --fluxer: var(--madoromi-fuji);
+        --primary-contrast: contrast-color(var(--primary));
+        --secondary-contrast: contrast-color(var(--secondary));
+        --info-contrast: contrast-color(var(--info));
+        --warning-contrast: contrast-color(var(--warning));
+        --error-contrast: white;
+        --surface-contrast: var(--madoromi-sumi);
+        --surface-1-contrast: var(--madoromi-sumi);
+        --surface-2-contrast: var(--madoromi-sumi);
+        --border-primary: color-mix(in oklch, var(--primary), transparent 55%);
+        --border: color-mix(in oklch, var(--madoromi-sumi), transparent 82%);
+        --surface-primary: color-mix(in oklch, var(--primary), transparent 80%);
+        --surface-primary-2: color-mix(
+            in oklch,
+            var(--primary),
+            transparent 85%
+        );
+        --surface-primary-contrast: var(--madoromi-sumi);
+        --surface-primary-2-contrast: var(--madoromi-sumi);
+        --info-surface: color-mix(in oklch, var(--info), transparent 88%);
+        --info-surface-contrast: var(--madoromi-sumi);
+        --sunrise-t: var(--madoromi-yamabuki);
+        --sunrise-m: var(--madoromi-kaki);
+        --sunrise-b: var(--madoromi-beni);
+        --noon-t: var(--madoromi-ai);
+        --noon-m: var(--madoromi-sora);
+        --noon-b: var(--madoromi-kami);
+        --sunset-t: var(--madoromi-botan);
+        --sunset-m: var(--madoromi-kaki);
+        --sunset-b: var(--madoromi-beni);
+        --night-t: var(--madoromi-chitsu);
+        --night-m: var(--madoromi-nijimi1);
+        --night-b: var(--madoromi-ai);
+    }
 }
