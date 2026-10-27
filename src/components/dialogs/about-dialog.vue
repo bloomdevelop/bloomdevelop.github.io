@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import DialogShell from "./dialog-shell.vue";
 
-const dialog = ref<HTMLDialogElement | null>(null);
+const dialog = ref<InstanceType<typeof DialogShell> | null>(null);
 const isDev = import.meta.env.DEV;
 
 function open() {
-	dialog.value?.showModal();
+	dialog.value?.open();
 }
 
 function close() {
@@ -16,16 +17,11 @@ defineExpose({ open, close });
 </script>
 
 <template>
-	<dialog
-		ref="dialog"
-		aria-labelledby="about-title"
-		id="about"
-		class="dialog"
-	>
+	<DialogShell ref="dialog" aria-labelledby="about-title" id="about">
 		<header>
 			<h1 id="about-title">About</h1>
 			<button
-				class="ui-button ui-button--ghost ui-button--icon"
+				class="ui-button ui-button--ghost ui-button--icon rounded-concentric"
 				type="button"
 				aria-label="Close about dialog"
 				@click="close"
@@ -52,12 +48,12 @@ defineExpose({ open, close });
 			<a
 				href="https://github.com/bloomdevelop/bloomdevelop.github.io"
 				target="_blank"
-				class="ui-button ui-button--colored ui-button--neutral"
+				class="ui-button ui-button--colored ui-button--neutral rounded-concentric"
 			>
 				View Source
 			</a>
 		</footer>
-	</dialog>
+	</DialogShell>
 </template>
 
 <style scoped>
