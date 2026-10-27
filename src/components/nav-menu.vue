@@ -83,3 +83,4 @@ watch(
     <AboutDialog ref="aboutDialog" />
     <MigrationDialog ref="migrationDialog" />
 </template>
+

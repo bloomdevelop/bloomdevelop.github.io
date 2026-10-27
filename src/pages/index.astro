@@ -1,11 +1,13 @@
 ---
 import BaseLayout from "../layouts/base-layout.astro";
+import Intro from "../components/intro.astro";
 import NavMenu from "../components/nav-menu.vue";
 import Logs from "../components/logs.astro";
 import Blogs from "../components/blogs.astro";
 ---
 
 <BaseLayout>
+    <Intro />
     <NavMenu client:only />
     <main id="main-content" class="has-nav">
         <section>

@@ -361,9 +361,9 @@
 			margin: 0;
 		}
 
-		/* Footer links that look like buttons use the neutral button
-       classes. Keep the compact height; hover comes from the shared
-       button :hover overlay. */
+		/* Footer links that look like buttons now are actual buttons
+       (data-component="button" data-color="neutral"). Keep the compact
+       height; hover comes from the shared button :hover overlay. */
 		& .footer a.ui-button.ui-button--neutral {
 			max-height: 32px;
 		}
@@ -727,7 +727,7 @@
 		line-height: normal;
 
 		/* Colored fill uses the shared button/badge treatment — see the
-       modifier rules above. */
+       [data-color] rules near [data-component="button"] above. */
 	}
 }
 
@@ -1330,7 +1330,7 @@
 		gap: var(--space-md);
 	}
 
-	.tetris .touch-button {
+	.tetris .touch-controls button {
 		min-width: 44px;
 		min-height: 44px;
 		padding: 0 var(--space-lg);
@@ -1346,7 +1346,7 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	.tetris .touch-button:active {
+	.tetris .touch-controls button:active {
 		background: var(--surface-primary);
 		color: var(--surface-contrast);
 	}
@@ -1427,7 +1427,7 @@
 			gap: var(--space-sm);
 		}
 
-		.tetris .touch-button {
+		.tetris .touch-controls button {
 			min-width: 40px;
 			padding-inline: var(--space-md);
 		}
