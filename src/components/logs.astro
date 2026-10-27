@@ -7,10 +7,17 @@ let posts: LogEntry[] = [];
 let fetchError: string | null = null;
 
 try {
-  posts = await fetchLogsFromPreviewDID();
-} catch (e) {
-  fetchError = e instanceof Error ? e.message : String(e);
-  console.error("[APP]", "failed to fetch logs:", e);
+    posts = await fetchLogsFromPreviewDID();
+} catch (error) {
+    fetchError = error instanceof Error ? error.message : String(error);
+    console.error("[APP]", "failed to fetch logs:", error);
+}
+
+function blueskyPostUrl(log: LogEntry): string | null {
+    if (!log.blueskyPost || typeof log.blueskyPost !== "object") return null;
+    const [repo, collection, rkey] = log.blueskyPost.uri.split("/").slice(2);
+    if (!repo || collection !== "app.bsky.feed.post" || !rkey) return null;
+    return `https://bsky.app/profile/${encodeURIComponent(repo).replaceAll("%3A", ":")}/post/${encodeURIComponent(rkey)}`;
 }
 ---
 
@@ -22,406 +29,410 @@ try {
 ></script>
 
 <noscript>
-  <div class="alert alert--error">
-    Please enable Javascript, otherwise some features will not work!
-  </div>
+    <div class="alert alert--error">
+        Please enable Javascript, otherwise some features will not work!
+    </div>
 </noscript>
 
 <div class="logs" id="logs">
-  <p role="status" aria-atomic="true" class="visually-hidden" id="logs-status"></p>
-  {fetchError ? (
-    <div role="alert" class="alert alert--error logs-error">
-      {fetchError}
-    </div>
-  ) : posts.length === 0 ? (
-    <div class="logs-skeleton" aria-hidden="true">
-      <div class="card">
-        <div class="card-content">
-          <span class="skeleton-line" style="width: 92%"></span>
-          <span class="skeleton-line" style="width: 78%"></span>
-          <span class="skeleton-line" style="width: 60%"></span>
+    <p
+        role="status"
+        aria-atomic="true"
+        class="visually-hidden"
+        id="logs-status"
+    ></p>
+    {fetchError ? (
+        <div role="alert" class="alert alert--error logs-error">
+            {fetchError}
         </div>
-        <footer>
-          <span class="skeleton-pill"></span>
-          <span class="skeleton-pill"></span>
-        </footer>
-      </div>
-      <div class="card">
-        <div class="card-content">
-          <span class="skeleton-line" style="width: 85%"></span>
-          <span class="skeleton-line" style="width: 68%"></span>
-        </div>
-        <footer>
-          <span class="skeleton-pill"></span>
-          <span class="skeleton-pill"></span>
-          <span class="skeleton-pill"></span>
-        </footer>
-      </div>
-    </div>
-  ) : (
-    posts.map((log) => (
-      <div class="card" data-rkey={log.rkey}>
-        <div class="card-content"><p>{log.content}</p></div>
-        <footer>
-          <span class="date">{formatDate(log.createdAt)}</span>
-          {log.blueskyPost && (
-            <div class="badge ui-button--colored ui-button--secondary">
-              <span class="md-symbols" aria-hidden="true">share</span>
-              Crossposted
+    ) : posts.length === 0 ? (
+        <div class="logs-skeleton" aria-hidden="true">
+            <div class="card rounded-lg border p-lg">
+                <div class="card-content">
+                    <span class="skeleton-line" style="width: 92%"></span>
+                    <span class="skeleton-line" style="width: 78%"></span>
+                    <span class="skeleton-line" style="width: 60%"></span>
+                </div>
+                <footer>
+                    <span class="skeleton-pill"></span>
+                    <span class="skeleton-pill"></span>
+                </footer>
             </div>
-          )}
-          <button class="ui-button ui-button--colored" data-rkey={log.rkey}>
-            <span class="md-symbols" aria-hidden="true">link</span>
-            <scritto-text>Permalink</scritto-text>
-          </button>
-          <button
-            class="ui-button ui-button--colored"
-            data-copy-twitter
-            data-rkey={log.rkey}
-            style="--color: var(--twitter); --color-contrast: white;"
-          >
-            <span class="md-symbols" aria-hidden="true">content_copy</span>
-            <scritto-text>Copy as Twitter post</scritto-text>
-          </button>
-        </footer>
-      </div>
-    ))
-  )}
+            <div class="card rounded-lg border p-lg">
+                <div class="card-content">
+                    <span class="skeleton-line" style="width: 85%"></span>
+                    <span class="skeleton-line" style="width: 68%"></span>
+                </div>
+                <footer>
+                    <span class="skeleton-pill"></span>
+                    <span class="skeleton-pill"></span>
+                    <span class="skeleton-pill"></span>
+                </footer>
+            </div>
+        </div>
+    ) : (
+        posts.map((log) => (
+            <div
+                class="group relative card log-card rounded-lg border p-lg"
+                data-log-card
+                data-rkey={log.rkey}
+            >
+                {blueskyPostUrl(log) && (
+                    <a
+                        class="invisible group-hover:visible transition duration-200 transition-discrete group absolute top-1 right-1 max-w-8 max-h-8 w-full h-full rounded-concentric shadow-md flex justify-center items-center no-underline"
+                        style="background: color-mix(in oklch, var(--surface), light-dark(black, white) 5%); border: 1px solid color-mix(in oklch, var(--surface), light-dark(black, white) 10%)"
+                        href={blueskyPostUrl(log)!}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="View on Bluesky"
+                    >
+                        <span
+                            class="group-hover:text-(--madoromi-aru) md-symbols text-md text-surface-contrast"
+                            aria-hidden="true"
+                        >
+                            arrow_outward
+                        </span>
+                    </a>
+                )}
+                <div class="card-content">
+                    <p>{log.content}</p>
+                </div>
+                <footer class="gap-2">
+                    <span class="date">{formatDate(log.createdAt)}</span>
+                    <button
+                        class="ui-button ui-button--icon ui-button--colored rounded-concentric"
+                        data-rkey={log.rkey}
+                        aria-label="Copy permalink"
+                    >
+                        <span class="md-symbols" aria-hidden="true">
+                            link
+                        </span>
+                    </button>
+                    <button
+                        class="ui-button ui-button--icon ui-button--colored rounded-concentric"
+                        data-copy-twitter
+                        data-rkey={log.rkey}
+                        aria-label="Copy as Twitter post"
+                        style="--color: var(--twitter); --color-contrast: white;"
+                    >
+                        <span class="md-symbols" aria-hidden="true">
+                            content_copy
+                        </span>
+                    </button>
+                </footer>
+            </div>
+        ))
+    )}
 </div>
 
 <script>
-import "../scripts/scrittoFix";
-import type { Scritto } from "@scritto/core";
-import { fetchLogsFromPreviewDID } from "../scripts/logsApi";
-import {
-  STORAGE_KEY,
-  getLogs,
-  mergeLocalPending,
-  mergeWithPending,
-  setLogs,
-  subscribe,
-  type LogEntry,
-} from "../scripts/logsStore";
-import { formatDate } from "../scripts/utils";
+    import { fetchLogsFromPreviewDID } from "../scripts/logsApi";
+    import {
+        STORAGE_KEY,
+        getLogs,
+        mergeLocalPending,
+        mergeWithPending,
+        setLogs,
+        subscribe,
+        type LogEntry,
+    } from "../scripts/logsStore";
+    import { formatDate } from "../scripts/utils";
 
-const container = document.getElementById("logs");
-if (!container) {
-  throw new Error("Logs container not found");
-}
+    const foundContainer = document.getElementById("logs");
+    const foundStatus = document.getElementById("logs-status");
+    if (!foundContainer || !foundStatus)
+        throw new Error("Logs container is incomplete");
+    const container: HTMLElement = foundContainer;
+    const status: HTMLElement = foundStatus;
 
-const statusEl = document.getElementById("logs-status");
+    const SYNC_INTERVAL_MS = 60_000;
+    let firstSyncDone = false;
+    let lastSyncFailed = false;
+    let syncing = false;
+    let pollTimer = 0;
+    let stateNode: HTMLElement | null = container.querySelector(
+        ".logs-skeleton, .logs-error, .logs-empty",
+    );
+    const revertTimers = new WeakMap<HTMLButtonElement, number>();
+    const cards = new Map<string, HTMLElement>();
 
-// The custom element does not adopt its text content, so seed it from the
-// server-rendered fallback and drop that fallback text to avoid duplication.
-// Keeping the empty plain text node the element appends preserves its
-// accessible value.
-function hydrateLabels(root: ParentNode) {
-  for (const el of root.querySelectorAll<Scritto>("scritto-text")) {
-    if (el.value) continue;
-    const text = el.textContent ?? "";
-    if (!text) continue;
-    for (const node of [...el.childNodes]) {
-      if (node.nodeType === Node.TEXT_NODE && node.nodeValue) node.remove();
+    function blueskyUrl(log: LogEntry): string | null {
+        if (!log.blueskyPost || typeof log.blueskyPost !== "object")
+            return null;
+        const [repo, collection, rkey] = log.blueskyPost.uri
+            .split("/")
+            .slice(2);
+        if (!repo || collection !== "app.bsky.feed.post" || !rkey) return null;
+        return `https://bsky.app/profile/${encodeURIComponent(repo).replaceAll("%3A", ":")}/post/${encodeURIComponent(rkey)}`;
     }
-    el.update(text, false);
-    el.setAttribute("role", "img");
-    el.setAttribute("aria-label", text);
-  }
-}
 
-function setLabel(el: Scritto, text: string) {
-  el.update(text);
-  el.setAttribute("aria-label", text);
-}
+    function makeCard(log: LogEntry): HTMLElement {
+        const card = document.createElement("div");
+        card.className = "card log-card rounded-lg border p-lg";
+        card.dataset.logCard = "";
+        card.dataset.rkey = log.rkey;
 
-hydrateLabels(container);
+        const content = document.createElement("div");
+        content.className = "card-content";
+        const paragraph = document.createElement("p");
+        paragraph.textContent = log.content;
+        content.append(paragraph);
+        card.append(content);
 
-const SYNC_INTERVAL_MS = 60_000;
-let lastSyncFailed = false;
-let syncing = false;
-// Until the first client-side sync resolves we can't tell whether there are
-// genuinely no logs or the snapshot is still loading — so we show a skeleton.
-let firstSyncDone = false;
+        const footer = document.createElement("footer");
+        const date = document.createElement("span");
+        date.className = "date";
+        date.textContent = formatDate(log.createdAt);
+        footer.append(date);
 
-const SKELETON_HTML = `
-  <div class="logs-skeleton" aria-hidden="true">
-    <div class="card">
-      <div class="card-content">
-        <span class="skeleton-line" style="width: 92%"></span>
-        <span class="skeleton-line" style="width: 78%"></span>
-        <span class="skeleton-line" style="width: 60%"></span>
-      </div>
-      <footer>
-        <span class="skeleton-pill"></span>
-        <span class="skeleton-pill"></span>
-      </footer>
-    </div>
-    <div class="card">
-      <div class="card-content">
-        <span class="skeleton-line" style="width: 85%"></span>
-        <span class="skeleton-line" style="width: 68%"></span>
-      </div>
-      <footer>
-        <span class="skeleton-pill"></span>
-        <span class="skeleton-pill"></span>
-        <span class="skeleton-pill"></span>
-      </footer>
-    </div>
-  </div>
-`;
-
-// Seed the store from the server-rendered snapshot so the page renders
-// instantly, then re-sync against the PDS so the cached page state catches up
-// with the latest records.
-const dataEl = document.getElementById("logs-initial");
-if (dataEl) {
-  try {
-    const raw = dataEl.textContent?.trim();
-    if (raw) {
-      const initialLogs: LogEntry[] = JSON.parse(decodeURIComponent(raw));
-      const merged = mergeWithPending(initialLogs);
-      if (merged.length > 0) {
-        setLogs(merged);
-      }
-    }
-  } catch (e) {
-    console.error("[APP]", "failed to parse initial logs:", e);
-  }
-}
-
-/**
- * Fetch the latest logs from the PDS, merge in anything still pending
- * locally, and hand the result to the store (which re-renders the list).
- */
-async function syncLogs() {
-  if (syncing) return;
-  syncing = true;
-  try {
-    const fresh = await fetchLogsFromPreviewDID();
-    lastSyncFailed = false;
-    firstSyncDone = true;
-    setLogs(mergeWithPending(fresh));
-  } catch (e) {
-    console.error("[APP]", "failed to sync logs:", e);
-    lastSyncFailed = true;
-    firstSyncDone = true;
-    renderLogs();
-  } finally {
-    syncing = false;
-  }
-}
-
-function escapeHtml(text: string): string {
-  const div = document.createElement("div");
-  div.appendChild(document.createTextNode(text));
-  return div.innerHTML;
-}
-
-function makeCardHTML(log: LogEntry): string {
-  const shareIcon = '<span class="md-symbols" aria-hidden="true">share</span>';
-  const linkIcon = '<span class="md-symbols" aria-hidden="true">link</span>';
-  const twitterCopyIcon =
-    '<span class="md-symbols" aria-hidden="true">content_copy</span>';
-  const twitterStyle = 'style="--color: var(--twitter); --color-contrast: white;"';
-
-  return `
-    <div class="card" data-rkey="${log.rkey}">
-      <div class="card-content"><p>${escapeHtml(log.content)}</p></div>
-      <footer>
-        <span class="date">${formatDate(log.createdAt)}</span>
-        ${
-          log.blueskyPost
-            ? `<div class="badge ui-button--colored ui-button--secondary">${shareIcon}Crossposted</div>`
-            : ""
+        const postUrl = blueskyUrl(log);
+        if (postUrl) {
+            const link = document.createElement("a");
+            link.href = postUrl;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.setAttribute("aria-label", "View on Bluesky");
+            link.append(icon("arrow_outward"));
+            footer.append(link);
         }
-        <button class="ui-button ui-button--colored" data-rkey="${log.rkey}">
-          ${linkIcon}<scritto-text>Permalink</scritto-text>
-        </button>
-        <button
-          class="ui-button ui-button--colored"
-          data-copy-twitter
-          data-rkey="${log.rkey}"
-          ${twitterStyle}
-        >
-          ${twitterCopyIcon}<scritto-text>Copy as Twitter post</scritto-text>
-        </button>
-      </footer>
-    </div>
-  `;
-}
-
-async function copyToClipboard(text: string): Promise<boolean> {
-  if (navigator.clipboard?.writeText) {
-    try {
-      await navigator.clipboard.writeText(text);
-      return true;
-    } catch {
-      // fall through to fallback
+        footer.append(actionButton(log.rkey, "link", "Permalink"));
+        const copyButton = actionButton(
+            log.rkey,
+            "content_copy",
+            "Copy as Twitter post",
+        );
+        copyButton.dataset.copyTwitter = "";
+        copyButton.style.setProperty("--color", "var(--twitter)");
+        copyButton.style.setProperty("--color-contrast", "white");
+        footer.append(copyButton);
+        card.append(footer);
+        return card;
     }
-  }
-  try {
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    textarea.style.pointerEvents = "none";
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand("copy");
-    document.body.removeChild(textarea);
-    return true;
-  } catch {
-    return false;
-  }
-}
 
-const revertTimers = new WeakMap<Scritto, number>();
-
-container.addEventListener("click", async (e) => {
-  const button = (e.target as HTMLElement).closest<HTMLButtonElement>('.ui-button[data-rkey]');
-  if (!button) return;
-  const rkey = button.getAttribute("data-rkey");
-  if (!rkey) return;
-
-  const status = document.getElementById("logs-status");
-  const label = button.querySelector<Scritto>("scritto-text");
-  const original = label ? String(label.value) : null;
-
-  const permalink = new URL(window.location.href);
-  permalink.searchParams.set("rkey", rkey);
-
-  const isTwitterCopy = button.dataset.copyTwitter !== undefined;
-  let text: string;
-  let failureLabel: string;
-  if (isTwitterCopy) {
-    const content =
-      button.closest(".card")
-        ?.querySelector(".card-content p")?.textContent?.trim() ?? "";
-    text = [content, permalink.toString()].filter(Boolean).join("\n\n");
-    failureLabel = "Unable to copy Twitter post";
-  } else {
-    text = permalink.toString();
-    failureLabel = "Unable to copy permalink";
-  }
-
-  if (await copyToClipboard(text)) {
-    if (label && original !== null) {
-      setLabel(label, "Copied!");
-      window.clearTimeout(revertTimers.get(label));
-      revertTimers.set(
-        label,
-        window.setTimeout(() => setLabel(label, original), 2000)
-      );
+    function icon(name: string): HTMLSpanElement {
+        const element = document.createElement("span");
+        element.className = "md-symbols";
+        element.setAttribute("aria-hidden", "true");
+        element.textContent = name;
+        return element;
     }
-    if (status) status.textContent = "Copied to clipboard.";
-  } else {
-    console.error("[APP]", isTwitterCopy ? "failed to copy twitter post" : "failed to copy permalink");
-    if (label) {
-      window.clearTimeout(revertTimers.get(label));
-      setLabel(label, failureLabel);
+
+    function actionButton(
+        rkey: string,
+        iconName: string,
+        labelText: string,
+    ): HTMLButtonElement {
+        const button = document.createElement("button");
+        button.className = "ui-button ui-button--colored rounded-concentric";
+        button.dataset.rkey = rkey;
+        button.append(icon(iconName));
+        button.setAttribute("aria-label", labelText);
+        return button;
     }
-    if (status) status.textContent = `Failed to copy. ${failureLabel}`;
-  }
-});
 
-const rkeyParam = new URL(window.location.href).searchParams.get("rkey");
-if (rkeyParam) {
-  const scrollToCard = () => {
-    const target = container.querySelector(`[data-rkey="${CSS.escape(rkeyParam)}"]`);
-    if (!target) return;
-    const card = target.closest(".card");
-    if (!card) return;
-    card.scrollIntoView({ behavior: "instant", block: "start" });
-  };
-  const queueScroll = () => {
-    requestAnimationFrame(() => requestAnimationFrame(scrollToCard));
-  };
-  if (document.readyState === "complete") {
-    queueScroll();
-  } else {
-    window.addEventListener("load", queueScroll, { once: true });
-  }
-}
-
-/**
- * Reconcile the DOM with the store: drop cards that no longer exist, insert
- * missing cards at their sorted (newest-first) position, and keep the
- * empty/error state alerts in sync.
- */
-const renderLogs = () => {
-  const allLogs = getLogs();
-  const byRkey = new Map(allLogs.map((log) => [log.rkey, log]));
-
-  // Clear the previous status so a stale "Loading logs…" doesn't linger once
-  // the list resolves (it is re-set below only while the skeleton is shown).
-  if (statusEl) statusEl.textContent = "";
-
-  // Remove cards that are no longer part of the list.
-  for (const el of Array.from(container.querySelectorAll<HTMLElement>("div[data-rkey]"))) {
-    if (!byRkey.has(el.dataset.rkey ?? "")) el.remove();
-  }
-
-  // State alerts and the loading skeleton are rebuilt below from the current state.
-  for (const el of Array.from(container.querySelectorAll<HTMLElement>(".logs-empty, .logs-error, .logs-skeleton"))) {
-    el.remove();
-  }
-
-  if (allLogs.length === 0) {
-    let html: string;
-    if (!firstSyncDone) {
-      html = SKELETON_HTML;
-      if (statusEl) statusEl.textContent = "Loading logs…";
-    } else if (lastSyncFailed) {
-      html = '<div role="alert" class="alert alert--error logs-error">Could not load logs.</div>';
-    } else {
-      html = '<div class="alert alert--warning logs-empty">There\'s no logs… yet. :(</div>';
+    function makeSkeleton(): HTMLElement {
+        const skeleton = document.createElement("div");
+        skeleton.className = "logs-skeleton";
+        skeleton.setAttribute("aria-hidden", "true");
+        for (const widths of [
+            [92, 78, 60],
+            [85, 68],
+        ]) {
+            const card = document.createElement("div");
+            card.className = "card rounded-lg border p-lg";
+            const content = document.createElement("div");
+            content.className = "card-content";
+            for (const width of widths) {
+                const line = document.createElement("span");
+                line.className = "skeleton-line";
+                line.style.width = `${width}%`;
+                content.append(line);
+            }
+            card.append(content);
+            const footer = document.createElement("footer");
+            for (let i = 0; i < (widths.length === 3 ? 2 : 3); i++) {
+                const pill = document.createElement("span");
+                pill.className = "skeleton-pill";
+                footer.append(pill);
+            }
+            card.append(footer);
+            skeleton.append(card);
+        }
+        return skeleton;
     }
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = html;
-    hydrateLabels(wrapper);
-    container.appendChild(wrapper.firstElementChild as HTMLElement);
-    return;
-  }
 
-  // Insert missing cards in their sorted (newest-first) position.
-  for (const log of allLogs) {
-    if (container.querySelector(`div[data-rkey="${CSS.escape(log.rkey)}"]`)) continue;
+    function renderState(logCount: number) {
+        status.textContent = "";
+        stateNode?.remove();
+        stateNode = null;
+        if (logCount > 0) return;
 
-    const wrapper = document.createElement("div");
-    wrapper.innerHTML = makeCardHTML(log);
-    hydrateLabels(wrapper);
-    const card = wrapper.firstElementChild as HTMLElement | null;
-    if (!card) continue;
-
-    const createdAt = new Date(log.createdAt).getTime();
-    let inserted = false;
-    for (const el of container.querySelectorAll<HTMLElement>("div[data-rkey]")) {
-      const existing = byRkey.get(el.dataset.rkey ?? "");
-      if (existing && createdAt > new Date(existing.createdAt).getTime()) {
-        container.insertBefore(card, el);
-        inserted = true;
-        break;
-      }
+        if (!firstSyncDone) {
+            status.textContent = "Loading logs…";
+            stateNode = makeSkeleton();
+        } else {
+            const message = document.createElement("div");
+            message.className = lastSyncFailed
+                ? "alert alert--error logs-error"
+                : "alert alert--warning logs-empty";
+            if (lastSyncFailed) message.setAttribute("role", "alert");
+            message.textContent = lastSyncFailed
+                ? "Could not load logs."
+                : "There's no logs… yet. :(";
+            stateNode = message;
+        }
+        container.insertBefore(stateNode, status.nextSibling);
     }
-    if (!inserted) container.appendChild(card);
-  }
-}
 
-subscribe(renderLogs);
+    function renderLogs() {
+        const entries = getLogs();
+        const active = new Set(entries.map((log) => log.rkey));
+        for (const [rkey, card] of cards) {
+            if (!active.has(rkey)) {
+                card.remove();
+                cards.delete(rkey);
+            }
+        }
+        for (const card of container.querySelectorAll<HTMLElement>(
+            "[data-log-card][data-rkey]",
+        )) {
+            if (!cards.has(card.dataset.rkey ?? "")) card.remove();
+        }
+        let anchor: ChildNode | null =
+            stateNode?.nextSibling ?? status.nextSibling;
+        for (const log of entries) {
+            let card = cards.get(log.rkey);
+            if (!card) {
+                card = makeCard(log);
+                cards.set(log.rkey, card);
+            }
+            if (card !== anchor) container.insertBefore(card, anchor);
+            anchor = card.nextSibling;
+        }
+        renderState(entries.length);
+    }
 
-// Paint anything from the seed that isn't in the cached HTML yet (e.g. logs
-// pending locally), then sync with the PDS and keep polling while open.
-renderLogs();
-syncLogs();
-setInterval(syncLogs, SYNC_INTERVAL_MS);
+    for (const card of container.querySelectorAll<HTMLElement>(
+        "[data-log-card][data-rkey]",
+    )) {
+        const key = card.dataset.rkey;
+        if (key) cards.set(key, card);
+    }
 
-// Re-sync when the tab becomes visible again.
-document.addEventListener("visibilitychange", () => {
-  if (!document.hidden) syncLogs();
-});
+    const dataEl = document.getElementById("logs-initial");
+    if (dataEl?.textContent) {
+        try {
+            const initialLogs = JSON.parse(
+                decodeURIComponent(dataEl.textContent),
+            ) as LogEntry[];
+            setLogs(mergeWithPending(initialLogs));
+        } catch (error) {
+            console.error("[APP]", "failed to parse initial logs:", error);
+        }
+    }
 
-// Pick up logs composed in another tab (they land in localStorage).
-window.addEventListener("storage", (e) => {
-  if (e.key === STORAGE_KEY) mergeLocalPending();
-});
+    async function syncLogs() {
+        if (syncing || document.hidden) return;
+        syncing = true;
+        try {
+            setLogs(mergeWithPending(await fetchLogsFromPreviewDID()));
+            lastSyncFailed = false;
+        } catch (error) {
+            console.error("[APP]", "failed to sync logs:", error);
+            lastSyncFailed = true;
+        } finally {
+            firstSyncDone = true;
+            syncing = false;
+            renderLogs();
+            if (!document.hidden)
+                pollTimer = window.setTimeout(syncLogs, SYNC_INTERVAL_MS);
+        }
+    }
+
+    async function copyToClipboard(text: string): Promise<boolean> {
+        try {
+            if (navigator.clipboard?.writeText) {
+                await navigator.clipboard.writeText(text);
+                return true;
+            }
+        } catch {
+            // Use the legacy copy command when clipboard permissions are unavailable.
+        }
+        const field = document.createElement("textarea");
+        field.value = text;
+        field.style.cssText = "position:fixed;opacity:0;pointer-events:none";
+        document.body.append(field);
+        try {
+            field.select();
+            return document.execCommand("copy");
+        } catch {
+            return false;
+        } finally {
+            field.remove();
+        }
+    }
+
+    container.addEventListener("click", async (event) => {
+        const target = event.target;
+        if (!(target instanceof Element)) return;
+        const button = target.closest<HTMLButtonElement>("button[data-rkey]");
+        if (!button) return;
+        const rkey = button.dataset.rkey;
+        if (!rkey) return;
+        const permalink = new URL(window.location.href);
+        permalink.searchParams.set("rkey", rkey);
+        const originalLabel = button.getAttribute("aria-label") ?? "Copy";
+        const isTwitterCopy = "copyTwitter" in button.dataset;
+        const content =
+            button
+                .closest(".card")
+                ?.querySelector(".card-content p")
+                ?.textContent?.trim() ?? "";
+        const copied = await copyToClipboard(
+            isTwitterCopy
+                ? [content, permalink.toString()].filter(Boolean).join("\n\n")
+                : permalink.toString(),
+        );
+        window.clearTimeout(revertTimers.get(button));
+        if (copied) {
+            button.setAttribute("aria-label", "Copied!");
+            revertTimers.set(
+                button,
+                window.setTimeout(
+                    () => button.setAttribute("aria-label", originalLabel),
+                    2000,
+                ),
+            );
+        } else {
+            button.setAttribute(
+                "aria-label",
+                isTwitterCopy
+                    ? "Unable to copy Twitter post"
+                    : "Unable to copy permalink",
+            );
+        }
+        status.textContent = copied
+            ? "Copied to clipboard."
+            : "Failed to copy.";
+    });
+
+    subscribe(renderLogs);
+    renderLogs();
+    void syncLogs();
+    document.addEventListener("visibilitychange", () => {
+        window.clearTimeout(pollTimer);
+        if (!document.hidden) void syncLogs();
+    });
+    window.addEventListener("storage", (event) => {
+        if (event.key === STORAGE_KEY) mergeLocalPending();
+    });
+
+    const rkey = new URL(window.location.href).searchParams.get("rkey");
+    if (rkey) {
+        const target = cards.get(rkey);
+        if (target)
+            requestAnimationFrame(() =>
+                target.scrollIntoView({ behavior: "instant", block: "start" }),
+            );
+    }
 </script>
