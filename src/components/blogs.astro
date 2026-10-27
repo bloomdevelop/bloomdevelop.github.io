@@ -13,7 +13,7 @@ const blogPosts = (await getCollection("blog"))
 
 {blogPosts.length === 0 && <p>No posts yet. :(</p>}
 {blogPosts.map((post) => (
-    <a class="card" href={`/blog/${post.id}`}>
+    <a class="card rounded-lg border p-lg" href={`/blog/${post.id}`}>
         <div class="card-header">
             <h3>{post.data.title}</h3>
             <p>{post.data.pubDate.toLocaleDateString()}</p>
