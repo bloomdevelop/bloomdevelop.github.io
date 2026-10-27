@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, type Ref } from "vue";
-import "../scripts/scrittoFix";
+import "../../../scripts/scrittoFix";
 import Scritto from "@scritto/vue";
-import { createLog } from "../scripts/oauth";
-import { prependLog } from "../scripts/logsStore";
+import { createLog } from "../../../scripts/oauth";
+import { prependLog } from "../../../scripts/logsStore";
+import { toGraphemeSegments } from "../../../scripts/segments";
 
 const content = ref("");
-
-const count = computed(() => content.value.length);
+const count = computed(() => toGraphemeSegments(content.value).length);
 const isCrosspostEnabled = ref(false);
 const hasInteracted = ref(false);
 const isSubmitting = ref(false);
@@ -15,6 +15,7 @@ const isEmpty = computed(() => content.value.trim().length === 0);
 const errorRef: Ref<Error | null> = ref(null);
 
 async function submit() {
+    if (isSubmitting.value || isEmpty.value) return;
     isSubmitting.value = true;
     errorRef.value = null;
 
@@ -39,11 +40,11 @@ async function submit() {
 </script>
 
 <template>
-    <header>
+    <header class="compose-heading">
         <h1>New Log</h1>
 
         <button
-            class="ui-button ui-button--ghost ui-button--icon"
+            class="ui-button ui-button--ghost ui-button--icon rounded-concentric"
             type="button"
             commandFor="compose"
             command="close"
@@ -52,90 +53,55 @@ async function submit() {
             <span class="md-symbols" aria-hidden="true">close</span>
         </button>
     </header>
-    <form style="margin-top: 5px;" @submit.prevent="submit" class="compose">
-        <label for="compose-textarea"> Content </label>
+    <form @submit.prevent="submit" class="flex flex-col gap-2">
         <textarea
             id="compose-textarea"
             v-model="content"
             class="compose-textarea"
-            placeholder="Write anything…"
-            rows="4"
+            placeholder="A thought, a tiny win, something you noticed…"
+            rows="5"
         ></textarea>
-
-        <div class="compose-footer">
-            <span class="compose-counter">
-                <Scritto :value="count" :transition="{ duration: 120 }" /> Characters
-            </span>
-        </div>
+        <Scritto
+            :value="
+                String(`${count} ${count < 1 ? 'character' : 'characters'}`)
+            "
+            :transition="{ duration: 250, easing: 'ease-out' }"
+            class="text-surface-contrast/75"
+        />
         <div
-            v-if="isCrosspostEnabled && content.trim().length > 300"
+            v-if="isCrosspostEnabled && count > 300"
             aria-live="polite"
             class="alert alert--warning"
         >
-            <p>Looks like your content is over 300 characters…</p>
-            <p>It will be truncated when submitted.</p>
+            <p>Heads up: crossposts are limited to 300 characters. The extra text will be trimmed when posted.</p>
         </div>
         <div v-if="errorRef" role="alert" class="alert alert--error">
             {{ errorRef.message }}
         </div>
 
-        <div class="footer">
-            <label>
+        <footer class="flex flex-row justify-between">
+            <label class="flex flex-row items-center gap-2">
                 <input
                     type="checkbox"
                     v-model="isCrosspostEnabled"
                     :class="{ 'is-init': hasInteracted }"
                     @change="hasInteracted = true"
                 />
-                <span>Crosspost?</span>
+                <span class="text-sm text-surface-contrast/75"
+                    >Share it to Bluesky</span
+                >
             </label>
             <button
-                class="ui-button ui-button--colored"
+                class="ui-button ui-button--colored rounded-concentric inline-flex items-center flex-row justify-start h-min max-w-[7rem]"
                 :disabled="isEmpty || isSubmitting"
+                :aria-busy="isSubmitting"
                 type="submit"
             >
-                Submit
+                <span class="md-symbols block-[1cap]" aria-hidden="true"
+                    >post_add</span
+                >
+                <span>{{ isSubmitting ? "Posting…" : "Post" }}</span>
             </button>
-        </div>
+        </footer>
     </form>
 </template>
-
-<style scoped>
-.compose {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-md);
-}
-
-.compose-textarea {
-    min-height: 7rem;
-}
-
-.compose-footer {
-    display: flex;
-    justify-content: flex-end;
-}
-
-.compose-counter {
-    font-family: var(--body);
-    font-size: 0.75rem;
-    color: var(--surface-1-contrast);
-    opacity: 0.6;
-    font-variant-numeric: tabular-nums;
-}
-
-label {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-    font-family: var(--body);
-    font-size: 0.875rem;
-    color: var(--surface-1-contrast);
-
-    & span {
-        user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-    }
-}
-</style>
