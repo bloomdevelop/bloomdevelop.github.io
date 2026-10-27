@@ -1,0 +1,24 @@
+---
+---
+
+<div data-component="intro" aria-hidden="true">
+    <canvas data-intro-canvas></canvas>
+    <div data-intro-veil></div>
+    <div data-intro-brand>
+        <span data-intro-halo></span>
+        <picture>
+            <source srcset="/logomark-dark.svg" media="(prefers-color-scheme: dark)" />
+            <img
+                src="/logomark-light.svg"
+                alt=""
+                width="308"
+                height="100"
+                draggable="false"
+            />
+        </picture>
+    </div>
+</div>
+
+<script>
+    import "../scripts/intro";
+</script>
