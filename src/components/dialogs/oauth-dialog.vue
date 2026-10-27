@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import "../scripts/scrittoFix";
+import "../../scripts/scrittoFix";
 import Scritto from "@scritto/vue";
-import { startLoginFlow } from "../scripts/oauth";
-const dialog = ref<HTMLDialogElement | null>(null);
+import { startLoginFlow } from "../../scripts/oauth";
+import DialogShell from "./dialog-shell.vue";
+const dialog = ref<InstanceType<typeof DialogShell> | null>(null);
 const handle = ref("");
 const loading = ref(false);
 
 function open() {
-    dialog.value?.showModal();
+    dialog.value?.open();
 }
 
 function close() {
@@ -32,12 +33,12 @@ defineExpose({ open, close });
 </script>
 
 <template>
-    <dialog ref="dialog" id="oauth" class="dialog">
+    <DialogShell ref="dialog" id="oauth">
         <header>
             <h1>Login via OAuth</h1>
 
             <button
-                class="ui-button ui-button--ghost ui-button--icon"
+                class="ui-button ui-button--ghost ui-button--icon rounded-concentric"
                 type="button"
                 commandFor="oauth"
                 command="close"
@@ -65,7 +66,7 @@ defineExpose({ open, close });
             </label>
             <footer>
                 <button
-                    class="ui-button ui-button--colored"
+                    class="ui-button ui-button--colored rounded-concentric"
                     type="submit"
                     :disabled="loading"
                     :aria-busy="loading"
@@ -77,7 +78,7 @@ defineExpose({ open, close });
                 </button>
             </footer>
         </form>
-    </dialog>
+    </DialogShell>
 </template>
 
 <style scoped>
