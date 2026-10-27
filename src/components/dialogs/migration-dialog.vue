@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import "../scripts/scrittoFix";
+import "../../scripts/scrittoFix";
 import Scritto from "@scritto/vue";
-import { agent } from "../scripts/agent";
-import { revokeSession } from "../scripts/oauth";
-import { startMigration } from "../scripts/migration";
+import { agent } from "../../scripts/agent";
+import { revokeSession } from "../../scripts/oauth";
+import { startMigration } from "../../scripts/migration";
+import DialogShell from "./dialog-shell.vue";
 
-const dialog = ref<HTMLDialogElement | null>(null);
+const dialog = ref<InstanceType<typeof DialogShell> | null>(null);
 const isMigrating = ref(false);
 const error = ref<string | null>(null);
 const progress = ref<{
@@ -19,7 +20,7 @@ const progress = ref<{
 function open() {
   progress.value = null;
   error.value = null;
-  dialog.value?.showModal();
+  dialog.value?.open();
 }
 
 function close() {
@@ -56,11 +57,7 @@ defineExpose({ open, close });
 </script>
 
 <template>
-  <dialog
-    ref="dialog"
-    aria-labelledby="migration-title"
-    class="dialog"
-  >
+  <DialogShell ref="dialog" aria-labelledby="migration-title">
     <header>
       <h1 id="migration-title">Migration required</h1>
     </header>
@@ -100,7 +97,7 @@ defineExpose({ open, close });
     </div>
     <div class="footer">
       <button
-        class="ui-button ui-button--colored"
+        class="ui-button ui-button--colored rounded-concentric"
         :disabled="isMigrating"
         :aria-busy="isMigrating"
         @click="start"
@@ -111,7 +108,7 @@ defineExpose({ open, close });
         />
       </button>
       <button
-        class="ui-button ui-button--colored ui-button--neutral danger"
+        class="ui-button ui-button--colored ui-button--neutral danger rounded-concentric"
 
         :disabled="isMigrating"
         @click="cancelAndLogout"
@@ -119,5 +116,5 @@ defineExpose({ open, close });
         Cancel and log out
       </button>
     </div>
-  </dialog>
+  </DialogShell>
 </template>
