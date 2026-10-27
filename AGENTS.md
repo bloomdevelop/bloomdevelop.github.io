@@ -27,9 +27,9 @@ Do not overcomment. Write code that explains itself and add comments only when t
 
 ## Architecture
 
-- **Vue islands only.** `astro.config.mjs` registers only the Vue integration. Interactive components are `.vue` files in `src/components/`: nav-menu, compose, compose-dialog, oauth-dialog, migration-dialog, logout-dialog, about-dialog. Do not add Solid components — `solid-js` and `@astrojs/solid-js` are stale dependencies left in `package.json`.
+- **Vue islands only.** `astro.config.mjs` registers only the Vue integration. Interactive components are `.vue` files in `src/components/`: nav-menu, compose, oauth-dialog, migration-dialog, logout-dialog, about-dialog. Do not add Solid components — `solid-js` and `@astrojs/solid-js` are stale dependencies left in `package.json`.
 - **Two near-duplicate layouts.** `src/layouts/base-layout.astro` is used by the index and blog pages. `src/layouts/spa-layout.astro` is used only by `src/pages/dni.md` and additionally provides the sky animation and an hourly page reload. Apply any head, footer, or font change to both layouts.
-- **Tailwind v4 + plain CSS.** Tailwind is wired through `@tailwindcss/vite`; its theme tokens are bridged in `src/css/theme.css`. Use utilities for layout and one-off styling. Component appearance lives in `src/css/components.css` and is driven by classes (`.ui-button`, `.dialog`, `.card`, `.alert`, `.link`, …); `data-*` attributes are reserved for JS hooks such as `data-rkey` and `data-action`. Design tokens remain in `colors.css` and `base.css`.
+- **Plain CSS, no Tailwind.** Styles live in `src/css/`, with design tokens in `colors.css`. UI components are styled through `data-component="..."` attribute selectors in `src/css/components/`, not through class names. Follow this pattern for new components.
 - **Fonts** are configured in `astro.config.mjs` (fontsource provider) and exposed as CSS variables `--inter`, `--maple-mono`, and `--material-symbols-rounded`. `base-layout.astro` preloads all three; `spa-layout.astro` preloads only two.
 - **Blog posts** are Markdown files in `src/blog/`. The schema in `src/content.config.ts` requires `title` and `pubDate` frontmatter; `description`, `tags`, and `draft` are optional. Drafts are hidden in production builds and render only in development, behind a warning banner.
 
