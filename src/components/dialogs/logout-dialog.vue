@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { revokeSession } from "../scripts/oauth";
+import { revokeSession } from "../../scripts/oauth";
+import DialogShell from "./dialog-shell.vue";
 
-const dialog = ref<HTMLDialogElement | null>(null);
+const dialog = ref<InstanceType<typeof DialogShell> | null>(null);
 
 function open() {
-	dialog.value?.showModal();
+	dialog.value?.open();
 }
 
 function close() {
@@ -21,18 +22,18 @@ defineExpose({ open, close });
 </script>
 
 <template>
-	<dialog ref="dialog" id="logout-confirmation" class="dialog">
+	<DialogShell ref="dialog" id="logout-confirmation">
 		<header>
 			<h1>Logout?</h1>
 		</header>
 		<p>Are you sure you want to logout?</p>
 		<div class="footer">
-			<button class="ui-button ui-button--colored ui-button--neutral" @click="close">
+			<button class="ui-button ui-button--colored ui-button--neutral rounded-concentric" @click="close">
 				Cancel
 			</button>
-			<button class="ui-button ui-button--colored ui-button--error" @click="logout">
+			<button class="ui-button ui-button--colored ui-button--error rounded-concentric" @click="logout">
 				Logout
 			</button>
 		</div>
-	</dialog>
+	</DialogShell>
 </template>
