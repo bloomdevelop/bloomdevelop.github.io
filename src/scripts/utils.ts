@@ -25,7 +25,7 @@ export function extractRkeyFromPlainAtURI(uri: string) {
 
 export function formatDate(date: string) {
 	const formatter = new Intl.DateTimeFormat("en-US", {
-		timeStyle: "long",
+		timeStyle: "short",
 		dateStyle: "short",
 	});
 
