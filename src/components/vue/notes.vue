@@ -2,6 +2,11 @@
 import { onMounted, ref } from 'vue';
 import { DEFAULT_PREVIEW_DID, DEFAULT_PREVIEW_PDS, NEW_LOG_LEXICON } from '@/scripts/consts';
 import { constructApiUrl, extractRkeyFromPlainAtURI, formatDate } from '@/scripts/atproto/utils';
+import LoginDialog from './dialogs/login-dialog.vue';
+import ComposeDialog from './dialogs/compose-dialog.vue';
+import { setupOAuth } from '@/scripts/atproto/api';
+import { isInitialized } from '@/scripts/atproto/agent';
+import LogoutDialog from './dialogs/logout-dialog.vue';
 
 interface LogEntry {
     uri: string;
@@ -15,7 +20,7 @@ interface LogEntry {
 // rkey is not part of the record value; it is the last segment of the AT URI.
 const rkeyOf = (entry: LogEntry) => extractRkeyFromPlainAtURI(entry.uri);
 
-const permalink = (entry: LogEntry) => `?rkey=${rkeyOf(entry)}`;
+const permalink = (entry: LogEntry) => `?log=${rkeyOf(entry)}`;
 
 // at://did/app.bsky.feed.post/rkey -> https://bsky.app/profile/did/post/rkey
 function blueskyUrl(uri: string): string {
@@ -28,6 +33,8 @@ const error = ref('');
 const loading = ref(true);
 
 onMounted(async () => {
+    void setupOAuth();
+
     try {
         // Reading public records needs no login: just ask the PDS.
         // ?log=<rkey> shows a single entry (the permalink)
@@ -57,10 +64,36 @@ onMounted(async () => {
 </script>
 
 <template>
+    <ComposeDialog />
+    <LoginDialog />
+    <LogoutDialog />
     <header class="flex items-baseline justify-between gap-2 mb-3">
-        <h2 class="text-3xl">Notes</h2>
+        <h2 class="text-2xl">Notes</h2>
         <div role="toolbar" class="flex gap-2">
-            <button class="flex items-center gap-3 px-3 py-2 hover:bg-nijimi-1 active:bg-nijimi-2">
+            <template v-if="isInitialized">
+                <button
+                    commandFor="ui-dialog-compose"
+                    command="show-modal"
+                    class="flex items-center gap-3 px-3 py-2 hover:bg-nijimi-1 focus-visible:bg-nijimi-1 active:bg-nijimi-2"
+                >
+                    <span class="font-md-symbols">add</span>
+                    New Note
+                </button>
+                <button
+                    commandFor="ui-dialog-logout"
+                    command="show-modal"
+                    class="flex items-center gap-3 px-3 py-2 hover:bg-nijimi-1 focus-visible:bg-nijimi-1 active:bg-nijimi-2"
+                >
+                    <span class="font-md-symbols">logout</span>
+                    Logout
+                </button>
+            </template>
+            <button
+                v-else
+                commandFor="ui-dialog-login"
+                command="show-modal"
+                class="flex items-center gap-3 px-3 py-2 hover:bg-nijimi-1 focus-visible:bg-nijimi-1 active:bg-nijimi-2"
+            >
                 <span class="font-md-symbols">login</span>
                 Login with ATProto
             </button>
@@ -71,31 +104,32 @@ onMounted(async () => {
     <p v-else-if="!entries.length">No logs yet.</p>
     <ul class="flex flex-col gap-2" v-else>
         <li
-            class="relative flex flex-col gap-2 border border-nijimi-1 p-2"
+            class="flex flex-col gap-2 border border-nijimi-1 p-2"
             v-for="entry in entries"
             :key="entry.uri"
         >
-            <a
-                v-if="entry.value.blueskyPost"
-                :href="blueskyUrl(entry.value.blueskyPost.uri)"
-                class="absolute top-2 right-2 text-link hover:text-link-hover"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                <span class="font-md-symbols">arrow_outward</span>
-            </a>
             <p class="whitespace-pre-wrap">{{ entry.value.content }}</p>
 
             <div role="toolbar" class="flex justify-between gap-2">
-                <small>
+                <small class="flex gap-2">
                     <time :datetime="entry.value.createdAt">{{
                         formatDate(entry.value.createdAt)
                     }}</time>
+                    <a class="hover:text-link hover:underline" :href="permalink(entry)"
+                        >({{ rkeyOf(entry) }})</a
+                    >
                 </small>
+
                 <small class="flex gap-2">
-                    <a class="hover:text-link hover:underline" :href="permalink(entry)">{{
-                        rkeyOf(entry)
-                    }}</a>
+                    <a
+                        v-if="entry.value.blueskyPost"
+                        :href="blueskyUrl(entry.value.blueskyPost.uri)"
+                        class="text-link hover:text-link-hover"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Open in Bluesky
+                    </a>
                 </small>
             </div>
         </li>
