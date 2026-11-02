@@ -1,3 +1,5 @@
+import { Duration, Effect, Schedule } from 'effect';
+
 /** Splits a string into grapheme clusters. */
 export function toGraphemeSegments(
     string: string,
@@ -41,30 +43,29 @@ export function formatDate(date: string) {
     return formatter.format(new Date(date));
 }
 
-export async function retry<T>(
-    fn: () => Promise<T>,
-    options: { initialDelay: number; maxRetries: number } = {
-        initialDelay: 200,
-        maxRetries: 10,
-    },
-): Promise<T> {
-    const { initialDelay, maxRetries } = options;
-    let attempt = 0;
-
-    while (attempt <= maxRetries) {
-        try {
-            return await fn();
-        } catch (error) {
-            if (attempt === maxRetries) throw error;
-
-            const t = initialDelay * 2 ** (attempt - 1);
-            const j = Math.random() * initialDelay;
-            const d = t + j;
-
-            await new Promise<void>((resolve) => setTimeout(() => resolve(), d));
-            attempt++;
-        }
-    }
-
-    throw new Error('retry: exceeded maximum attempts');
+export interface RetryOptions {
+    readonly initialDelay: number;
+    readonly maxRetries: number;
 }
+
+const DEFAULT_RETRY_OPTIONS: RetryOptions = {
+    initialDelay: 200,
+    maxRetries: 10,
+};
+
+/**
+ * Retries a typed Effect failure with exponential backoff and jitter.
+ *
+ * The Effect itself is re-evaluated on every attempt, so wrap Promise-based
+ * work in `Effect.tryPromise` before passing it here.
+ */
+export const retry = <A, E, R>(
+    effect: Effect.Effect<A, E, R>,
+    options: RetryOptions = DEFAULT_RETRY_OPTIONS,
+): Effect.Effect<A, E, R> =>
+    Effect.retry(effect, {
+        times: options.maxRetries,
+        schedule: Schedule.exponential(Duration.millis(options.initialDelay)).pipe(
+            Schedule.jittered,
+        ),
+    });

@@ -17,9 +17,27 @@
                     "run": "onSave"
                 }
             }
+        },
+        "typescript-language-server": {
+            "binary": {
+                "path": "./node_modules/.bin/effect-tsgo",
+                "arguments": ["tsc", "--lsp", "--stdio"]
+            }
         }
     },
     "languages": {
+        "JavaScript": {
+            "language_servers": ["typescript-language-server"]
+        },
+        "JSX": {
+            "language_servers": ["typescript-language-server"]
+        },
+        "TypeScript": {
+            "language_servers": ["typescript-language-server"]
+        },
+        "TSX": {
+            "language_servers": ["typescript-language-server"]
+        },
         "CSS": {
             "format_on_save": "on",
             "prettier": {

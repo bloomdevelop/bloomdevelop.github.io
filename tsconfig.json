@@ -1,4 +1,5 @@
 {
+    "$schema": "./node_modules/@effect/tsgo/schema.json",
     "extends": "astro/tsconfigs/strict",
     "include": [".astro/types.d.ts", "**/*"],
     "exclude": ["dist"],
@@ -6,6 +7,12 @@
         "paths": {
             "@/*": ["./src/*"]
         },
-        "jsx": "preserve"
+        "jsx": "preserve",
+        "plugins": [
+            {
+                "name": "@effect/language-service",
+                "diagnostics": false
+            }
+        ]
     }
 }

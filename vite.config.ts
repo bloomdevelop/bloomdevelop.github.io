@@ -1,4 +1,14 @@
 import { defineConfig } from 'vite-plus';
+import effectRecommended from '@effect/tsgo/oxlint-presets/recommended.json';
+
+// JS configs may only extend config objects, so inline the recommended rules.
+// Convert the JSON preset's broad `string` values to Oxlint's severity literals.
+const effectRules = Object.fromEntries(
+    Object.entries(effectRecommended.rules).map(
+        ([rule, severity]) =>
+            [rule, severity === 'error' ? 'error' : severity === 'off' ? 'off' : 'warn'] as const,
+    ),
+);
 
 export default defineConfig({
     staged: {
@@ -12,8 +22,8 @@ export default defineConfig({
     },
     lint: {
         // Keep the Oxlint defaults (unicorn, typescript, oxc) and add plugins
-        // that match the app's stack: ESM imports, promises, and Vue SFCs.
-        plugins: ['unicorn', 'typescript', 'oxc', 'import', 'promise', 'vue'],
+        // that match the app's stack: ESM imports, promises, Vue SFCs, and Effect.
+        plugins: ['unicorn', 'typescript', 'oxc', 'import', 'promise', 'vue', 'effecttsgo'],
         jsPlugins: [{ name: 'vite-plus', specifier: 'vite-plus/oxlint-plugin' }],
         categories: {
             correctness: 'error',
@@ -34,6 +44,9 @@ export default defineConfig({
         },
         ignorePatterns: ['dist/**', '.astro/**'],
         rules: {
+            // Effect's recommended diagnostics (see `effect-tsgo patch --oxlint`
+            // in the `prepare` script).
+            ...effectRules,
             'vite-plus/prefer-vite-plus-imports': 'error',
             // TypeScript
             '@typescript-eslint/no-explicit-any': 'warn',
