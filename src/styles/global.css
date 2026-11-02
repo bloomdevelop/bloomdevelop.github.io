@@ -23,3 +23,29 @@
     --font-maple-mono: 'Maple Mono', monospace;
     --font-md-symbols: var(--md-symbols);
 }
+
+/*
+ * Mixes a theme color with black.
+ *
+ * Usage: bg-shade-<color>/<percentage>
+ * Example: bg-shade-accent/50
+ *
+ * The percentage is a modifier, not part of the color name. That matters
+ * because theme colors like `haru-hiru-ansi-0` already end in a number.
+ */
+@utility bg-shade-* {
+    background-color: color-mix(
+        in oklch,
+        --value(--color-*, [color]),
+        black calc(--modifier(integer, --default(50)) * 1%)
+    );
+}
+
+* {
+    @apply accent-accent;
+    @apply outline-accent focus-visible:outline-2 focus-visible:outline-offset-3;
+}
+
+button {
+    @apply cursor-pointer;
+}
