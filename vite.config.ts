@@ -57,6 +57,7 @@ export default defineConfig({
             'promise/param-names': 'warn',
             // Retry loops deliberately await sequentially between backoff delays.
             'no-await-in-loop': 'off',
+            complexity: ['warn', { max: 20, variant: 'modified' }],
         },
         options: { typeAware: true, typeCheck: true },
     },
