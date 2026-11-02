@@ -1,17 +1,35 @@
 {
-  "name": "new-bloomdevelop.github.io",
-  "type": "module",
-  "version": "0.0.1",
-  "engines": {
-    "node": ">=22.23.4"
-  },
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
-  },
-  "dependencies": {
-    "astro": "^7.4.4"
-  }
+    "name": "new-bloomdevelop.github.io",
+    "version": "0.0.1",
+    "type": "module",
+    "scripts": {
+        "dev": "astro dev",
+        "build": "astro build",
+        "preview": "astro preview",
+        "astro": "astro",
+        "prepare": "vp config"
+    },
+    "dependencies": {
+        "@astrojs/vue": "^7.1.2",
+        "@atcute/tid": "^1.1.4",
+        "@atproto/api": "^0.30.0",
+        "@atproto/oauth-client-browser": "^0.5.11",
+        "@tailwindcss/vite": "^4.3.3",
+        "astro": "^7.4.4",
+        "tailwindcss": "^4.3.3",
+        "vue": "^3.5.44"
+    },
+    "devDependencies": {
+        "vite-plus": "catalog:"
+    },
+    "devEngines": {
+        "packageManager": {
+            "name": "pnpm",
+            "version": "12.16.1",
+            "onFail": "download"
+        }
+    },
+    "engines": {
+        "node": ">=22.23.4"
+    }
 }
