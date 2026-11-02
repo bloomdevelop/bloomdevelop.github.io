@@ -1,0 +1,34 @@
+---
+import { DEFAULT_PREVIEW_PDS } from '@/scripts/consts';
+import { Font } from 'astro:assets';
+---
+
+<head>
+    <meta charset="UTF-8" />
+    {import.meta.env.DEV ? (
+        <>
+            <link rel="icon" type="image/svg+xml" href="/favicon-dev.svg" />
+            <link rel="icon" href="/favicon-dev.ico" />
+        </>
+    ) : (
+        <>
+            <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+            <link rel="icon" href="/favicon.ico" />
+        </>
+    )}
+    <title>Spring's Website</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+
+    <link rel="preconnect" href={DEFAULT_PREVIEW_PDS} />
+    <link rel="preconnect" href="https://api.bsky.app" />
+    <link
+        rel="preload"
+        href="/fonts/MapleMono%5Bwght%5D.ttf"
+        as="font"
+        type="font/ttf"
+        crossorigin="anonymous"
+    />
+    <Font cssVariable="--md-symbols" preload />
+</head>

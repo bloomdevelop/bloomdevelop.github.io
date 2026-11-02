@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+@import './madoromi.css';
+
+/* Fonts */
+@font-face {
+    font-family: 'Maple Mono';
+    src: url('/fonts/MapleMono[wght].ttf') format('truetype');
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Maple Mono';
+    src: url('/fonts/MapleMono-Italic[wght].ttf') format('truetype');
+    font-style: italic;
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+/* Theme */
+@theme inline {
+    --font-maple-mono: 'Maple Mono', monospace;
+    --font-md-symbols: var(--md-symbols);
+}

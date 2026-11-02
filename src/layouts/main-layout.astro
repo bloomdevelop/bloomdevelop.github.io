@@ -1,0 +1,15 @@
+---
+import Head from '@/components/head.astro';
+import '@/styles/global.css';
+import Navigation from '@/components/navigation.astro';
+---
+
+<html lang="en">
+    <Head />
+    <body class="bg-paper text-ink antialiased font-maple-mono">
+        <Navigation />
+        <main class="mx-auto max-w-4xl px-3">
+            <slot />
+        </main>
+    </body>
+</html>

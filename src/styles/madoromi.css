@@ -1,0 +1,439 @@
+/*
+ * madoromi 微睡 — a colour theme built from Pilot Iroshizuku inks.
+ *
+ * Ported from https://github.com/the-moonwitch/madoromi (MPL-2.0).
+ * Values are converted from the palette's sRGB hex to OKLCH.
+ *
+ * Usage:
+ *   <html data-madoromi="haru-yoru">        set a flavour: haru-hiru (day) or haru-yoru (night)
+ *   bg-paper text-ink border-line           semantic utilities, follow the active flavour
+ *   bg-haru-hiru-kami text-haru-yoru-sumi   a fixed colour from a flavour
+ *
+ * Semantic tokens mirror the madoromi style guide:
+ *   paper 紙    paper, surface, chrome, line, surface-0/1/2
+ *   ink 墨      ink, ink-muted, ink-subtle, ink-faint, accent, link, success,
+ *               warning, error, info, hint, cursor, selection
+ *   code 符     syntax-*
+ *   prose 文    prose-*
+ *   diff 差     diff-*
+ *   terminal 端 ansi-0 … ansi-15
+ */
+
+/* --------------------------------------------------------------------------
+ * Full palettes — every flavour, addressable without switching.
+ * -------------------------------------------------------------------------- */
+
+/* haru 春 · hiru 昼 (spring, day) */
+@theme {
+    /* neutrals 墨 */
+    --color-haru-hiru-sumi: oklch(0.43 0.0342 318.66);
+    --color-haru-hiru-usuzumi1: oklch(0.4986 0.0343 317.16);
+    --color-haru-hiru-usuzumi0: oklch(0.5405 0.0336 317.18);
+    --color-haru-hiru-kasure2: oklch(0.5994 0.029 316.07);
+    --color-haru-hiru-kasure1: oklch(0.6594 0.0284 316.09);
+    --color-haru-hiru-kasure0: oklch(0.7093 0.0284 318.22);
+    --color-haru-hiru-nijimi2: oklch(0.7598 0.0274 316.11);
+    --color-haru-hiru-nijimi1: oklch(0.8103 0.0269 316.12);
+    --color-haru-hiru-nijimi0: oklch(0.8608 0.0271 318.23);
+    --color-haru-hiru-kami: oklch(0.9601 0.014 318.7);
+    --color-haru-hiru-hyoshi: oklch(0.9303 0.0153 315.96);
+    --color-haru-hiru-chitsu: oklch(0.8999 0.0154 315.96);
+
+    /* accents 彩 */
+    --color-haru-hiru-sakura: oklch(0.61 0.0838 351.32);
+    --color-haru-hiru-nadeshiko: oklch(0.6192 0.1904 352.38);
+    --color-haru-hiru-botan: oklch(0.5996 0.1359 337.26);
+    --color-haru-hiru-fuji: oklch(0.4606 0.2126 296.73);
+    --color-haru-hiru-kikyo: oklch(0.5209 0.1527 269.5);
+    --color-haru-hiru-beni: oklch(0.5502 0.2052 32.59);
+    --color-haru-hiru-akane: oklch(0.6205 0.2209 22.17);
+    --color-haru-hiru-kaki: oklch(0.6701 0.2162 36.73);
+    --color-haru-hiru-yamabuki: oklch(0.7201 0.1185 94.02);
+    --color-haru-hiru-wakaba: oklch(0.5796 0.1255 131.7);
+    --color-haru-hiru-tokiwa: oklch(0.5802 0.1279 161.67);
+    --color-haru-hiru-sora: oklch(0.5914 0.1108 223.73);
+    --color-haru-hiru-ruri: oklch(0.5505 0.115 242.88);
+    --color-haru-hiru-ai: oklch(0.4789 0.1775 260.99);
+
+    /* ansi 端 */
+    --color-haru-hiru-ansi-0: oklch(0.4986 0.0343 317.16);
+    --color-haru-hiru-ansi-1: oklch(0.5502 0.2052 32.59);
+    --color-haru-hiru-ansi-2: oklch(0.5796 0.1255 131.7);
+    --color-haru-hiru-ansi-3: oklch(0.7201 0.1185 94.02);
+    --color-haru-hiru-ansi-4: oklch(0.4789 0.1775 260.99);
+    --color-haru-hiru-ansi-5: oklch(0.5996 0.1359 337.26);
+    --color-haru-hiru-ansi-6: oklch(0.5802 0.1279 161.67);
+    --color-haru-hiru-ansi-7: oklch(0.7598 0.0274 316.11);
+    --color-haru-hiru-ansi-8: oklch(0.5405 0.0336 317.18);
+    --color-haru-hiru-ansi-9: oklch(0.5502 0.2052 32.59);
+    --color-haru-hiru-ansi-10: oklch(0.519 0.1055 135.69);
+    --color-haru-hiru-ansi-11: oklch(0.6613 0.1091 89.5);
+    --color-haru-hiru-ansi-12: oklch(0.4202 0.1646 263.83);
+    --color-haru-hiru-ansi-13: oklch(0.5397 0.1451 336.85);
+    --color-haru-hiru-ansi-14: oklch(0.5199 0.1194 159.07);
+    --color-haru-hiru-ansi-15: oklch(0.8103 0.0269 316.12);
+}
+
+/* haru 春 · yoru 夜 (spring, night) */
+@theme {
+    /* neutrals 墨 */
+    --color-haru-yoru-sumi: oklch(0.8802 0.0344 316.88);
+    --color-haru-yoru-usuzumi1: oklch(0.8203 0.0333 316.4);
+    --color-haru-yoru-usuzumi0: oklch(0.7509 0.034 316.39);
+    --color-haru-yoru-kasure2: oklch(0.6791 0.0282 316.09);
+    --color-haru-yoru-kasure1: oklch(0.6095 0.0289 316.07);
+    --color-haru-yoru-kasure0: oklch(0.54 0.0279 315.37);
+    --color-haru-yoru-nijimi2: oklch(0.4692 0.0275 317.06);
+    --color-haru-yoru-nijimi1: oklch(0.3997 0.0286 317.03);
+    --color-haru-yoru-nijimi0: oklch(0.319 0.0287 318.94);
+    --color-haru-yoru-kami: oklch(0.2403 0.0221 319.46);
+    --color-haru-yoru-hyoshi: oklch(0.209 0.0221 315.64);
+    --color-haru-yoru-chitsu: oklch(0.1818 0.0211 318.63);
+
+    /* accents 彩 */
+    --color-haru-yoru-sakura: oklch(0.8809 0.071 355.06);
+    --color-haru-yoru-nadeshiko: oklch(0.8395 0.1106 345.69);
+    --color-haru-yoru-botan: oklch(0.7794 0.1475 352.59);
+    --color-haru-yoru-fuji: oklch(0.8299 0.1129 309.27);
+    --color-haru-yoru-kikyo: oklch(0.77 0.1004 268.27);
+    --color-haru-yoru-beni: oklch(0.7596 0.144 30.02);
+    --color-haru-yoru-akane: oklch(0.8102 0.1122 6.59);
+    --color-haru-yoru-kaki: oklch(0.8405 0.118 66.23);
+    --color-haru-yoru-yamabuki: oklch(0.8603 0.1515 84.55);
+    --color-haru-yoru-wakaba: oklch(0.8499 0.1713 119.5);
+    --color-haru-yoru-tokiwa: oklch(0.8102 0.0996 169.08);
+    --color-haru-yoru-sora: oklch(0.8396 0.083 213.39);
+    --color-haru-yoru-ruri: oklch(0.79 0.1135 227.14);
+    --color-haru-yoru-ai: oklch(0.7398 0.1362 255.56);
+
+    /* ansi 端 */
+    --color-haru-yoru-ansi-0: oklch(0.3997 0.0286 317.03);
+    --color-haru-yoru-ansi-1: oklch(0.7596 0.144 30.02);
+    --color-haru-yoru-ansi-2: oklch(0.8499 0.1713 119.5);
+    --color-haru-yoru-ansi-3: oklch(0.8603 0.1515 84.55);
+    --color-haru-yoru-ansi-4: oklch(0.7398 0.1362 255.56);
+    --color-haru-yoru-ansi-5: oklch(0.7794 0.1475 352.59);
+    --color-haru-yoru-ansi-6: oklch(0.8102 0.0996 169.08);
+    --color-haru-yoru-ansi-7: oklch(0.8203 0.0333 316.4);
+    --color-haru-yoru-ansi-8: oklch(0.4692 0.0275 317.06);
+    --color-haru-yoru-ansi-9: oklch(0.8208 0.1003 25.46);
+    --color-haru-yoru-ansi-10: oklch(0.9109 0.1493 116.35);
+    --color-haru-yoru-ansi-11: oklch(0.9197 0.1161 92.99);
+    --color-haru-yoru-ansi-12: oklch(0.8007 0.1042 250.47);
+    --color-haru-yoru-ansi-13: oklch(0.8406 0.0894 351.78);
+    --color-haru-yoru-ansi-14: oklch(0.8699 0.0808 170.93);
+    --color-haru-yoru-ansi-15: oklch(0.7509 0.034 316.39);
+}
+
+/* --------------------------------------------------------------------------
+ * Runtime flavours — set data-madoromi on <html> (or any element) to switch.
+ * The official variable names (--madoromi-sumi, …) are kept for parity with
+ * the upstream CSS port. Defaults to haru-hiru, or haru-yoru when the
+ * operating system asks for dark.
+ * -------------------------------------------------------------------------- */
+
+:root {
+    color-scheme: light;
+    --madoromi-sumi: oklch(0.43 0.0342 318.66);
+    --madoromi-usuzumi1: oklch(0.4986 0.0343 317.16);
+    --madoromi-usuzumi0: oklch(0.5405 0.0336 317.18);
+    --madoromi-kasure2: oklch(0.5994 0.029 316.07);
+    --madoromi-kasure1: oklch(0.6594 0.0284 316.09);
+    --madoromi-kasure0: oklch(0.7093 0.0284 318.22);
+    --madoromi-nijimi2: oklch(0.7598 0.0274 316.11);
+    --madoromi-nijimi1: oklch(0.8103 0.0269 316.12);
+    --madoromi-nijimi0: oklch(0.8608 0.0271 318.23);
+    --madoromi-kami: oklch(0.9601 0.014 318.7);
+    --madoromi-hyoshi: oklch(0.9303 0.0153 315.96);
+    --madoromi-chitsu: oklch(0.8999 0.0154 315.96);
+    --madoromi-sakura: oklch(0.61 0.0838 351.32);
+    --madoromi-nadeshiko: oklch(0.6192 0.1904 352.38);
+    --madoromi-botan: oklch(0.5996 0.1359 337.26);
+    --madoromi-fuji: oklch(0.4606 0.2126 296.73);
+    --madoromi-kikyo: oklch(0.5209 0.1527 269.5);
+    --madoromi-beni: oklch(0.5502 0.2052 32.59);
+    --madoromi-akane: oklch(0.6205 0.2209 22.17);
+    --madoromi-kaki: oklch(0.6701 0.2162 36.73);
+    --madoromi-yamabuki: oklch(0.7201 0.1185 94.02);
+    --madoromi-wakaba: oklch(0.5796 0.1255 131.7);
+    --madoromi-tokiwa: oklch(0.5802 0.1279 161.67);
+    --madoromi-sora: oklch(0.5914 0.1108 223.73);
+    --madoromi-ruri: oklch(0.5505 0.115 242.88);
+    --madoromi-ai: oklch(0.4789 0.1775 260.99);
+    --madoromi-ansi-0: oklch(0.4986 0.0343 317.16);
+    --madoromi-ansi-1: oklch(0.5502 0.2052 32.59);
+    --madoromi-ansi-2: oklch(0.5796 0.1255 131.7);
+    --madoromi-ansi-3: oklch(0.7201 0.1185 94.02);
+    --madoromi-ansi-4: oklch(0.4789 0.1775 260.99);
+    --madoromi-ansi-5: oklch(0.5996 0.1359 337.26);
+    --madoromi-ansi-6: oklch(0.5802 0.1279 161.67);
+    --madoromi-ansi-7: oklch(0.7598 0.0274 316.11);
+    --madoromi-ansi-8: oklch(0.5405 0.0336 317.18);
+    --madoromi-ansi-9: oklch(0.5502 0.2052 32.59);
+    --madoromi-ansi-10: oklch(0.519 0.1055 135.69);
+    --madoromi-ansi-11: oklch(0.6613 0.1091 89.5);
+    --madoromi-ansi-12: oklch(0.4202 0.1646 263.83);
+    --madoromi-ansi-13: oklch(0.5397 0.1451 336.85);
+    --madoromi-ansi-14: oklch(0.5199 0.1194 159.07);
+    --madoromi-ansi-15: oklch(0.8103 0.0269 316.12);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        --madoromi-sumi: oklch(0.8802 0.0344 316.88);
+        --madoromi-usuzumi1: oklch(0.8203 0.0333 316.4);
+        --madoromi-usuzumi0: oklch(0.7509 0.034 316.39);
+        --madoromi-kasure2: oklch(0.6791 0.0282 316.09);
+        --madoromi-kasure1: oklch(0.6095 0.0289 316.07);
+        --madoromi-kasure0: oklch(0.54 0.0279 315.37);
+        --madoromi-nijimi2: oklch(0.4692 0.0275 317.06);
+        --madoromi-nijimi1: oklch(0.3997 0.0286 317.03);
+        --madoromi-nijimi0: oklch(0.319 0.0287 318.94);
+        --madoromi-kami: oklch(0.2403 0.0221 319.46);
+        --madoromi-hyoshi: oklch(0.209 0.0221 315.64);
+        --madoromi-chitsu: oklch(0.1818 0.0211 318.63);
+        --madoromi-sakura: oklch(0.8809 0.071 355.06);
+        --madoromi-nadeshiko: oklch(0.8395 0.1106 345.69);
+        --madoromi-botan: oklch(0.7794 0.1475 352.59);
+        --madoromi-fuji: oklch(0.8299 0.1129 309.27);
+        --madoromi-kikyo: oklch(0.77 0.1004 268.27);
+        --madoromi-beni: oklch(0.7596 0.144 30.02);
+        --madoromi-akane: oklch(0.8102 0.1122 6.59);
+        --madoromi-kaki: oklch(0.8405 0.118 66.23);
+        --madoromi-yamabuki: oklch(0.8603 0.1515 84.55);
+        --madoromi-wakaba: oklch(0.8499 0.1713 119.5);
+        --madoromi-tokiwa: oklch(0.8102 0.0996 169.08);
+        --madoromi-sora: oklch(0.8396 0.083 213.39);
+        --madoromi-ruri: oklch(0.79 0.1135 227.14);
+        --madoromi-ai: oklch(0.7398 0.1362 255.56);
+        --madoromi-ansi-0: oklch(0.3997 0.0286 317.03);
+        --madoromi-ansi-1: oklch(0.7596 0.144 30.02);
+        --madoromi-ansi-2: oklch(0.8499 0.1713 119.5);
+        --madoromi-ansi-3: oklch(0.8603 0.1515 84.55);
+        --madoromi-ansi-4: oklch(0.7398 0.1362 255.56);
+        --madoromi-ansi-5: oklch(0.7794 0.1475 352.59);
+        --madoromi-ansi-6: oklch(0.8102 0.0996 169.08);
+        --madoromi-ansi-7: oklch(0.8203 0.0333 316.4);
+        --madoromi-ansi-8: oklch(0.4692 0.0275 317.06);
+        --madoromi-ansi-9: oklch(0.8208 0.1003 25.46);
+        --madoromi-ansi-10: oklch(0.9109 0.1493 116.35);
+        --madoromi-ansi-11: oklch(0.9197 0.1161 92.99);
+        --madoromi-ansi-12: oklch(0.8007 0.1042 250.47);
+        --madoromi-ansi-13: oklch(0.8406 0.0894 351.78);
+        --madoromi-ansi-14: oklch(0.8699 0.0808 170.93);
+        --madoromi-ansi-15: oklch(0.7509 0.034 316.39);
+    }
+}
+
+[data-madoromi='haru-hiru'] {
+    color-scheme: light;
+    --madoromi-sumi: oklch(0.43 0.0342 318.66);
+    --madoromi-usuzumi1: oklch(0.4986 0.0343 317.16);
+    --madoromi-usuzumi0: oklch(0.5405 0.0336 317.18);
+    --madoromi-kasure2: oklch(0.5994 0.029 316.07);
+    --madoromi-kasure1: oklch(0.6594 0.0284 316.09);
+    --madoromi-kasure0: oklch(0.7093 0.0284 318.22);
+    --madoromi-nijimi2: oklch(0.7598 0.0274 316.11);
+    --madoromi-nijimi1: oklch(0.8103 0.0269 316.12);
+    --madoromi-nijimi0: oklch(0.8608 0.0271 318.23);
+    --madoromi-kami: oklch(0.9601 0.014 318.7);
+    --madoromi-hyoshi: oklch(0.9303 0.0153 315.96);
+    --madoromi-chitsu: oklch(0.8999 0.0154 315.96);
+    --madoromi-sakura: oklch(0.61 0.0838 351.32);
+    --madoromi-nadeshiko: oklch(0.6192 0.1904 352.38);
+    --madoromi-botan: oklch(0.5996 0.1359 337.26);
+    --madoromi-fuji: oklch(0.4606 0.2126 296.73);
+    --madoromi-kikyo: oklch(0.5209 0.1527 269.5);
+    --madoromi-beni: oklch(0.5502 0.2052 32.59);
+    --madoromi-akane: oklch(0.6205 0.2209 22.17);
+    --madoromi-kaki: oklch(0.6701 0.2162 36.73);
+    --madoromi-yamabuki: oklch(0.7201 0.1185 94.02);
+    --madoromi-wakaba: oklch(0.5796 0.1255 131.7);
+    --madoromi-tokiwa: oklch(0.5802 0.1279 161.67);
+    --madoromi-sora: oklch(0.5914 0.1108 223.73);
+    --madoromi-ruri: oklch(0.5505 0.115 242.88);
+    --madoromi-ai: oklch(0.4789 0.1775 260.99);
+    --madoromi-ansi-0: oklch(0.4986 0.0343 317.16);
+    --madoromi-ansi-1: oklch(0.5502 0.2052 32.59);
+    --madoromi-ansi-2: oklch(0.5796 0.1255 131.7);
+    --madoromi-ansi-3: oklch(0.7201 0.1185 94.02);
+    --madoromi-ansi-4: oklch(0.4789 0.1775 260.99);
+    --madoromi-ansi-5: oklch(0.5996 0.1359 337.26);
+    --madoromi-ansi-6: oklch(0.5802 0.1279 161.67);
+    --madoromi-ansi-7: oklch(0.7598 0.0274 316.11);
+    --madoromi-ansi-8: oklch(0.5405 0.0336 317.18);
+    --madoromi-ansi-9: oklch(0.5502 0.2052 32.59);
+    --madoromi-ansi-10: oklch(0.519 0.1055 135.69);
+    --madoromi-ansi-11: oklch(0.6613 0.1091 89.5);
+    --madoromi-ansi-12: oklch(0.4202 0.1646 263.83);
+    --madoromi-ansi-13: oklch(0.5397 0.1451 336.85);
+    --madoromi-ansi-14: oklch(0.5199 0.1194 159.07);
+    --madoromi-ansi-15: oklch(0.8103 0.0269 316.12);
+}
+[data-madoromi='haru-yoru'] {
+    color-scheme: dark;
+    --madoromi-sumi: oklch(0.8802 0.0344 316.88);
+    --madoromi-usuzumi1: oklch(0.8203 0.0333 316.4);
+    --madoromi-usuzumi0: oklch(0.7509 0.034 316.39);
+    --madoromi-kasure2: oklch(0.6791 0.0282 316.09);
+    --madoromi-kasure1: oklch(0.6095 0.0289 316.07);
+    --madoromi-kasure0: oklch(0.54 0.0279 315.37);
+    --madoromi-nijimi2: oklch(0.4692 0.0275 317.06);
+    --madoromi-nijimi1: oklch(0.3997 0.0286 317.03);
+    --madoromi-nijimi0: oklch(0.319 0.0287 318.94);
+    --madoromi-kami: oklch(0.2403 0.0221 319.46);
+    --madoromi-hyoshi: oklch(0.209 0.0221 315.64);
+    --madoromi-chitsu: oklch(0.1818 0.0211 318.63);
+    --madoromi-sakura: oklch(0.8809 0.071 355.06);
+    --madoromi-nadeshiko: oklch(0.8395 0.1106 345.69);
+    --madoromi-botan: oklch(0.7794 0.1475 352.59);
+    --madoromi-fuji: oklch(0.8299 0.1129 309.27);
+    --madoromi-kikyo: oklch(0.77 0.1004 268.27);
+    --madoromi-beni: oklch(0.7596 0.144 30.02);
+    --madoromi-akane: oklch(0.8102 0.1122 6.59);
+    --madoromi-kaki: oklch(0.8405 0.118 66.23);
+    --madoromi-yamabuki: oklch(0.8603 0.1515 84.55);
+    --madoromi-wakaba: oklch(0.8499 0.1713 119.5);
+    --madoromi-tokiwa: oklch(0.8102 0.0996 169.08);
+    --madoromi-sora: oklch(0.8396 0.083 213.39);
+    --madoromi-ruri: oklch(0.79 0.1135 227.14);
+    --madoromi-ai: oklch(0.7398 0.1362 255.56);
+    --madoromi-ansi-0: oklch(0.3997 0.0286 317.03);
+    --madoromi-ansi-1: oklch(0.7596 0.144 30.02);
+    --madoromi-ansi-2: oklch(0.8499 0.1713 119.5);
+    --madoromi-ansi-3: oklch(0.8603 0.1515 84.55);
+    --madoromi-ansi-4: oklch(0.7398 0.1362 255.56);
+    --madoromi-ansi-5: oklch(0.7794 0.1475 352.59);
+    --madoromi-ansi-6: oklch(0.8102 0.0996 169.08);
+    --madoromi-ansi-7: oklch(0.8203 0.0333 316.4);
+    --madoromi-ansi-8: oklch(0.4692 0.0275 317.06);
+    --madoromi-ansi-9: oklch(0.8208 0.1003 25.46);
+    --madoromi-ansi-10: oklch(0.9109 0.1493 116.35);
+    --madoromi-ansi-11: oklch(0.9197 0.1161 92.99);
+    --madoromi-ansi-12: oklch(0.8007 0.1042 250.47);
+    --madoromi-ansi-13: oklch(0.8406 0.0894 351.78);
+    --madoromi-ansi-14: oklch(0.8699 0.0808 170.93);
+    --madoromi-ansi-15: oklch(0.7509 0.034 316.39);
+}
+
+/* --------------------------------------------------------------------------
+ * Semantic tokens — utilities such as bg-paper, text-ink, border-line.
+ * `inline` keeps the var() reference, so they follow the active flavour.
+ * -------------------------------------------------------------------------- */
+
+@theme inline {
+    /* paper 紙 */
+    --color-kami: var(--madoromi-kami);
+    --color-hyoshi: var(--madoromi-hyoshi);
+    --color-chitsu: var(--madoromi-chitsu);
+    --color-nijimi-2: var(--madoromi-nijimi2);
+    --color-nijimi-1: var(--madoromi-nijimi1);
+    --color-nijimi-0: var(--madoromi-nijimi0);
+    --color-kasure-2: var(--madoromi-kasure2);
+    --color-kasure-1: var(--madoromi-kasure1);
+    --color-kasure-0: var(--madoromi-kasure0);
+
+    /* ink 墨 */
+    --color-sumi: var(--madoromi-sumi);
+    --color-usuzumi-1: var(--madoromi-usuzumi1);
+    --color-usuzumi-0: var(--madoromi-usuzumi0);
+    --color-sakura: var(--madoromi-sakura);
+    --color-nadeshiko: var(--madoromi-nadeshiko);
+    --color-botan: var(--madoromi-botan);
+    --color-fuji: var(--madoromi-fuji);
+    --color-kikyo: var(--madoromi-kikyo);
+    --color-beni: var(--madoromi-beni);
+    --color-akane: var(--madoromi-akane);
+    --color-kaki: var(--madoromi-kaki);
+    --color-yamabuki: var(--madoromi-yamabuki);
+    --color-wakaba: var(--madoromi-wakaba);
+    --color-tokiwa: var(--madoromi-tokiwa);
+    --color-sora: var(--madoromi-sora);
+    --color-ruri: var(--madoromi-ruri);
+    --color-ai: var(--madoromi-ai);
+
+    /* roles — see the upstream style guide */
+    --color-paper: var(--madoromi-kami);
+    --color-surface: var(--madoromi-hyoshi);
+    --color-chrome: var(--madoromi-chitsu);
+    --color-line: var(--madoromi-nijimi2);
+    --color-line-strong: var(--madoromi-nijimi1);
+    --color-surface-0: var(--madoromi-nijimi0);
+    --color-surface-1: var(--madoromi-nijimi1);
+    --color-surface-2: var(--madoromi-nijimi2);
+
+    --color-ink: var(--madoromi-sumi);
+    --color-ink-muted: var(--madoromi-usuzumi1);
+    --color-ink-subtle: var(--madoromi-usuzumi0);
+    --color-ink-faint: var(--madoromi-kasure2);
+    --color-accent: var(--madoromi-fuji);
+    --color-link: var(--madoromi-sora);
+    --color-success: var(--madoromi-wakaba);
+    --color-warning: var(--madoromi-yamabuki);
+    --color-error: var(--madoromi-beni);
+    --color-info: var(--madoromi-sora);
+    --color-hint: var(--madoromi-tokiwa);
+    --color-cursor: var(--madoromi-sakura);
+    --color-selection: var(--madoromi-nijimi2);
+
+    /* code 符 */
+    --color-syntax-text: var(--madoromi-sumi);
+    --color-syntax-comment: var(--madoromi-kasure2);
+    --color-syntax-punctuation: var(--madoromi-usuzumi0);
+    --color-syntax-keyword: var(--madoromi-fuji);
+    --color-syntax-operator: var(--madoromi-sora);
+    --color-syntax-string: var(--madoromi-wakaba);
+    --color-syntax-escape: var(--madoromi-botan);
+    --color-syntax-regexp: var(--madoromi-botan);
+    --color-syntax-number: var(--madoromi-kaki);
+    --color-syntax-constant: var(--madoromi-kaki);
+    --color-syntax-enum-member: var(--madoromi-tokiwa);
+    --color-syntax-character: var(--madoromi-tokiwa);
+    --color-syntax-function: var(--madoromi-ai);
+    --color-syntax-builtin: var(--madoromi-beni);
+    --color-syntax-macro: var(--madoromi-tokiwa);
+    --color-syntax-decorator: var(--madoromi-nadeshiko);
+    --color-syntax-type: var(--madoromi-yamabuki);
+    --color-syntax-namespace: var(--madoromi-kikyo);
+    --color-syntax-parameter: var(--madoromi-akane);
+    --color-syntax-property: var(--madoromi-ruri);
+    --color-syntax-self: var(--madoromi-beni);
+    --color-syntax-tag: var(--madoromi-botan);
+    --color-syntax-attribute: var(--madoromi-yamabuki);
+    --color-syntax-label: var(--madoromi-sakura);
+
+    /* prose 文 */
+    --color-prose-heading: var(--madoromi-fuji);
+    --color-prose-link: var(--madoromi-sora);
+    --color-prose-code: var(--madoromi-wakaba);
+    --color-prose-quote: var(--madoromi-kasure2);
+    --color-prose-list: var(--madoromi-kaki);
+
+    /* diff 差 */
+    --color-diff-added: var(--madoromi-wakaba);
+    --color-diff-changed: var(--madoromi-ai);
+    --color-diff-modified: var(--madoromi-yamabuki);
+    --color-diff-deleted: var(--madoromi-beni);
+
+    /* terminal 端 */
+    --color-ansi-0: var(--madoromi-ansi-0);
+    --color-ansi-1: var(--madoromi-ansi-1);
+    --color-ansi-2: var(--madoromi-ansi-2);
+    --color-ansi-3: var(--madoromi-ansi-3);
+    --color-ansi-4: var(--madoromi-ansi-4);
+    --color-ansi-5: var(--madoromi-ansi-5);
+    --color-ansi-6: var(--madoromi-ansi-6);
+    --color-ansi-7: var(--madoromi-ansi-7);
+    --color-ansi-8: var(--madoromi-ansi-8);
+    --color-ansi-9: var(--madoromi-ansi-9);
+    --color-ansi-10: var(--madoromi-ansi-10);
+    --color-ansi-11: var(--madoromi-ansi-11);
+    --color-ansi-12: var(--madoromi-ansi-12);
+    --color-ansi-13: var(--madoromi-ansi-13);
+    --color-ansi-14: var(--madoromi-ansi-14);
+    --color-ansi-15: var(--madoromi-ansi-15);
+}
+
+/* `dark:` matches any night flavour. */
+@custom-variant dark (&:where([data-madoromi$='-yoru'], [data-madoromi$='-yoru'] *));
