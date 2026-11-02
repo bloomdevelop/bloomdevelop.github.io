@@ -30,10 +30,17 @@ function clientID(): string {
     return `https://${window.location.host}/oauth-client-metadata.json`;
 }
 
-const CLIENT_ID = clientID();
+// NOTE: do not compute this at module scope. `clientID()` reads `window.location`,
+// which does not exist during SSR, and this module is imported by components that
+// Astro renders on the server.
+let cachedClientID: string | undefined;
+function getClientID(): string {
+    return (cachedClientID ??= clientID());
+}
 
 // TODO: Refactor to global state
 let oauthClient: BrowserOAuthClient | undefined;
+let oauthSetupPromise: Promise<boolean> | undefined;
 let agent: Agent;
 
 /**
@@ -64,21 +71,36 @@ async function beforeLogin(identifier: string): Promise<boolean> {
 
 /**
  * Configure the OAuthClient and perform any necesary work to restore a session.
+ *
+ * Safe to call more than once: concurrent calls share the same setup, and a
+ * failed attempt is retried the next time this is called.
+ * @returns whether the client was successfully initialized
  * @todo Split off client/agent setup and session restoration
  */
-export async function setupOAuth() {
+export function setupOAuth(): Promise<boolean> {
+    oauthSetupPromise ??= configureOAuth().then((initialized) => {
+        // Allow a later call to retry if setup failed.
+        if (!initialized) oauthSetupPromise = undefined;
+        return initialized;
+    });
+
+    return oauthSetupPromise;
+}
+
+async function configureOAuth(): Promise<boolean> {
     try {
         const { BrowserOAuthClient } = await import('@atproto/oauth-client-browser');
         const { Agent } = await import('@atproto/api');
 
         oauthClient = await BrowserOAuthClient.load({
-            clientId: CLIENT_ID,
+            clientId: getClientID(),
             handleResolver: 'https://bsky.social',
         });
 
         const result = await oauthClient.init();
 
-        if (!result) return;
+        // No stored session: the client is still ready to start a sign-in.
+        if (!result) return true;
 
         const { session, state } = result;
         if (state != null) {
@@ -90,7 +112,7 @@ export async function setupOAuth() {
         if (!ALLOWED_DIDS.includes(session.did)) {
             console.warn('[OAUTH]', 'DID', session.did, 'is not allowed!');
             isDidAllowed.value = false;
-            return;
+            return true;
         }
 
         isDidAllowed.value = true;
@@ -106,8 +128,13 @@ export async function setupOAuth() {
         console.info('[OAUTH]', 'Agent initialized');
         sharedAgent.value = agent;
         isInitialized.value = true;
+
+        return true;
     } catch (error) {
         console.error('[OAUTH]', 'An error occurred during OAuth setup:', error);
+        // Do not leave a half-initialized client behind; let a later call retry.
+        oauthClient = undefined;
+        return false;
     }
 }
 
@@ -118,17 +145,22 @@ export async function setupOAuth() {
  */
 export async function startLoginFlow(identifier: string) {
     try {
-        if (!oauthClient) {
+        // The client is normally set up on page load; initialize it lazily here
+        // too in case the user clicks before that finished (or it never ran).
+        if (!oauthClient) await setupOAuth();
+
+        const client = oauthClient;
+        if (!client) {
             console.error(
                 '[OAUTH]',
-                'OAuth client not initialized (failed to load @atproto/oauth-client-browser). Try reloading the page.',
+                'OAuth client could not be initialized (failed to load @atproto/oauth-client-browser). Try reloading the page.',
             );
             return;
         }
 
         if (!(await beforeLogin(identifier))) return;
 
-        await oauthClient.signIn(identifier, {
+        await client.signIn(identifier, {
             state: window.crypto.randomUUID(),
             signal: new AbortController().signal,
         });
