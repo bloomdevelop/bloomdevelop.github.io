@@ -6,10 +6,16 @@ import Navigation from '@/components/astro/navigation.astro';
 
 <html lang="en">
     <Head />
-    <body class="bg-paper text-ink antialiased font-maple-mono">
+    <body class="flex min-h-screen flex-col bg-paper text-ink antialiased font-maple-mono">
         <Navigation />
-        <main class="mx-auto max-w-4xl px-3">
+        <main class="mx-auto mb-5 flex w-full max-w-4xl flex-1 flex-col px-3">
             <slot />
         </main>
+        <footer class="flex flex-col py-5 px-3 gap-2 bg-shade-paper/30">
+            <h3 class="text-3xl font-bold">
+                Created by Bloom Perez (&copy; {new Date().getFullYear()})
+            </h3>
+            <p class="text-ink-subtle">Made with love from Dominican Republic ❤️</p>
+        </footer>
     </body>
 </html>
