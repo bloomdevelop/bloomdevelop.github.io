@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
+    site: 'https://bloomdevelop.github.io',
     integrations: [vue()],
     vite: {
         plugins: [tailwindcss()],
