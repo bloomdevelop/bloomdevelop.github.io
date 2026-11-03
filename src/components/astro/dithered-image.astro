@@ -1,0 +1,96 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+    src: ImageMetadata;
+    alt?: string;
+    class?: string;
+    width?: number;
+    /** Size of one dither cell in CSS pixels. */
+    pixelSize?: number;
+    /**
+     * `match` dithers between the nearest colours of `palette` (OKLab),
+     * `palette` maps luminance onto a dark-to-light ramp of `palette`,
+     * `color` quantizes each RGB channel.
+     */
+    mode?: 'match' | 'palette' | 'color';
+    /** Quantization levels. Defaults to the palette size (palette) or 4 (color). */
+    levels?: number;
+    /** Any CSS colours (theme variables work), 2-32 entries. Defaults to the whole theme. */
+    palette?: string[];
+    /** Dither amplitude for `match` mode. Higher = coarser, more visible pattern. */
+    spread?: number;
+    /** Dither strength, 0 = plain quantization. */
+    strength?: number;
+    contrast?: number;
+}
+
+const madoromi = (names: string[]) => names.map((name) => `var(--madoromi-${name})`);
+
+// The full active flavour: 12 neutrals + 14 inks.
+const THEME_PALETTE = madoromi([
+    'sumi',
+    'usuzumi1',
+    'usuzumi0',
+    'kasure2',
+    'kasure1',
+    'kasure0',
+    'nijimi2',
+    'nijimi1',
+    'nijimi0',
+    'kami',
+    'hyoshi',
+    'chitsu',
+    'sakura',
+    'nadeshiko',
+    'botan',
+    'fuji',
+    'kikyo',
+    'beni',
+    'akane',
+    'kaki',
+    'yamabuki',
+    'wakaba',
+    'tokiwa',
+    'sora',
+    'ruri',
+    'ai',
+]);
+
+// Neutrals only, for a monochrome luminance ramp.
+const RAMP_PALETTE = madoromi(['sumi', 'kasure2', 'nijimi2', 'kami']);
+
+const {
+    src,
+    alt = '',
+    class: className,
+    width = 1280,
+    pixelSize = 3,
+    mode = 'match',
+    levels,
+    palette = mode === 'palette' ? RAMP_PALETTE : THEME_PALETTE,
+    spread = 0.2,
+    strength = 1,
+    contrast = 1,
+} = Astro.props;
+---
+
+<dither-image
+    class:list={['relative block overflow-hidden', className]}
+    data-mode={mode}
+    data-pixel-size={pixelSize}
+    data-levels={levels}
+    data-palette={JSON.stringify(palette)}
+    data-spread={spread}
+    data-strength={strength}
+    data-contrast={contrast}
+>
+    <Image src={src} alt={alt} width={width} class="h-full w-full object-cover" />
+</dither-image>
+
+<script>
+    import { defineDitherImage } from '@/scripts/dither';
+
+    defineDitherImage();
+</script>
