@@ -1,0 +1,87 @@
+---
+import DitheredImage from '@/components/astro/dithered-image.astro';
+import { getCollection, render } from 'astro:content';
+import MainLayout from '@/layouts/main-layout.astro';
+import Prose from '@/components/astro/prose.astro';
+
+export async function getStaticPaths() {
+    const publications = await getCollection('blog');
+
+    return Promise.all(
+        publications.map(async (publication) => ({
+            params: { slug: publication.id },
+            props: {
+                publication,
+                rendered: await render(publication),
+            },
+        })),
+    );
+}
+
+const { publication, rendered } = Astro.props;
+const { Content } = rendered;
+---
+
+<MainLayout>
+    <article>
+        {publication.data.headerImage && (
+            <div class="media-dither relative left-1/2 right-1/2 mb-4 aspect-video w-screen -translate-x-1/2">
+                <DitheredImage
+                    src={publication.data.headerImage}
+                    alt={publication.data.headerImageAlt ?? ''}
+                    width={1920}
+                    pixelSize={4}
+                    class="h-full w-full"
+                />
+                <a
+                    href="/blog"
+                    class="absolute top-5 left-5 z-30 flex gap-3 rounded bg-paper/85 px-3 py-1 text-ink hover:bg-link hover:text-paper"
+                >
+                    <span class="font-md-symbols">arrow_back</span>
+                    Go back
+                </a>
+            </div>
+        )}
+        {!publication.data.headerImage && (
+            <a
+                href="/blog"
+                class="flex gap-3 rounded bg-paper/85 px-3 py-1 text-ink hover:bg-link hover:text-paper"
+            >
+                <span class="font-md-symbols">arrow_back</span>
+                Go back
+            </a>
+        )}
+        <div class="border-b-2 border-nijimi-1 border-dashed pb-2 mb-2">
+            <h1 class="mb-2 text-2xl">{publication.data.title}</h1>
+            <time datetime={publication.data.pubDate.toISOString()}>
+                {publication.data.pubDate.toLocaleDateString('en-US', {
+                    dateStyle: 'long',
+                })}
+            </time>
+            {publication.data.draft && (
+                <div class="flex gap-2 items-center mt-2 bg-error text-paper p-2">
+                    <span class="font-md-symbols">warning</span>
+                    <p class="text-sm">
+                        This publication is marked as draft and may not be complete or accurate.
+                    </p>
+                </div>
+            )}
+        </div>
+        <div class="mt-4">
+            <Prose>
+                <Content />
+            </Prose>
+        </div>
+    </article>
+</MainLayout>
+
+<style>
+    .media-dither::before {
+        position: absolute;
+        z-index: 21;
+        inset: 0;
+        background-image: linear-gradient(to bottom, transparent, var(--color-paper));
+        content: '';
+        pointer-events: none;
+    }
+</style>
