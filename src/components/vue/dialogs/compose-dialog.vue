@@ -82,7 +82,7 @@ async function createNote() {
     <dialog
         ref="dialog"
         id="ui-dialog-compose"
-        class="m-auto max-w-xl w-full bg-nijimi-0"
+        class="m-auto max-w-xl w-full bg-surface-0"
         @close="hideLimitTooltip"
     >
         <header class="flex justify-between items-center p-2">
@@ -103,7 +103,7 @@ async function createNote() {
                     <textarea
                         v-model="content"
                         id="ui-dialog-compose-content"
-                        class="bg-paper px-3 py-2 w-full resize-none"
+                        class="bg-surface-1 px-3 py-2 w-full resize-none"
                         placeholder="Write anything..."
                     />
                     <small></small>
@@ -113,12 +113,16 @@ async function createNote() {
             <footer class="flex p-2">
                 <label class="flex items-center gap-3 select-none">
                     <input
-                        class="grid place-content-center appearance-none size-6 rounded-none border-2 border-nijimi-2 bg-nijimi-1 before:size-5 checked:before:bg-accent"
+                        class="peer sr-only"
                         type="checkbox"
                         v-model="isCrosspostEnabled"
                         :class="{ 'is-init': hasInteracted }"
                         @change="hasInteracted = true"
                     />
+                    <span
+                        aria-hidden="true"
+                        class="grid size-7 shrink-0 place-content-center rounded-none border-2 border-line bg-surface-1 before:size-5 peer-checked:before:bg-accent peer-focus-visible:outline-2 peer-focus-visible:outline-offset-3 peer-focus-visible:outline-accent"
+                    ></span>
                     <span>Crosspost?</span>
                 </label>
                 <div class="ml-auto flex items-center gap-5">

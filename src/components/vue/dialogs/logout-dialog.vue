@@ -18,13 +18,13 @@ async function confirmLogout() {
 </script>
 
 <template>
-    <dialog id="ui-dialog-logout" class="m-auto max-w-xl w-full bg-nijimi-0">
+    <dialog id="ui-dialog-logout" class="m-auto max-w-xl w-full bg-surface-0">
         <header class="flex justify-between items-center p-2">
             <h1 class="text-xl font-semibold">Are you sure?</h1>
             <button
                 commandFor="ui-dialog-logout"
                 command="close"
-                class="flex items-center justify-center size-8 hover:bg-nijimi-1 focus-visible:bg-nijimi-1"
+                class="flex items-center justify-center size-8 hover:bg-surface-1 focus-visible:bg-surface-1"
             >
                 <span class="font-md-symbols" aria-hidden="true"> close </span>
             </button>

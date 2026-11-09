@@ -19,14 +19,14 @@ async function attemptLogin() {
 </script>
 
 <template>
-    <dialog id="ui-dialog-login" class="m-auto max-w-xl w-full bg-nijimi-0">
+    <dialog id="ui-dialog-login" class="m-auto max-w-xl w-full bg-surface-0">
         <header class="flex justify-between items-center p-2">
             <h1 class="text-xl font-semibold">Login with ATProto</h1>
 
             <button
                 commandFor="ui-dialog-login"
                 command="close"
-                class="flex items-center justify-center size-8 hover:bg-nijimi-1 focus-visible:bg-nijimi-1"
+                class="flex items-center justify-center size-8 hover:bg-surface-1 focus-visible:bg-surface-1"
             >
                 <span class="font-md-symbols" aria-hidden="true"> close </span>
             </button>
@@ -38,7 +38,7 @@ async function attemptLogin() {
                     <input
                         v-model="handle"
                         id="ui-dialog-login-handle"
-                        class="bg-paper px-3 py-2"
+                        class="bg-surface-1 px-3 py-2"
                         autocomplete="username"
                         placeholder="whatever.bsky.social"
                     />
