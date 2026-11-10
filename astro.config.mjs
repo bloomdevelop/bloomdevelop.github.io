@@ -16,6 +16,12 @@ export default defineConfig({
     },
     fonts: [
         {
+            cssVariable: '--inter-variable',
+            provider: fontProviders.fontsource(),
+            name: 'Inter Variable',
+            weights: ['100 900'],
+        },
+        {
             cssVariable: '--md-symbols',
             provider: fontProviders.fontsource(),
             name: 'Material Symbols Rounded',

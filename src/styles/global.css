@@ -4,6 +4,14 @@
 
 /* Fonts */
 @font-face {
+    font-family: 'Intern';
+    src: url('/fonts/Intern-Variable.ttf') format('truetype');
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+}
+
+@font-face {
     font-family: 'Maple Mono';
     src: url('/fonts/MapleMono[wght].ttf') format('truetype');
     font-style: normal;
@@ -21,8 +29,22 @@
 
 /* Theme */
 @theme inline {
+    --font-sans: var(--inter-variable);
+    --font-intern: 'Intern', sans-serif;
     --font-maple-mono: 'Maple Mono', monospace;
     --font-md-symbols: var(--md-symbols);
+}
+
+@layer base {
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-family: var(--font-intern);
+        font-optical-sizing: auto;
+    }
 }
 
 /*
