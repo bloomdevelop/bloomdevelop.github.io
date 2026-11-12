@@ -131,7 +131,7 @@ onMounted(async () => {
                     <a
                         v-if="entry.value.blueskyPost"
                         :href="blueskyUrl(entry.value.blueskyPost.uri)"
-                        class="text-link hover:text-link-hover"
+                        class="text-link hover:text-link"
                         target="_blank"
                         rel="noopener noreferrer"
                     >
