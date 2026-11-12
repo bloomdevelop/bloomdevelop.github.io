@@ -13,6 +13,8 @@
         "prepare": "vp config && effect-tsgo patch --typescript --oxlint"
     },
     "dependencies": {
+        "@astrojs/rss": "^4.0.19",
+        "@astrojs/sitemap": "^3.7.4",
         "@astrojs/vue": "^7.1.2",
         "@atcute/tid": "^1.1.4",
         "@atproto/api": "^0.30.0",

@@ -72,6 +72,8 @@ const imageUrl = image ? new URL(image, Astro.site ?? Astro.url).toString() : un
     <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f0f3" />
     <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#211c22" />
 
+    <link rel="alternate" type="application/rss+xml" title={siteName} href="/rss.xml" />
+
     <link rel="preconnect" href={DEFAULT_PREVIEW_PDS} />
     <link rel="preconnect" href="https://api.bsky.app" />
     <link
