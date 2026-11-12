@@ -7,6 +7,11 @@ interface Props {
     alt?: string;
     class?: string;
     width?: number;
+    /** Responsive candidates; `width` is used as the fallback. */
+    widths?: number[];
+    sizes?: string;
+    loading?: 'lazy' | 'eager';
+    fetchpriority?: 'high' | 'low' | 'auto';
     /** Size of one dither cell in CSS pixels. */
     pixelSize?: number;
     /**
@@ -66,6 +71,10 @@ const {
     alt = '',
     class: className,
     width = 1280,
+    widths,
+    sizes,
+    loading,
+    fetchpriority,
     pixelSize = 3,
     mode = 'match',
     levels,
@@ -86,7 +95,16 @@ const {
     data-strength={strength}
     data-contrast={contrast}
 >
-    <Image src={src} alt={alt} width={width} class="h-full w-full object-cover" />
+    <Image
+        src={src}
+        alt={alt}
+        width={width}
+        widths={widths}
+        sizes={sizes}
+        loading={loading}
+        fetchpriority={fetchpriority}
+        class="h-full w-full object-cover"
+    />
 </dither-image>
 
 <script>

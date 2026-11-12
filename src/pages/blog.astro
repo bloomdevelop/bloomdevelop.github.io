@@ -35,6 +35,8 @@ function formatDate(date: string) {
                         <DitheredImage
                             src={publication.data.headerImage}
                             width={640}
+                            widths={[320, 480, 640]}
+                            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                             pixelSize={3}
                             class="h-full w-full"
                         />

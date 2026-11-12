@@ -41,6 +41,10 @@ const description = `${publication.data.title} — a publication on Spring's Web
                     src={publication.data.headerImage}
                     alt={publication.data.headerImageAlt ?? ''}
                     width={1920}
+                    widths={[480, 768, 1280, 1920]}
+                    sizes="100vw"
+                    loading="eager"
+                    fetchpriority="high"
                     pixelSize={4}
                     class="h-full w-full"
                 />
