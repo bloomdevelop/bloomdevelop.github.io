@@ -32,12 +32,8 @@ const entries = ref<LogEntry[]>([]);
 const error = ref('');
 const loading = ref(true);
 
-onMounted(async () => {
-    void setupOAuth();
-
+async function loadEntries() {
     try {
-        // Reading public records needs no login: just ask the PDS.
-        // ?log=<rkey> shows a single entry (the permalink)
         const rkey = new URLSearchParams(window.location.search).get('log');
         const res = await fetch(
             rkey
@@ -60,11 +56,16 @@ onMounted(async () => {
     } finally {
         loading.value = false;
     }
+}
+
+onMounted(async () => {
+    void setupOAuth();
+    await loadEntries();
 });
 </script>
 
 <template>
-    <ComposeDialog />
+    <ComposeDialog @created="loadEntries" />
     <LoginDialog />
     <LogoutDialog />
     <header class="flex flex-wrap items-center justify-between gap-2 mb-3">

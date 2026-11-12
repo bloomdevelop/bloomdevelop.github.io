@@ -17,6 +17,11 @@ const isCrosspostEnabled = ref(false);
 const hasInteracted = ref(false);
 const error = ref('');
 
+//  Emit events that only fires once it was created successfully
+const emit = defineEmits<{
+    created: [created: Awaited<ReturnType<typeof createLog>>];
+}>();
+
 // Notes are not limited, but crossposts are counted the same way Bluesky counts them.
 const graphemeCount = computed(() => toGraphemeSegments(content.value).length);
 
@@ -63,7 +68,8 @@ async function createNote() {
     error.value = '';
 
     try {
-        await createLog(content.value, isCrosspostEnabled.value);
+        const created = await createLog(content.value, isCrosspostEnabled.value);
+        emit('created', created);
 
         content.value = '';
         isCrosspostEnabled.value = false;
