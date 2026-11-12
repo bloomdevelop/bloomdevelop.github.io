@@ -557,12 +557,17 @@ export const createLogEffect = (
     AtprotoError | NoSessionError
 > =>
     Effect.gen(function* () {
+        const savedContent = content.trim();
+        if (!savedContent) {
+            return yield* new AtprotoError({ message: 'A note cannot be empty.' });
+        }
+
         const tid = now();
         const nowUtc = yield* DateTime.now;
         const createdAt = DateTime.formatIso(nowUtc);
 
         if (shouldCrosspost) {
-            yield* crosspost(content, tid, createdAt);
+            yield* crosspost(savedContent, tid, createdAt);
         } else {
             const currentAgent = yield* requireAgent();
 
@@ -572,7 +577,7 @@ export const createLogEffect = (
                 rkey: tid,
                 record: {
                     $type: NEW_LOG_LEXICON,
-                    content: content,
+                    content: savedContent,
                     createdAt,
                 },
             });
@@ -580,7 +585,7 @@ export const createLogEffect = (
 
         return {
             rkey: tid,
-            content,
+            content: savedContent,
             createdAt,
         };
     });
