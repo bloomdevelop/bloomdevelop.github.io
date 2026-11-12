@@ -1,21 +1,12 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { DEFAULT_PREVIEW_DID, DEFAULT_PREVIEW_PDS, NEW_LOG_LEXICON } from '@/scripts/consts';
-import { constructApiUrl, extractRkeyFromPlainAtURI, formatDate } from '@/scripts/atproto/utils';
+import { loadNotes, type LogEntry } from '@/scripts/atproto/notes';
+import { extractRkeyFromPlainAtURI, formatDate } from '@/scripts/atproto/utils';
 import LoginDialog from './dialogs/login-dialog.vue';
 import ComposeDialog from './dialogs/compose-dialog.vue';
 import { setupOAuth } from '@/scripts/atproto/api';
 import { isInitialized } from '@/scripts/atproto/agent';
 import LogoutDialog from './dialogs/logout-dialog.vue';
-
-interface LogEntry {
-    uri: string;
-    value: {
-        content: string;
-        createdAt: string;
-        blueskyPost?: { uri: string; cid: string };
-    };
-}
 
 // rkey is not part of the record value; it is the last segment of the AT URI.
 const rkeyOf = (entry: LogEntry) => extractRkeyFromPlainAtURI(entry.uri);
@@ -33,24 +24,12 @@ const error = ref('');
 const loading = ref(true);
 
 async function loadEntries() {
+    error.value = '';
+
     try {
+        // ?log=<rkey> shows a single entry (the permalink)
         const rkey = new URLSearchParams(window.location.search).get('log');
-        const res = await fetch(
-            rkey
-                ? constructApiUrl(
-                      'com.atproto.repo.getRecord',
-                      { repo: DEFAULT_PREVIEW_DID, collection: NEW_LOG_LEXICON, rkey },
-                      DEFAULT_PREVIEW_PDS,
-                  )
-                : constructApiUrl(
-                      'com.atproto.repo.listRecords',
-                      { repo: DEFAULT_PREVIEW_DID, collection: NEW_LOG_LEXICON, limit: '50' },
-                      DEFAULT_PREVIEW_PDS,
-                  ),
-        );
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        entries.value = rkey ? [data as LogEntry] : (data as { records: LogEntry[] }).records;
+        entries.value = (await loadNotes({ rkey })).entries;
     } catch (e) {
         error.value = e instanceof Error ? e.message : String(e);
     } finally {
