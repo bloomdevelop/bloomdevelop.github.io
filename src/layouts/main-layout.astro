@@ -7,8 +7,18 @@ import Navigation from '@/components/astro/navigation.astro';
 <html lang="en">
     <Head />
     <body class="flex min-h-screen flex-col bg-paper text-ink antialiased font-sans">
+        <a
+            href="#main-content"
+            class="fixed top-0 left-3 z-50 -translate-y-full rounded-b-md bg-paper px-4 py-2 font-medium text-ink shadow-lg ring-1 ring-chitsu transition-transform focus:translate-y-0"
+        >
+            Skip to Main Content
+        </a>
         <Navigation />
-        <main class="mx-auto mb-5 flex w-full max-w-4xl flex-1 flex-col px-3">
+        <main
+            id="main-content"
+            tabindex="-1"
+            class="mx-auto mb-5 flex w-full max-w-4xl flex-1 flex-col px-3 outline-none"
+        >
             <slot />
         </main>
         <footer class="flex flex-col py-5 px-3 gap-2 bg-chrome">
