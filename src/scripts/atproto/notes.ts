@@ -33,7 +33,10 @@ const request = (url: string, notFoundMessage: string): Effect.Effect<unknown, N
     Effect.gen(function* () {
         const response = yield* retry(
             Effect.tryPromise({
-                try: (signal) => fetch(url, { signal }),
+                try: (signal) =>
+                    fetch(url, {
+                        signal: AbortSignal.any([signal, AbortSignal.timeout(10_000)]),
+                    }),
                 catch: (cause) =>
                     new NotesError({ message: 'Could not reach the public PDS.', cause }),
             }),
