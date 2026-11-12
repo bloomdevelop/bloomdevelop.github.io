@@ -67,35 +67,38 @@ onMounted(async () => {
     <ComposeDialog />
     <LoginDialog />
     <LogoutDialog />
-    <header class="flex items-baseline justify-between gap-2 mb-3">
+    <header class="flex flex-wrap items-center justify-between gap-2 mb-3">
         <h2 class="text-2xl">Notes</h2>
-        <div role="toolbar" class="flex gap-2">
+        <div role="toolbar" class="flex flex-wrap justify-end gap-2">
             <template v-if="isInitialized">
                 <button
                     commandFor="ui-dialog-compose"
                     command="show-modal"
-                    class="flex items-center gap-3 px-3 py-2 hover:bg-nijimi-1 focus-visible:bg-nijimi-1 active:bg-nijimi-2"
+                    aria-label="New Note"
+                    class="flex items-center gap-3 px-3 py-2 hover:bg-surface-1 focus-visible:bg-surface-1 active:bg-nijimi-2"
                 >
-                    <span class="font-md-symbols">add</span>
-                    New Note
+                    <span class="font-md-symbols" aria-hidden="true">add</span>
+                    <span class="hidden sm:inline"> New Note </span>
                 </button>
                 <button
                     commandFor="ui-dialog-logout"
                     command="show-modal"
-                    class="flex items-center gap-3 px-3 py-2 hover:bg-nijimi-1 focus-visible:bg-nijimi-1 active:bg-nijimi-2"
+                    aria-label="Logout"
+                    class="flex items-center gap-3 px-3 py-2 hover:bg-surface-1 focus-visible:bg-surface-1 active:bg-nijimi-2"
                 >
-                    <span class="font-md-symbols">logout</span>
-                    Logout
+                    <span class="font-md-symbols" aria-hidden="true">logout</span>
+                    <span class="hidden sm:inline"> Logout </span>
                 </button>
             </template>
             <button
                 v-else
                 commandFor="ui-dialog-login"
                 command="show-modal"
-                class="flex items-center gap-3 px-3 py-2 hover:bg-nijimi-1 focus-visible:bg-nijimi-1 active:bg-nijimi-2"
+                aria-label="Login with ATProto"
+                class="flex items-center gap-3 px-3 py-2 hover:bg-surface-1 focus-visible:bg-surface-1 active:bg-nijimi-2"
             >
-                <span class="font-md-symbols">login</span>
-                Login with ATProto
+                <span class="font-md-symbols" aria-hidden="true">login</span>
+                <span class="hidden sm:inline"> Login with ATProto </span>
             </button>
         </div>
     </header>
@@ -110,8 +113,11 @@ onMounted(async () => {
         >
             <p class="whitespace-pre-wrap">{{ entry.value.content }}</p>
 
-            <div role="toolbar" class="flex justify-between gap-2">
-                <small class="flex gap-2">
+            <div
+                role="toolbar"
+                class="flex flex-col justify-between gap-2 md:flex-row md:items-center"
+            >
+                <small class="flex justify-between gap-2 md:justify-start">
                     <time :datetime="entry.value.createdAt">{{
                         formatDate(entry.value.createdAt)
                     }}</time>
