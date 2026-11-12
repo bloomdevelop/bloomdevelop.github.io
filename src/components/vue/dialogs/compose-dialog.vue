@@ -91,7 +91,7 @@ async function createNote() {
             <button
                 commandFor="ui-dialog-compose"
                 command="close"
-                class="flex items-center justify-center size-8 hover:bg-nijimi-1 focus-visible:bg-nijimi-1"
+                class="flex items-center justify-center size-8 hover:bg-surface-1 focus-visible:bg-surface-1"
             >
                 <span class="font-md-symbols" aria-hidden="true"> close </span>
             </button>
