@@ -1,22 +1,24 @@
 <script setup lang="ts">
 import { startLoginFlow } from '@/scripts/atproto/api';
 import { isInitialized } from '@/scripts/atproto/agent';
+import { primaryButton } from '@/components/vue/ui/button-classes';
+import DialogShell from '@/components/vue/ui/dialog-shell.vue';
 import { ref, useTemplateRef, watch } from 'vue';
 
-const dialog = useTemplateRef<HTMLDialogElement>('dialog');
+const dialog = useTemplateRef<InstanceType<typeof DialogShell>>('dialog');
 const handle = ref('');
 const loading = ref(false);
 const error = ref('');
 
 function open() {
-    dialog.value?.showModal();
+    dialog.value?.open();
 }
 
 defineExpose({ open });
 
 // Setup may restore a session while this dialog is open; it is no longer needed.
 watch(isInitialized, (initialized) => {
-    if (initialized && dialog.value?.open) dialog.value.close();
+    if (initialized && dialog.value?.isOpen()) dialog.value.close();
 });
 
 async function attemptLogin() {
@@ -37,23 +39,7 @@ async function attemptLogin() {
 </script>
 
 <template>
-    <dialog
-        ref="dialog"
-        aria-labelledby="ui-dialog-login"
-        id="ui-dialog-login"
-        class="m-auto max-w-xl w-full bg-surface-0"
-    >
-        <header class="flex justify-between items-center p-2">
-            <h2 class="text-xl font-semibold">Login with ATProto</h2>
-
-            <button
-                commandFor="ui-dialog-login"
-                command="close"
-                class="flex items-center justify-center size-8 hover:bg-surface-1 focus-visible:bg-surface-1"
-            >
-                <span class="font-md-symbols" aria-label="Close" aria-hidden="true"> close </span>
-            </button>
-        </header>
+    <DialogShell ref="dialog" id="ui-dialog-login" title="Login with ATProto">
         <form @submit.prevent="attemptLogin">
             <div class="p-2">
                 <div class="flex flex-col gap-2">
@@ -72,14 +58,10 @@ async function attemptLogin() {
             </div>
             <footer class="flex p-2 justify-between">
                 <p v-if="error" role="alert" class="mt-2 text-error">{{ error }}</p>
-                <button
-                    :disabled="loading"
-                    type="submit"
-                    class="ml-auto px-4 py-2 bg-accent text-paper hover:bg-shade-accent/10 disabled:bg-accent/50 disabled:cursor-not-allowed"
-                >
+                <button :disabled="loading" type="submit" :class="['ml-auto', primaryButton]">
                     Login
                 </button>
             </footer>
         </form>
-    </dialog>
+    </DialogShell>
 </template>

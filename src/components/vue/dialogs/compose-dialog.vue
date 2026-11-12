@@ -2,13 +2,15 @@
 import { computed, ref, useTemplateRef, watch } from 'vue';
 import { createLog } from '@/scripts/atproto/api';
 import { toGraphemeSegments } from '@/scripts/atproto/utils';
+import { primaryButton } from '@/components/vue/ui/button-classes';
+import DialogShell from '@/components/vue/ui/dialog-shell.vue';
 
 // Bluesky posts are limited to 300 graphemes; crossposts reserve 3 for the ellipsis.
 const CROSSPOST_LIMIT = 300;
 const CROSSPOST_ELLIPSIS = '...';
 const CROSSPOST_CONTENT_LIMIT = CROSSPOST_LIMIT - CROSSPOST_ELLIPSIS.length;
 
-const dialog = useTemplateRef<HTMLDialogElement>('dialog');
+const dialog = useTemplateRef<InstanceType<typeof DialogShell>>('dialog');
 const limitPopover = useTemplateRef<HTMLElement>('limitPopover');
 
 const content = ref('');
@@ -85,24 +87,7 @@ async function createNote() {
 </script>
 
 <template>
-    <dialog
-        ref="dialog"
-        id="ui-dialog-compose"
-        class="m-auto max-w-xl w-full bg-surface-0"
-        aria-labelledby="ui-dialog-compose"
-        @close="hideLimitTooltip"
-    >
-        <header class="flex justify-between items-center p-2">
-            <h2 class="text-xl font-semibold">Create Note</h2>
-
-            <button
-                commandFor="ui-dialog-compose"
-                command="close"
-                class="flex items-center justify-center size-8 hover:bg-surface-1 focus-visible:bg-surface-1"
-            >
-                <span class="font-md-symbols" aria-label="Close" aria-hidden="true"> close </span>
-            </button>
-        </header>
+    <DialogShell ref="dialog" id="ui-dialog-compose" title="Create Note" @close="hideLimitTooltip">
         <form @submit.prevent="createNote">
             <div class="p-2">
                 <div class="flex flex-col gap-2">
@@ -164,12 +149,12 @@ async function createNote() {
                     <button
                         :disabled="loading || !content.trim()"
                         type="submit"
-                        class="px-4 py-2 bg-accent text-paper hover:bg-shade-accent/10 disabled:bg-accent/50 disabled:cursor-not-allowed"
+                        :class="primaryButton"
                     >
                         Create
                     </button>
                 </div>
             </footer>
         </form>
-    </dialog>
+    </DialogShell>
 </template>
