@@ -187,6 +187,9 @@ importers:
       '@atproto/oauth-client-browser':
         specifier: ^0.5.11
         version: 0.5.11
+      '@ipld/dag-cbor':
+        specifier: ^9.2.7
+        version: 9.2.7
       '@tailwindcss/typography':
         specifier: ^0.5.20
         version: 0.5.20(tailwindcss@4.3.3)
@@ -199,6 +202,9 @@ importers:
       effect:
         specifier: ^4.1.1
         version: 4.1.1
+      multiformats:
+        specifier: ^13.4.2
+        version: 13.4.2
       tailwindcss:
         specifier: ^4.3.3
         version: 4.3.3
@@ -830,6 +836,9 @@ packages:
     engines: {node: '>=20.9.0'}
     cpu: [x64]
     os: [win32]
+
+  '@ipld/dag-cbor@9.2.7':
+    resolution: {integrity: sha512-ZmfXmElRWATr+hoUTSAOr6HUcjVhOcNHDqgczc76qte2DHHFEK0ZhNzUcdTDQhF/VSIvf2ioaRTRLWwLc83sNw==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -1928,6 +1937,10 @@ packages:
 
   caniuse-lite@1.0.30001820:
     resolution: {integrity: sha512-gfWD6MxqVCqAOwmODfZf7DchWvlrA+SRdNX7ceLfg3xRqe5ssjjpF7EgslC/0tiLiNTajdaNN/q8c/5u/7Gz8w==}
+
+  cborg@5.1.11:
+    resolution: {integrity: sha512-oc6Pzg/gkTobxHZNgMmny+G99dOeBMbAmnGHcZWMKtolxZBIVwfi0Pj0khxEtNU8HMFdbT5sK0HmtgecDUPP0A==}
+    hasBin: true
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -3729,6 +3742,11 @@ snapshots:
   '@img/sharp-win32-x64@0.35.5':
     optional: true
 
+  '@ipld/dag-cbor@9.2.7':
+    dependencies:
+      cborg: 5.1.11
+      multiformats: 13.4.2
+
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
@@ -4682,6 +4700,8 @@ snapshots:
       run-applescript: 7.1.0
 
   caniuse-lite@1.0.30001820: {}
+
+  cborg@5.1.11: {}
 
   ccount@2.0.1: {}
 

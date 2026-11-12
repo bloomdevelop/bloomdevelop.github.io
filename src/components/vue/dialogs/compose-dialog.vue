@@ -89,17 +89,18 @@ async function createNote() {
         ref="dialog"
         id="ui-dialog-compose"
         class="m-auto max-w-xl w-full bg-surface-0"
+        aria-labelledby="ui-dialog-compose"
         @close="hideLimitTooltip"
     >
         <header class="flex justify-between items-center p-2">
-            <h1 class="text-xl font-semibold">Create Note</h1>
+            <h2 class="text-xl font-semibold">Create Note</h2>
 
             <button
                 commandFor="ui-dialog-compose"
                 command="close"
                 class="flex items-center justify-center size-8 hover:bg-surface-1 focus-visible:bg-surface-1"
             >
-                <span class="font-md-symbols" aria-hidden="true"> close </span>
+                <span class="font-md-symbols" aria-label="Close" aria-hidden="true"> close </span>
             </button>
         </header>
         <form @submit.prevent="createNote">

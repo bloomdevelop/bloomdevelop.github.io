@@ -4,9 +4,18 @@
 // Code:
 
 import { now } from '@atcute/tid';
-import type { Agent, AppBskyEmbedExternal, ComAtprotoRepoCreateRecord } from '@atproto/api';
+import type {
+    Agent,
+    AppBskyEmbedExternal,
+    AppBskyFeedPost,
+    ComAtprotoRepoApplyWrites,
+    ComAtprotoRepoCreateRecord,
+} from '@atproto/api';
 import type { BrowserOAuthClient } from '@atproto/oauth-client-browser';
+import * as dagCbor from '@ipld/dag-cbor';
 import { Data, DateTime, Effect, Schema } from 'effect';
+import { CID } from 'multiformats/cid';
+import { sha256 } from 'multiformats/hashes/sha2';
 import { resetAgentState, setDidAllowed, setInitialized, setSharedAgent } from './agent';
 import { ALLOWED_DIDS, NEW_LOG_LEXICON, OLD_LOG_LEXICON } from '../consts';
 import { constructApiUrl, toGraphemeSegments } from './utils';
@@ -373,54 +382,90 @@ const createRecord = (
         return response;
     });
 
-/**
- * Create a bluesky post for a log entry.
- * @param tid - TID of the entry
- * @param content - The entry's content
- *
- * YOU SHOULD BE USING {@link createLogEffect}, NOT createCrosspostedLog!!!
- */
-const createCrosspostedLog = (
-    tid: string,
-    content: string,
-    createdAt: string,
-): Effect.Effect<ComAtprotoRepoCreateRecord.Response, AtprotoError | NoSessionError> =>
+const applyWrites = (
+    input: ComAtprotoRepoApplyWrites.InputSchema,
+): Effect.Effect<ComAtprotoRepoApplyWrites.Response, AtprotoError | NoSessionError> =>
     Effect.gen(function* () {
         const currentAgent = yield* requireAgent();
-        const segments = toGraphemeSegments(content);
-        const embedRecord = generateEmbedForContent(segments, tid);
 
-        let text: string;
-        if (segments.length > 300) {
-            // Truncate by grapheme so we never split a surrogate pair (emoji /
-            // astral characters) and produce replacement-character "garbage".
-            // Reserve 3 graphemes for the ellipsis so the post stays within
-            // Bluesky's 300-grapheme limit.
-            text = `${segments.slice(0, 300 - 3).join('')}...`;
-        } else {
-            text = content;
+        const response = yield* Effect.tryPromise({
+            try: () => currentAgent.com.atproto.repo.applyWrites(input),
+            catch: (cause) =>
+                new AtprotoError({
+                    message: `Failed to apply ATProto writes${causeMessage(cause)}`,
+                    cause,
+                }),
+        });
+
+        if (!response.success) {
+            return yield* new AtprotoError({
+                message: 'ATProto writes were not successful',
+                cause: response,
+            });
         }
 
-        return yield* createRecord({
-            repo: currentAgent.assertDid,
-            collection: 'app.bsky.feed.post',
-            rkey: tid,
-            validate: true,
-            record: {
-                $type: 'app.bsky.feed.post',
-                text,
-                embed: {
-                    $type: 'app.bsky.embed.external',
-                    external: embedRecord,
-                },
-                createdAt,
-            },
-        });
+        return response;
     });
 
 /**
- * Create both an entry and a bluesky post at (almost) the same time
- * @todo Use applyWrites to actually create both in a single transaction
+ * Compute the CID a PDS assigns to a record: a DAG-CBOR encoding hashed with
+ * SHA-256. This lets a record reference another record that is created in the
+ * same `applyWrites` transaction.
+ */
+const cidForRecord = (record: Record<string, unknown>): Effect.Effect<string, AtprotoError> =>
+    Effect.tryPromise({
+        try: async () => {
+            const bytes = dagCbor.encode(record);
+            const digest = await sha256.digest(bytes);
+            return CID.createV1(dagCbor.code, digest).toString();
+        },
+        catch: (cause) =>
+            new AtprotoError({
+                message: `Failed to compute the ATProto record CID${causeMessage(cause)}`,
+                cause,
+            }),
+    });
+
+/**
+ * Build the bluesky post record for a log entry.
+ * @param tid - TID of the entry
+ * @param content - The entry's content
+ *
+ * YOU SHOULD BE USING {@link createLogEffect}, NOT buildCrosspostedPost!!!
+ */
+const buildCrosspostedPost = (
+    tid: string,
+    content: string,
+    createdAt: string,
+): AppBskyFeedPost.Record => {
+    const segments = toGraphemeSegments(content);
+    const embedRecord = generateEmbedForContent(segments, tid);
+
+    let text: string;
+    if (segments.length > 300) {
+        // Truncate by grapheme so we never split a surrogate pair (emoji /
+        // astral characters) and produce replacement-character "garbage".
+        // Reserve 3 graphemes for the ellipsis so the post stays within
+        // Bluesky's 300-grapheme limit.
+        text = `${segments.slice(0, 300 - 3).join('')}...`;
+    } else {
+        text = content;
+    }
+
+    return {
+        $type: 'app.bsky.feed.post',
+        text,
+        embed: {
+            $type: 'app.bsky.embed.external',
+            external: embedRecord,
+        },
+        createdAt,
+    };
+};
+
+/**
+ * Create both an entry and a bluesky post in a single transaction, so a
+ * failure can never leave a post pointing at a log entry that doesn't exist.
  *
  * Please use {@link createLogEffect} instead
  */
@@ -430,22 +475,34 @@ const crosspost = (
     createdAt: string,
 ): Effect.Effect<void, AtprotoError | NoSessionError> =>
     Effect.gen(function* () {
-        const crosspostLog = yield* createCrosspostedLog(tid, content, createdAt);
         const currentAgent = yield* requireAgent();
+        const post = buildCrosspostedPost(tid, content, createdAt);
+        const postCid = yield* cidForRecord(post);
 
-        yield* createRecord({
+        yield* applyWrites({
             repo: currentAgent.assertDid,
-            collection: NEW_LOG_LEXICON,
-            rkey: tid,
-            record: {
-                $type: NEW_LOG_LEXICON,
-                content: content,
-                createdAt,
-                blueskyPost: {
-                    uri: crosspostLog.data.uri,
-                    cid: crosspostLog.data.cid,
+            writes: [
+                {
+                    $type: 'com.atproto.repo.applyWrites#create',
+                    collection: 'app.bsky.feed.post',
+                    rkey: tid,
+                    value: post,
                 },
-            },
+                {
+                    $type: 'com.atproto.repo.applyWrites#create',
+                    collection: NEW_LOG_LEXICON,
+                    rkey: tid,
+                    value: {
+                        $type: NEW_LOG_LEXICON,
+                        content,
+                        createdAt,
+                        blueskyPost: {
+                            uri: `at://${currentAgent.assertDid}/app.bsky.feed.post/${tid}`,
+                            cid: postCid,
+                        },
+                    },
+                },
+            ],
         });
     });
 
