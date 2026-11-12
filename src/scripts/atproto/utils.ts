@@ -1,12 +1,24 @@
 import { Duration, Effect, Schedule } from 'effect';
 
+const segmenters = new Map<string, Intl.Segmenter>();
+
+function getSegmenter(lang: string, options: Intl.SegmenterOptions) {
+    const key = `${lang}:${JSON.stringify(options)}`;
+    let segmenter = segmenters.get(key);
+    if (!segmenter) {
+        segmenter = new Intl.Segmenter(lang, options);
+        segmenters.set(key, segmenter);
+    }
+    return segmenter;
+}
+
 /** Splits a string into grapheme clusters. */
 export function toGraphemeSegments(
     string: string,
     lang: string = 'en',
     options: Intl.SegmenterOptions = { granularity: 'grapheme' },
 ): string[] {
-    return [...new Intl.Segmenter(lang, options).segment(string)].map((s) => s.segment);
+    return [...getSegmenter(lang, options).segment(string)].map((s) => s.segment);
 }
 
 /**
@@ -34,14 +46,28 @@ export function extractRkeyFromPlainAtURI(uri: string) {
     return uri.split('/').at(-1) ?? '';
 }
 
-export function formatNoteDate(date: string, timeZone: string = 'UTC') {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        timeStyle: 'short',
-        dateStyle: 'medium',
-        timeZone,
-    });
+const noteDateFormatters = new Map<string | undefined, Intl.DateTimeFormat>();
 
-    return formatter.format(new Date(date));
+function noteDateFormatter(timeZone?: string) {
+    let formatter = noteDateFormatters.get(timeZone);
+    if (!formatter) {
+        formatter = new Intl.DateTimeFormat('en-US', {
+            timeStyle: 'short',
+            dateStyle: 'medium',
+            ...(timeZone ? { timeZone } : {}),
+        });
+        noteDateFormatters.set(timeZone, formatter);
+    }
+    return formatter;
+}
+
+const postDateFormatter = new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'long',
+    timeZone: 'UTC',
+});
+
+export function formatNoteDate(date: string, timeZone: string = 'UTC') {
+    return noteDateFormatter(timeZone).format(new Date(date));
 }
 
 /**
@@ -49,12 +75,7 @@ export function formatNoteDate(date: string, timeZone: string = 'UTC') {
  * in UTC to keep the build machine's timezone from shifting the day.
  */
 export function formatPostDate(date: Date) {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'long',
-        timeZone: 'UTC',
-    });
-
-    return formatter.format(date);
+    return postDateFormatter.format(date);
 }
 
 export interface RetryOptions {
