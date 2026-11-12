@@ -5,15 +5,23 @@ import { loadNotes, type LogEntry } from '@/scripts/atproto/notes';
 
 // Pre-render the public notes so the page is readable and indexable without JS.
 let initialEntries: LogEntry[] = [];
+let initialCursor: string | undefined;
 let initialError = '';
 
 try {
-    initialEntries = (await loadNotes()).entries;
+    const result = await loadNotes();
+    initialEntries = result.entries;
+    initialCursor = result.cursor;
 } catch (e) {
     initialError = e instanceof Error ? e.message : String(e);
 }
 ---
 
 <MainLayout description="Notes from Spring, published through the AT Protocol.">
-    <Notes client:load initialEntries={initialEntries} initialError={initialError} />
+    <Notes
+        client:load
+        initialEntries={initialEntries}
+        initialCursor={initialCursor}
+        initialError={initialError}
+    />
 </MainLayout>

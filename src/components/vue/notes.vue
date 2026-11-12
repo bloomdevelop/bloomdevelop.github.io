@@ -2,6 +2,7 @@
 import { onMounted, ref, useTemplateRef } from 'vue';
 import { loadNotes, type LogEntry } from '@/scripts/atproto/notes';
 import { extractRkeyFromPlainAtURI, formatNoteDate } from '@/scripts/atproto/utils';
+import { outlineButton } from '@/components/vue/ui/button-classes';
 import LoginDialog from './dialogs/login-dialog.vue';
 import ComposeDialog from './dialogs/compose-dialog.vue';
 import { hasSessionHint, setupOAuth } from '@/scripts/atproto/api';
@@ -11,6 +12,7 @@ import LogoutDialog from './dialogs/logout-dialog.vue';
 interface Props {
     /** Notes rendered at build time, so the list is readable before hydration. */
     initialEntries?: LogEntry[];
+    initialCursor?: string;
     initialError?: string;
 }
 
@@ -30,6 +32,8 @@ function blueskyUrl(uri: string): string {
 const entries = ref<LogEntry[]>(props.initialEntries ?? []);
 const error = ref(props.initialError ?? '');
 const loading = ref(!props.initialEntries?.length && !props.initialError);
+const loadingMore = ref(false);
+const cursor = ref<string | undefined>(props.initialCursor);
 const isHydrated = ref(false);
 const loginDialog = useTemplateRef<InstanceType<typeof LoginDialog>>('loginDialog');
 
@@ -44,11 +48,33 @@ async function loadEntries() {
     try {
         // ?log=<rkey> shows a single entry (the permalink)
         const rkey = new URLSearchParams(window.location.search).get('log');
-        entries.value = (await loadNotes({ rkey })).entries;
+        const result = await loadNotes({ rkey });
+        entries.value = result.entries;
+        cursor.value = rkey ? undefined : result.cursor;
     } catch (e) {
         error.value = e instanceof Error ? e.message : String(e);
     } finally {
         loading.value = false;
+    }
+}
+
+async function loadMore() {
+    if (loadingMore.value || !cursor.value) return;
+    loadingMore.value = true;
+    error.value = '';
+
+    try {
+        const result = await loadNotes({ cursor: cursor.value });
+        const seen = new Set(entries.value.map((entry) => entry.uri));
+        entries.value = [
+            ...entries.value,
+            ...result.entries.filter((entry) => !seen.has(entry.uri)),
+        ];
+        cursor.value = result.cursor;
+    } catch (e) {
+        error.value = e instanceof Error ? e.message : String(e);
+    } finally {
+        loadingMore.value = false;
     }
 }
 
@@ -147,4 +173,9 @@ onMounted(async () => {
             </div>
         </li>
     </ul>
+    <div v-if="cursor" class="mt-3 flex justify-center">
+        <button type="button" :disabled="loadingMore" :class="outlineButton" @click="loadMore">
+            {{ loadingMore ? 'Loading…' : 'Load more notes' }}
+        </button>
+    </div>
 </template>
