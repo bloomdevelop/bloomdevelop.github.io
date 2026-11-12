@@ -3,7 +3,7 @@ import { onMounted, ref, useTemplateRef } from 'vue';
 import type { LogEntry } from '@/scripts/atproto/notes';
 import { extractRkeyFromPlainAtURI, formatNoteDate } from '@/scripts/atproto/utils';
 import { outlineButton } from '@/components/vue/ui/button-classes';
-import { hasSessionHint, isInitialized } from '@/scripts/atproto/session';
+import { hasSessionHint, isInitialized, isOAuthCallback } from '@/scripts/atproto/session';
 import LoginDialog from './dialogs/login-dialog.vue';
 import ComposeDialog from './dialogs/compose-dialog.vue';
 import LogoutDialog from './dialogs/logout-dialog.vue';
@@ -34,6 +34,7 @@ const loading = ref(!props.initialEntries?.length && !props.initialError);
 const loadingMore = ref(false);
 const cursor = ref<string | undefined>(props.initialCursor);
 const isHydrated = ref(false);
+const restoringSession = ref(false);
 const loginDialog = useTemplateRef<InstanceType<typeof LoginDialog>>('loginDialog');
 
 // The server has no reliable local timezone; render UTC first and switch once
@@ -97,12 +98,30 @@ async function loadMore() {
     }
 }
 
+/**
+ * Restore a stored ATProto session. The OAuth bundle is only downloaded when
+ * the visitor has logged in before or is returning from an OAuth redirect.
+ */
+async function restoreSession(): Promise<boolean> {
+    restoringSession.value = true;
+
+    try {
+        const { setupOAuth } = await import('@/scripts/atproto/api');
+        return await setupOAuth();
+    } catch (e) {
+        console.error('[SESSION]', 'Failed to restore the ATProto session:', e);
+        return false;
+    } finally {
+        restoringSession.value = false;
+    }
+}
+
 async function openLoginDialog() {
     // Restoring a session needs the OAuth bundle; only pay for it when there is
-    // a hint that this visitor has logged in before, or when they ask to log in.
-    if (hasSessionHint()) {
-        const { setupOAuth } = await import('@/scripts/atproto/api');
-        const initialized = await setupOAuth();
+    // a hint that this visitor has logged in before, or when they are coming
+    // back from the OAuth redirect.
+    if (hasSessionHint() || isOAuthCallback()) {
+        const initialized = await restoreSession();
         if (!initialized) error.value = 'Could not restore your session. Try logging in again.';
         if (isInitialized.value) return;
     }
@@ -113,10 +132,9 @@ async function openLoginDialog() {
 onMounted(() => {
     isHydrated.value = true;
 
-    // Readers never triggered a login do not download the auth bundle.
-    if (hasSessionHint()) {
-        void import('@/scripts/atproto/api').then(({ setupOAuth }) => setupOAuth());
-    }
+    // Readers never triggered a login do not download the auth bundle. A
+    // returning OAuth redirect has no hint yet, so check the URL as well.
+    if (hasSessionHint() || isOAuthCallback()) void restoreSession();
 
     // Refresh the build-time list so readers see notes published since the last
     // deploy. The refresh is a no-op when nothing changed, so it does not
@@ -152,6 +170,17 @@ onMounted(() => {
                     <span class="hidden sm:inline"> Logout </span>
                 </button>
             </template>
+            <button
+                v-else-if="restoringSession"
+                type="button"
+                disabled
+                aria-busy="true"
+                aria-label="Restoring session"
+                class="flex items-center gap-3 px-3 py-2 opacity-60"
+            >
+                <span class="font-md-symbols" aria-hidden="true">login</span>
+                <span class="hidden sm:inline"> Checking session… </span>
+            </button>
             <button
                 v-else
                 type="button"

@@ -17,7 +17,7 @@ import { Data, DateTime, Effect, Schema } from 'effect';
 import { CID } from 'multiformats/cid';
 import { sha256 } from 'multiformats/hashes/sha2';
 import { resetAgentState, setDidAllowed, setInitialized, setSharedAgent } from './agent';
-import { setSessionHint } from './session';
+import { setSessionHint, clearOAuthCallbackParams } from './session';
 import { ALLOWED_DIDS, NEW_LOG_LEXICON, OLD_LOG_LEXICON } from '../consts';
 import { constructApiUrl, toGraphemeSegments } from './utils';
 
@@ -229,6 +229,9 @@ export const setupOAuthEffect: Effect.Effect<boolean> = Effect.gen(function* () 
 
     return true;
 }).pipe(
+    // The authorization response is single-use; do not leave it in the URL for
+    // a reload to replay. No-op unless this was an OAuth callback page.
+    Effect.ensuring(Effect.sync(() => clearOAuthCallbackParams())),
     Effect.catch((error) =>
         Effect.gen(function* () {
             yield* Effect.logError('[OAUTH]', 'An error occurred during OAuth setup:', error);
@@ -298,6 +301,11 @@ export const startLoginFlowEffect = (identifier: string): Effect.Effect<void, OA
                 message: `"${identifier}" is not authorized to log in`,
             });
         }
+
+        // Remember that a sign-in is in flight. The OAuth client only creates a
+        // session after the redirect, so on a first login the callback page
+        // would otherwise have no hint that it should run `init()`.
+        setSessionHint(true);
 
         yield* Effect.tryPromise({
             try: (signal) =>
