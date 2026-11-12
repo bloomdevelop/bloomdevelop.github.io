@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef, watch } from 'vue';
-import { createLog } from '@/scripts/atproto/api';
+import type { createLog } from '@/scripts/atproto/api';
 import { toGraphemeSegments } from '@/scripts/atproto/utils';
 import { primaryButton } from '@/components/vue/ui/button-classes';
 import DialogShell from '@/components/vue/ui/dialog-shell.vue';
@@ -69,7 +69,8 @@ async function createNote() {
     error.value = '';
 
     try {
-        const created = await createLog(content.value, isCrosspostEnabled.value);
+        const api = await import('@/scripts/atproto/api');
+        const created = await api.createLog(content.value, isCrosspostEnabled.value);
         emit('created', created);
 
         content.value = '';

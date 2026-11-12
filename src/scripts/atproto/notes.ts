@@ -1,6 +1,7 @@
 import { Data, Effect, Schema } from 'effect';
 import { DEFAULT_PREVIEW_DID, DEFAULT_PREVIEW_PDS, NEW_LOG_LEXICON } from '../consts';
-import { constructApiUrl, retry } from './utils';
+import { retry } from './retry';
+import { constructApiUrl } from './utils';
 
 export class NotesError extends Data.TaggedError('NotesError')<{
     readonly message: string;

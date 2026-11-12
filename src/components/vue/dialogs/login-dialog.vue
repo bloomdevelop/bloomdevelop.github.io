@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { startLoginFlow } from '@/scripts/atproto/api';
-import { isInitialized } from '@/scripts/atproto/agent';
+import { isInitialized } from '@/scripts/atproto/session';
 import { primaryButton } from '@/components/vue/ui/button-classes';
 import DialogShell from '@/components/vue/ui/dialog-shell.vue';
 import { ref, useTemplateRef, watch } from 'vue';
@@ -28,6 +27,7 @@ async function attemptLogin() {
     error.value = '';
 
     try {
+        const { startLoginFlow } = await import('@/scripts/atproto/api');
         await startLoginFlow(handle.value);
     } catch (e) {
         console.error('[LOGIN]', 'Failed to log in via OAuth:', e);

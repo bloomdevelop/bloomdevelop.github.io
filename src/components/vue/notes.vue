@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { onMounted, ref, useTemplateRef } from 'vue';
-import { loadNotes, type LogEntry } from '@/scripts/atproto/notes';
+import type { LogEntry } from '@/scripts/atproto/notes';
 import { extractRkeyFromPlainAtURI, formatNoteDate } from '@/scripts/atproto/utils';
 import { outlineButton } from '@/components/vue/ui/button-classes';
+import { hasSessionHint, isInitialized } from '@/scripts/atproto/session';
 import LoginDialog from './dialogs/login-dialog.vue';
 import ComposeDialog from './dialogs/compose-dialog.vue';
-import { hasSessionHint, setupOAuth } from '@/scripts/atproto/api';
-import { isInitialized } from '@/scripts/atproto/agent';
 import LogoutDialog from './dialogs/logout-dialog.vue';
 
 interface Props {
@@ -43,16 +42,35 @@ const noteDate = (createdAt: string) =>
     formatNoteDate(createdAt, isHydrated.value ? undefined : 'UTC');
 
 async function loadEntries() {
-    error.value = '';
+    // ?log=<rkey> shows a single entry (the permalink)
+    const rkey = new URLSearchParams(window.location.search).get('log');
+    // A plain page load already has build-time entries; refresh them quietly
+    // instead of showing an error if the PDS is unreachable.
+    const isRefresh = !rkey && entries.value.length > 0;
+    if (!isRefresh) error.value = '';
 
     try {
-        // ?log=<rkey> shows a single entry (the permalink)
-        const rkey = new URLSearchParams(window.location.search).get('log');
+        // Notes are needed for the list, so the fetch/Effect machinery is loaded
+        // on demand instead of shipping with the initial island.
+        const { loadNotes } = await import('@/scripts/atproto/notes');
+
         const result = await loadNotes({ rkey });
-        entries.value = result.entries;
+        // Only replace the list when something actually changed. Assigning an
+        // equivalent array re-renders every note and moves Largest Contentful
+        // Paint for no visible benefit.
+        const unchanged =
+            isRefresh &&
+            result.entries.length === entries.value.length &&
+            result.entries.every(
+                (entry, index) =>
+                    entry.uri === entries.value[index]?.uri &&
+                    entry.cid === entries.value[index]?.cid,
+            );
+
+        if (!unchanged) entries.value = result.entries;
         cursor.value = rkey ? undefined : result.cursor;
     } catch (e) {
-        error.value = e instanceof Error ? e.message : String(e);
+        if (!isRefresh) error.value = e instanceof Error ? e.message : String(e);
     } finally {
         loading.value = false;
     }
@@ -64,6 +82,7 @@ async function loadMore() {
     error.value = '';
 
     try {
+        const { loadNotes } = await import('@/scripts/atproto/notes');
         const result = await loadNotes({ cursor: cursor.value });
         const seen = new Set(entries.value.map((entry) => entry.uri));
         entries.value = [
@@ -82,6 +101,7 @@ async function openLoginDialog() {
     // Restoring a session needs the OAuth bundle; only pay for it when there is
     // a hint that this visitor has logged in before, or when they ask to log in.
     if (hasSessionHint()) {
+        const { setupOAuth } = await import('@/scripts/atproto/api');
         const initialized = await setupOAuth();
         if (!initialized) error.value = 'Could not restore your session. Try logging in again.';
         if (isInitialized.value) return;
@@ -90,12 +110,18 @@ async function openLoginDialog() {
     loginDialog.value?.open();
 }
 
-onMounted(async () => {
+onMounted(() => {
     isHydrated.value = true;
 
     // Readers never triggered a login do not download the auth bundle.
-    if (hasSessionHint()) void setupOAuth();
-    await loadEntries();
+    if (hasSessionHint()) {
+        void import('@/scripts/atproto/api').then(({ setupOAuth }) => setupOAuth());
+    }
+
+    // Refresh the build-time list so readers see notes published since the last
+    // deploy. The refresh is a no-op when nothing changed, so it does not
+    // re-render the notes (or move Largest Contentful Paint) needlessly.
+    void loadEntries();
 });
 </script>
 

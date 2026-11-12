@@ -17,6 +17,7 @@ import { Data, DateTime, Effect, Schema } from 'effect';
 import { CID } from 'multiformats/cid';
 import { sha256 } from 'multiformats/hashes/sha2';
 import { resetAgentState, setDidAllowed, setInitialized, setSharedAgent } from './agent';
+import { setSessionHint } from './session';
 import { ALLOWED_DIDS, NEW_LOG_LEXICON, OLD_LOG_LEXICON } from '../consts';
 import { constructApiUrl, toGraphemeSegments } from './utils';
 
@@ -64,29 +65,6 @@ function clientID(): string {
 let cachedClientID: string | undefined;
 function getClientID(): string {
     return (cachedClientID ??= clientID());
-}
-
-const SESSION_HINT_KEY = 'atproto-session';
-
-function setSessionHint(value: boolean) {
-    try {
-        if (value) localStorage.setItem(SESSION_HINT_KEY, '1');
-        else localStorage.removeItem(SESSION_HINT_KEY);
-    } catch {
-        // Storage can be unavailable (private mode); the hint is only an optimisation.
-    }
-}
-
-/**
- * Whether a previous visit left a session behind. Used to avoid downloading the
- * OAuth client for anonymous readers.
- */
-export function hasSessionHint(): boolean {
-    try {
-        return localStorage.getItem(SESSION_HINT_KEY) === '1';
-    } catch {
-        return false;
-    }
 }
 
 // TODO: Refactor to global state

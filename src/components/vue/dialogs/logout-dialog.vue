@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { revokeSession } from '@/scripts/atproto/api';
 import { dangerButton } from '@/components/vue/ui/button-classes';
 import DialogShell from '@/components/vue/ui/dialog-shell.vue';
 import { ref } from 'vue';
@@ -11,6 +10,7 @@ async function confirmLogout() {
     loading.value = true;
 
     try {
+        const { revokeSession } = await import('@/scripts/atproto/api');
         await revokeSession();
     } catch (e) {
         console.error('[LOGOUT]', 'Failed to revoke session:', e);
