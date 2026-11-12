@@ -114,10 +114,7 @@ onMounted(async () => {
         >
             <p class="whitespace-pre-wrap">{{ entry.value.content }}</p>
 
-            <div
-                role="toolbar"
-                class="flex flex-col justify-between gap-2 md:flex-row md:items-center"
-            >
+            <div class="flex flex-col justify-between gap-2 md:flex-row md:items-center">
                 <small class="flex justify-between gap-2 md:justify-start">
                     <time :datetime="entry.value.createdAt">{{
                         formatDate(entry.value.createdAt)
