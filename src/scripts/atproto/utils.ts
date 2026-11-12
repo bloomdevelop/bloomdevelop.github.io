@@ -38,6 +38,7 @@ export function formatDate(date: string) {
     const formatter = new Intl.DateTimeFormat('en-US', {
         timeStyle: 'long',
         dateStyle: 'short',
+        timeZone: 'UTC',
     });
 
     return formatter.format(new Date(date));
