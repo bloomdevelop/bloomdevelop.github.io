@@ -255,7 +255,7 @@ export function setupOAuth(): Promise<boolean> {
  * @param identifier
  * @example await startLoginFlow("did:plc:z72i7hdynmk6r22z27h6tvur")
  */
-export const startLoginFlowEffect = (identifier: string): Effect.Effect<void> =>
+export const startLoginFlowEffect = (identifier: string): Effect.Effect<void, OAuthError> =>
     Effect.gen(function* () {
         // The client is normally set up on page load; initialize it lazily here
         // too in case the user clicks before that finished (or it never ran).
@@ -268,30 +268,36 @@ export const startLoginFlowEffect = (identifier: string): Effect.Effect<void> =>
         }
 
         const client = oauthClient;
-        if (client) {
-            if (yield* beforeLogin(identifier)) {
-                yield* Effect.tryPromise({
-                    try: (signal) =>
-                        client.signIn(identifier, {
-                            state: crypto.randomUUID(),
-                            signal,
-                        }),
-                    catch: (cause) =>
-                        new OAuthError({
-                            message: 'Failed to start the OAuth sign-in flow',
-                            cause,
-                        }),
-                });
-            }
-        } else {
-            yield* Effect.logError(
-                '[OAUTH]',
-                'OAuth client could not be initialized (failed to load @atproto/oauth-client-browser). Try reloading the page.',
-            );
+        if (!client) {
+            return yield* new OAuthError({
+                message:
+                    'Could not initialize the OAuth client (failed to load @atproto/oauth-client-browser). Try reloading the page.',
+            });
         }
+
+        if (!(yield* beforeLogin(identifier))) {
+            return yield* new OAuthError({
+                message: `Handle "${identifier}" is not authorized to log in`,
+            });
+        }
+
+        yield* Effect.tryPromise({
+            try: (signal) =>
+                client.signIn(identifier, {
+                    state: crypto.randomUUID(),
+                    signal,
+                }),
+            catch: (cause) =>
+                new OAuthError({
+                    message: 'Failed to start the OAuth sign-in flow',
+                    cause,
+                }),
+        });
+
+        return undefined;
     }).pipe(
-        Effect.catchCause((cause) =>
-            Effect.logError('[OAUTH]', 'Failed to start OAuth client sign-in flow:', cause),
+        Effect.tapError((error) =>
+            Effect.logError('[OAUTH]', 'Failed to start OAuth client sign-in flow:', error),
         ),
     );
 

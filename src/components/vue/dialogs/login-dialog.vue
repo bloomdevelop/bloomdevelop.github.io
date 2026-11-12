@@ -4,14 +4,19 @@ import { ref } from 'vue';
 
 const handle = ref('');
 const loading = ref(false);
+const error = ref('');
 
 async function attemptLogin() {
     // Don't attempt to login if it's still loading
     if (loading.value) return;
     loading.value = true;
+    error.value = '';
 
     try {
         await startLoginFlow(handle.value);
+    } catch (e) {
+        console.error('[LOGIN]', 'Failed to log in via OAuth:', e);
+        error.value = e instanceof Error ? e.message : String(e);
     } finally {
         loading.value = false;
     }
@@ -41,10 +46,12 @@ async function attemptLogin() {
                         class="bg-surface-1 px-3 py-2"
                         autocomplete="username"
                         placeholder="whatever.bsky.social"
+                        @input="error = ''"
                     />
                 </div>
             </div>
-            <footer class="flex p-2">
+            <footer class="flex p-2 justify-between">
+                <p v-if="error" role="alert" class="mt-2 text-error">{{ error }}</p>
                 <button
                     :disabled="loading"
                     type="submit"
