@@ -373,17 +373,21 @@ export function revokeSession(): Promise<void> {
 
 /**
  * Generate an embed for the given content and TID.
- * @param length - The length of the content as grapheme segments, to avoid recalculating
- * @param content
+ * @param segments - The content as grapheme segments, to avoid recalculating
  * @param generatedTID - A pre-defined TID to use for the embed's URI. It should point to that specific log entry.
  */
 function generateEmbedForContent(
     segments: string[],
     generatedTID: string,
 ): AppBskyEmbedExternal.External {
+    // Do not reuse location.href: composing from a permalink would append a
+    // second ?log= query instead of replacing it.
+    const url = new URL(window.location.pathname, window.location.origin);
+    url.searchParams.set('log', generatedTID);
+
     return {
         $type: 'app.bsky.embed.external#external',
-        uri: `${window.location.href}?log=${generatedTID}`,
+        uri: url.toString(),
         title: "View in Spring's Website",
         description: segments.length > 63 ? `${segments.slice(0, 60).join('')}…` : '', // Skip description because otherwise it looks weird and repetitive
     };
