@@ -50,7 +50,9 @@ function formatDate(date: string) {
                     <h3 class="flex gap-4 items-center">{publication.data.title}</h3>
                     <div role="toolbar" class="flex gap-2">
                         <small>
-                            <date>{formatDate(publication.data.pubDate.toString())}</date>
+                            <time datetime={publication.data.pubDate.toString()}>
+                                {formatDate(publication.data.pubDate.toString())}
+                            </time>
                         </small>
                         {publication.data.draft && (
                             <small class="bg-error text-paper px-1 rounded-sm font-bold">
