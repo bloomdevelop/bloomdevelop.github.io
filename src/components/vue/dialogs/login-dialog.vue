@@ -46,6 +46,8 @@ async function attemptLogin() {
                     <label for="ui-dialog-login-handle">Handle</label>
                     <input
                         v-model="handle"
+                        required
+                        autofocus="true"
                         id="ui-dialog-login-handle"
                         class="bg-surface-1 px-3 py-2"
                         autocomplete="username"

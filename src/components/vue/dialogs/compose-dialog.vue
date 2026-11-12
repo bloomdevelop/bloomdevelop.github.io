@@ -108,7 +108,9 @@ async function createNote() {
                 <div class="flex flex-col gap-2">
                     <label for="ui-dialog-compose-content" class="sr-only">Note</label>
                     <textarea
+                        required
                         v-model="content"
+                        autofocus="true"
                         id="ui-dialog-compose-content"
                         class="bg-surface-1 px-3 py-2 w-full resize-none"
                         placeholder="Write anything..."
