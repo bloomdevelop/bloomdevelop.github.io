@@ -47,6 +47,26 @@ const imageUrl = image ? new URL(image, Astro.site ?? Astro.url).toString() : un
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#f6eff8" />
+    <script is:inline>
+        (() => {
+            const dark = (() => {
+                try {
+                    const stored = localStorage.getItem('madoromi');
+                    if (stored === 'haru-hiru' || stored === 'haru-yoru')
+                        return stored === 'haru-yoru';
+                } catch {
+                    // Storage can be unavailable; fall back to the system preference.
+                }
+                return window.matchMedia('(prefers-color-scheme: dark)').matches;
+            })();
+
+            document.documentElement.dataset.madoromi = dark ? 'haru-yoru' : 'haru-hiru';
+            document
+                .querySelector('meta[name="theme-color"]')
+                ?.setAttribute('content', dark ? '#241c26' : '#f6eff8');
+        })();
+    </script>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex" />}
@@ -68,9 +88,6 @@ const imageUrl = image ? new URL(image, Astro.site ?? Astro.url).toString() : un
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     {imageUrl && <meta name="twitter:image" content={imageUrl} />}
-
-    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f4f0f3" />
-    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#211c22" />
 
     <link rel="alternate" type="application/rss+xml" title={siteName} href="/rss.xml" />
 
