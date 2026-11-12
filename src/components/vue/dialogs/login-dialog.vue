@@ -43,7 +43,7 @@ async function attemptLogin() {
         <form @submit.prevent="attemptLogin">
             <div class="p-2">
                 <div class="flex flex-col gap-2">
-                    <label for="ui-dialog-login-handle">Handle</label>
+                    <label for="ui-dialog-login-handle">Handle or DID</label>
                     <input
                         v-model="handle"
                         required

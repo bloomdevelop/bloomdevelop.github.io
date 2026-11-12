@@ -158,9 +158,9 @@ const resolveHandle = (identifier: string): Effect.Effect<string, OAuthError> =>
  */
 const beforeLogin = (identifier: string): Effect.Effect<boolean, OAuthError> =>
     Effect.gen(function* () {
-        yield* Effect.logDebug('[OAUTH]', 'performing beforeLogin check for handle', identifier);
+        yield* Effect.logDebug('[OAUTH]', 'performing beforeLogin check for', identifier);
 
-        const did = yield* resolveHandle(identifier);
+        const did = identifier.startsWith('did:') ? identifier : yield* resolveHandle(identifier);
         const allowed = ALLOWED_DIDS.includes(did);
 
         yield* setDidAllowed(allowed);
@@ -317,7 +317,7 @@ export const startLoginFlowEffect = (identifier: string): Effect.Effect<void, OA
 
         if (!(yield* beforeLogin(identifier))) {
             return yield* new OAuthError({
-                message: `Handle "${identifier}" is not authorized to log in`,
+                message: `"${identifier}" is not authorized to log in`,
             });
         }
 
