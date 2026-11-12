@@ -5,7 +5,10 @@ import MainLayout from '@/layouts/main-layout.astro';
 import Prose from '@/components/astro/prose.astro';
 
 export async function getStaticPaths() {
-    const publications = await getCollection('blog');
+    const publications = await getCollection(
+        'blog',
+        ({ data }) => import.meta.env.DEV || !data.draft,
+    );
 
     return Promise.all(
         publications.map(async (publication) => ({
