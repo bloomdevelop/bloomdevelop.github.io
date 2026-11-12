@@ -103,9 +103,9 @@ onMounted(async () => {
             </button>
         </div>
     </header>
-    <p v-if="loading">Loading…</p>
-    <p v-else-if="error">Could not load logs: {{ error }}</p>
-    <p v-else-if="!entries.length">No logs yet.</p>
+    <p aria-busy="true" v-if="loading">Loading…</p>
+    <p aria-live="polite" v-else-if="error">Could not load logs: {{ error }}</p>
+    <p aria-live="polite" v-else-if="!entries.length">No logs yet.</p>
     <ul class="flex flex-col gap-2" v-else>
         <li
             class="flex flex-col gap-2 border border-nijimi-1 p-2"
