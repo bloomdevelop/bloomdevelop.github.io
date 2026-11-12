@@ -5,13 +5,16 @@ interface Props {
 
 const { href } = Astro.props;
 const normalizePath = (path: string) => path.replace(/\/+$/, '') || '/';
-const isCurrent = normalizePath(Astro.url.pathname) === normalizePath(href);
+const pathname = normalizePath(Astro.url.pathname);
+const target = normalizePath(href);
+const isCurrent =
+    target === '/' ? pathname === '/' : pathname === target || pathname.startsWith(`${target}/`);
 ---
 
 <a
     class:list={[
         'font-medium hover:text-link hover:underline',
-        { 'text-accent font-semibold underline': isCurrent },
+        { 'text-accent underline': isCurrent },
     ]}
     aria-current={isCurrent ? 'page' : undefined}
     href={href}
