@@ -66,6 +66,29 @@ function getClientID(): string {
     return (cachedClientID ??= clientID());
 }
 
+const SESSION_HINT_KEY = 'atproto-session';
+
+function setSessionHint(value: boolean) {
+    try {
+        if (value) localStorage.setItem(SESSION_HINT_KEY, '1');
+        else localStorage.removeItem(SESSION_HINT_KEY);
+    } catch {
+        // Storage can be unavailable (private mode); the hint is only an optimisation.
+    }
+}
+
+/**
+ * Whether a previous visit left a session behind. Used to avoid downloading the
+ * OAuth client for anonymous readers.
+ */
+export function hasSessionHint(): boolean {
+    try {
+        return localStorage.getItem(SESSION_HINT_KEY) === '1';
+    } catch {
+        return false;
+    }
+}
+
 // TODO: Refactor to global state
 let oauthClient: BrowserOAuthClient | undefined;
 let oauthSetupPromise: Promise<boolean> | undefined;
@@ -186,7 +209,10 @@ export const setupOAuthEffect: Effect.Effect<boolean> = Effect.gen(function* () 
     });
 
     // No stored session: the client is still ready to start a sign-in.
-    if (!result) return true;
+    if (!result) {
+        setSessionHint(false);
+        return true;
+    }
 
     const { session, state } = result;
     if (state != null) {
@@ -220,6 +246,7 @@ export const setupOAuthEffect: Effect.Effect<boolean> = Effect.gen(function* () 
     agent = nextAgent;
     yield* setSharedAgent(nextAgent);
     yield* setInitialized(true);
+    setSessionHint(true);
     yield* Effect.logInfo('[OAUTH]', 'Agent initialized');
 
     return true;
@@ -284,6 +311,10 @@ export const startLoginFlowEffect = (identifier: string): Effect.Effect<void, OA
             });
         }
 
+        // Setup may have restored an existing session just now (for example when
+        // the caller could not know about it up front); no sign-in is needed.
+        if (agent) return undefined;
+
         if (!(yield* beforeLogin(identifier))) {
             return yield* new OAuthError({
                 message: `Handle "${identifier}" is not authorized to log in`,
@@ -329,6 +360,7 @@ export const revokeSessionEffect: Effect.Effect<void, OAuthError> = Effect.gen(f
         try: () => client.revoke(did),
         catch: (cause) => new OAuthError({ message: 'Failed to revoke the OAuth session', cause }),
     });
+    setSessionHint(false);
     yield* Effect.sync(() => window.location.reload());
 });
 

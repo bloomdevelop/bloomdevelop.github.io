@@ -1,10 +1,23 @@
 <script setup lang="ts">
 import { startLoginFlow } from '@/scripts/atproto/api';
-import { ref } from 'vue';
+import { isInitialized } from '@/scripts/atproto/agent';
+import { ref, useTemplateRef, watch } from 'vue';
 
+const dialog = useTemplateRef<HTMLDialogElement>('dialog');
 const handle = ref('');
 const loading = ref(false);
 const error = ref('');
+
+function open() {
+    dialog.value?.showModal();
+}
+
+defineExpose({ open });
+
+// Setup may restore a session while this dialog is open; it is no longer needed.
+watch(isInitialized, (initialized) => {
+    if (initialized && dialog.value?.open) dialog.value.close();
+});
 
 async function attemptLogin() {
     // Don't attempt to login if it's still loading
@@ -25,6 +38,7 @@ async function attemptLogin() {
 
 <template>
     <dialog
+        ref="dialog"
         aria-labelledby="ui-dialog-login"
         id="ui-dialog-login"
         class="m-auto max-w-xl w-full bg-surface-0"
