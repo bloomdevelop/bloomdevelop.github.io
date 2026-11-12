@@ -21,6 +21,16 @@ Consult these guides before working on related tasks:
 - [Adding styles or using Tailwind](https://docs.astro.build/en/guides/styling/)
 - [Supporting multiple languages](https://docs.astro.build/en/guides/internationalization/)
 
+## Commits
+
+Commit changes with Jujutsu (`jj`). Whenever you are asked to commit, append
+this trailer to the end of the commit description, replacing `AGENT` and
+`MODEL` with the agent and model that made the changes:
+
+```
+Assisted-By: AGENT:MODEL [optional: tool]
+```
+
 <!--VITE PLUS START-->
 
 # Using Vite+, the Unified Toolchain for the Web
