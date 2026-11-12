@@ -47,15 +47,17 @@ function formatDate(date: string) {
                     </div>
                 )}
                 <div class="p-2">
-                    <h3 class="flex gap-4 items-center">
-                        {publication.data.title}
+                    <h3 class="flex gap-4 items-center">{publication.data.title}</h3>
+                    <div role="toolbar" class="flex gap-2">
+                        <small>
+                            <date>{formatDate(publication.data.pubDate.toString())}</date>
+                        </small>
                         {publication.data.draft && (
-                            <small class="text-error font-bold">Draft</small>
+                            <small class="bg-error text-paper px-1 rounded-sm font-bold">
+                                Draft
+                            </small>
                         )}
-                    </h3>
-                    <small>
-                        <date>{formatDate(publication.data.pubDate.toString())}</date>
-                    </small>
+                    </div>
                 </div>
             </a>
         ))}
