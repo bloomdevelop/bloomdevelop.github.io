@@ -28,7 +28,7 @@ const { Content } = rendered;
 <MainLayout>
     <article>
         {publication.data.headerImage && (
-            <div class="media-dither relative left-1/2 right-1/2 mb-4 aspect-video w-screen h-full max-h-1/2 -translate-x-1/2">
+            <div class="media-dither relative left-1/2 right-1/2 mb-4 aspect-video w-screen h-full max-h-[60vh] -translate-x-1/2 overflow-x-clip">
                 <DitheredImage
                     src={publication.data.headerImage}
                     alt={publication.data.headerImageAlt ?? ''}
