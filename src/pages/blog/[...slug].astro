@@ -23,9 +23,17 @@ export async function getStaticPaths() {
 
 const { publication, rendered } = Astro.props;
 const { Content } = rendered;
+const description = `${publication.data.title} — a publication on Spring's Website.`;
 ---
 
-<MainLayout>
+<MainLayout
+    title={publication.data.title}
+    description={description}
+    image={publication.data.headerImage?.src}
+    type="article"
+    publishedTime={publication.data.pubDate.toISOString()}
+    modifiedTime={publication.data.updatedDate?.toISOString()}
+>
     <article>
         {publication.data.headerImage && (
             <div class="media-dither relative left-1/2 right-1/2 mb-4 aspect-video w-screen h-full max-h-[60vh] -translate-x-1/2 overflow-x-clip">

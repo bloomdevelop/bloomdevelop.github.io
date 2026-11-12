@@ -18,7 +18,10 @@ function formatDate(date: string) {
 }
 ---
 
-<MainLayout>
+<MainLayout
+    title="Publications"
+    description="Longer writings by Spring, from Linux reviews to notes on software."
+>
     <h1 class="text-2xl mb-3">Publications</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
         {!publications.length && <EmptyState />}
