@@ -36,6 +36,11 @@ const publications = (
                 )}
                 <div class="p-2">
                     <h3 class="flex gap-4 items-center">{publication.data.title}</h3>
+                    {publication.data.description && (
+                        <p class="mt-1 line-clamp-2 text-sm text-ink-muted">
+                            {publication.data.description}
+                        </p>
+                    )}
                     <div class="flex gap-2">
                         <small>
                             <time datetime={publication.data.pubDate.toISOString()}>

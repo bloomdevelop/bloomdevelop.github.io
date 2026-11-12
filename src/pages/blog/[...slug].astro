@@ -24,7 +24,9 @@ export async function getStaticPaths() {
 
 const { publication, rendered } = Astro.props;
 const { Content } = rendered;
-const description = `${publication.data.title} — a publication on Spring's Website.`;
+const description =
+    publication.data.description ??
+    `${publication.data.title} — a publication on Spring's Website.`;
 ---
 
 <MainLayout
@@ -69,9 +71,19 @@ const description = `${publication.data.title} — a publication on Spring's Web
         )}
         <div class="border-b-2 border-nijimi-1 border-dashed pb-2 mb-2">
             <h1 class="mb-2 text-2xl">{publication.data.title}</h1>
-            <time datetime={publication.data.pubDate.toISOString()}>
-                {formatPostDate(publication.data.pubDate)}
-            </time>
+            <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm">
+                <time datetime={publication.data.pubDate.toISOString()}>
+                    {formatPostDate(publication.data.pubDate)}
+                </time>
+                {publication.data.updatedDate && (
+                    <span class="text-ink-subtle">
+                        Updated
+                        <time datetime={publication.data.updatedDate.toISOString()}>
+                            {formatPostDate(publication.data.updatedDate)}
+                        </time>
+                    </span>
+                )}
+            </div>
             {publication.data.draft && (
                 <div class="flex gap-2 items-center mt-2 bg-error text-paper p-2">
                     <span class="font-md-symbols">warning</span>

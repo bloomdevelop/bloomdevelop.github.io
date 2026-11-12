@@ -13,7 +13,9 @@ export async function GET(context: APIContext) {
         site: context.site ?? 'https://bloomdevelop.github.io',
         items: publications.map((publication) => ({
             title: publication.data.title,
-            description: `A publication by Spring: ${publication.data.title}.`,
+            description:
+                publication.data.description ??
+                `A publication by Spring: ${publication.data.title}.`,
             pubDate: publication.data.pubDate,
             link: `/blog/${publication.id}/`,
         })),

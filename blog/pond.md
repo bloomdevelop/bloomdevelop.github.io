@@ -1,5 +1,6 @@
 ---
 title: 'Pond Linux Review'
+description: 'A hands-on look at Pond Linux, the Arch-based distribution built around Niri and Quickshell.'
 pubDate: 2026-11-03
 headerImage: ./media/header/lee-soo-hyun-c7bfOg6yQ0w-unsplash.jpg
 draft: false
