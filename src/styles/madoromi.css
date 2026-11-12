@@ -160,6 +160,8 @@
     --madoromi-sora: oklch(0.5914 0.1108 223.73);
     --madoromi-ruri: oklch(0.5505 0.115 242.88);
     --madoromi-ai: oklch(0.4789 0.1775 260.99);
+    /* sora only reaches 3.51:1 on paper, so daytime links use ai (6.02:1). */
+    --madoromi-link: var(--madoromi-ai);
     --madoromi-ansi-0: oklch(0.4986 0.0343 317.16);
     --madoromi-ansi-1: oklch(0.5502 0.2052 32.59);
     --madoromi-ansi-2: oklch(0.5796 0.1255 131.7);
@@ -207,6 +209,8 @@
         --madoromi-sora: oklch(0.8396 0.083 213.39);
         --madoromi-ruri: oklch(0.79 0.1135 227.14);
         --madoromi-ai: oklch(0.7398 0.1362 255.56);
+        /* Night-time links keep the brighter sora (10.38:1 on paper). */
+        --madoromi-link: var(--madoromi-sora);
         --madoromi-ansi-0: oklch(0.3997 0.0286 317.03);
         --madoromi-ansi-1: oklch(0.7596 0.144 30.02);
         --madoromi-ansi-2: oklch(0.8499 0.1713 119.5);
@@ -254,6 +258,8 @@
     --madoromi-sora: oklch(0.5914 0.1108 223.73);
     --madoromi-ruri: oklch(0.5505 0.115 242.88);
     --madoromi-ai: oklch(0.4789 0.1775 260.99);
+    /* sora only reaches 3.51:1 on paper, so daytime links use ai (6.02:1). */
+    --madoromi-link: var(--madoromi-ai);
     --madoromi-ansi-0: oklch(0.4986 0.0343 317.16);
     --madoromi-ansi-1: oklch(0.5502 0.2052 32.59);
     --madoromi-ansi-2: oklch(0.5796 0.1255 131.7);
@@ -299,6 +305,8 @@
     --madoromi-sora: oklch(0.8396 0.083 213.39);
     --madoromi-ruri: oklch(0.79 0.1135 227.14);
     --madoromi-ai: oklch(0.7398 0.1362 255.56);
+    /* Night-time links keep the brighter sora (10.38:1 on paper). */
+    --madoromi-link: var(--madoromi-sora);
     --madoromi-ansi-0: oklch(0.3997 0.0286 317.03);
     --madoromi-ansi-1: oklch(0.7596 0.144 30.02);
     --madoromi-ansi-2: oklch(0.8499 0.1713 119.5);
@@ -368,7 +376,7 @@
     --color-ink-subtle: var(--madoromi-usuzumi0);
     --color-ink-faint: var(--madoromi-kasure2);
     --color-accent: var(--madoromi-fuji);
-    --color-link: var(--madoromi-sora);
+    --color-link: var(--madoromi-link);
     --color-success: var(--madoromi-wakaba);
     --color-warning: var(--madoromi-yamabuki);
     --color-error: var(--madoromi-beni);
@@ -405,7 +413,7 @@
 
     /* prose 文 */
     --color-prose-heading: var(--madoromi-fuji);
-    --color-prose-link: var(--madoromi-sora);
+    --color-prose-link: var(--madoromi-link);
     --color-prose-code: var(--madoromi-wakaba);
     --color-prose-quote: var(--madoromi-kasure2);
     --color-prose-list: var(--madoromi-kaki);
