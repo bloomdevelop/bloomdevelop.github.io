@@ -10,7 +10,7 @@ const isCurrent = normalizePath(Astro.url.pathname) === normalizePath(href);
 
 <a
     class:list={[
-        'hover:text-link hover:font-semibold hover:underline',
+        'font-medium hover:text-link hover:underline',
         { 'text-accent font-semibold underline': isCurrent },
     ]}
     aria-current={isCurrent ? 'page' : undefined}
