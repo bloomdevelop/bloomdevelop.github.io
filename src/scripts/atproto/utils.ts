@@ -34,14 +34,27 @@ export function extractRkeyFromPlainAtURI(uri: string) {
     return uri.split('/').at(-1) ?? '';
 }
 
-export function formatDate(date: string) {
+export function formatNoteDate(date: string, timeZone: string = 'UTC') {
     const formatter = new Intl.DateTimeFormat('en-US', {
-        timeStyle: 'long',
-        dateStyle: 'short',
-        timeZone: 'UTC',
+        timeStyle: 'short',
+        dateStyle: 'medium',
+        timeZone,
     });
 
     return formatter.format(new Date(date));
+}
+
+/**
+ * Publication dates are authored as plain calendar dates, so they are formatted
+ * in UTC to keep the build machine's timezone from shifting the day.
+ */
+export function formatPostDate(date: Date) {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        dateStyle: 'long',
+        timeZone: 'UTC',
+    });
+
+    return formatter.format(date);
 }
 
 export interface RetryOptions {

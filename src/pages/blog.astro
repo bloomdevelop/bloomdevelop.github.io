@@ -3,19 +3,11 @@ import MainLayout from '@/layouts/main-layout.astro';
 import { getCollection } from 'astro:content';
 import DitheredImage from '@/components/astro/dithered-image.astro';
 import EmptyState from '@/components/astro/empty-state.astro';
+import { formatPostDate } from '@/scripts/atproto/utils';
 
 const publications = (
     await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft)
 ).toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-// Helper function
-function formatDate(date: string) {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'long',
-    });
-
-    return formatter.format(new Date(date));
-}
 ---
 
 <MainLayout
@@ -46,8 +38,8 @@ function formatDate(date: string) {
                     <h3 class="flex gap-4 items-center">{publication.data.title}</h3>
                     <div class="flex gap-2">
                         <small>
-                            <time datetime={publication.data.pubDate.toString()}>
-                                {formatDate(publication.data.pubDate.toString())}
+                            <time datetime={publication.data.pubDate.toISOString()}>
+                                {formatPostDate(publication.data.pubDate)}
                             </time>
                         </small>
                         {publication.data.draft && (

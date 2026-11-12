@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, useTemplateRef } from 'vue';
 import { loadNotes, type LogEntry } from '@/scripts/atproto/notes';
-import { extractRkeyFromPlainAtURI, formatDate } from '@/scripts/atproto/utils';
+import { extractRkeyFromPlainAtURI, formatNoteDate } from '@/scripts/atproto/utils';
 import LoginDialog from './dialogs/login-dialog.vue';
 import ComposeDialog from './dialogs/compose-dialog.vue';
 import { hasSessionHint, setupOAuth } from '@/scripts/atproto/api';
@@ -30,7 +30,13 @@ function blueskyUrl(uri: string): string {
 const entries = ref<LogEntry[]>(props.initialEntries ?? []);
 const error = ref(props.initialError ?? '');
 const loading = ref(!props.initialEntries?.length && !props.initialError);
+const isHydrated = ref(false);
 const loginDialog = useTemplateRef<InstanceType<typeof LoginDialog>>('loginDialog');
+
+// The server has no reliable local timezone; render UTC first and switch once
+// the browser knows where the visitor is.
+const noteDate = (createdAt: string) =>
+    formatNoteDate(createdAt, isHydrated.value ? undefined : 'UTC');
 
 async function loadEntries() {
     error.value = '';
@@ -59,6 +65,8 @@ async function openLoginDialog() {
 }
 
 onMounted(async () => {
+    isHydrated.value = true;
+
     // Readers never triggered a login do not download the auth bundle.
     if (hasSessionHint()) void setupOAuth();
     await loadEntries();
@@ -118,7 +126,7 @@ onMounted(async () => {
             <div class="flex flex-col justify-between gap-2 md:flex-row md:items-center">
                 <small class="flex justify-between gap-2 md:justify-start">
                     <time :datetime="entry.value.createdAt">{{
-                        formatDate(entry.value.createdAt)
+                        noteDate(entry.value.createdAt)
                     }}</time>
                     <a class="hover:text-link hover:underline" :href="permalink(entry)"
                         >({{ rkeyOf(entry) }})</a
