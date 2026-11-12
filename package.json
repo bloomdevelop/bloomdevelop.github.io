@@ -10,6 +10,7 @@
         "lint": "vp lint",
         "typecheck": "effect-tsgo tsc --noEmit",
         "check": "vp check",
+        "test": "vp test",
         "prepare": "vp config && effect-tsgo patch --typescript --oxlint"
     },
     "dependencies": {
@@ -31,7 +32,8 @@
     "devDependencies": {
         "@effect/tsgo": "0.63.0",
         "typescript": "7.0.2",
-        "vite-plus": "catalog:"
+        "vite-plus": "catalog:",
+        "vitest": "5.0.5"
     },
     "devEngines": {
         "packageManager": {
