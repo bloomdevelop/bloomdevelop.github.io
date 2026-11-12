@@ -16,7 +16,6 @@ const limitPopover = useTemplateRef<HTMLElement>('limitPopover');
 const content = ref('');
 const loading = ref(false);
 const isCrosspostEnabled = ref(false);
-const hasInteracted = ref(false);
 const error = ref('');
 
 //  Emit events that only fires once it was created successfully
@@ -75,7 +74,6 @@ async function createNote() {
 
         content.value = '';
         isCrosspostEnabled.value = false;
-        hasInteracted.value = false;
         dialog.value?.close();
     } catch (e) {
         console.error('[COMPOSE]', 'Failed to create note:', e);
@@ -100,19 +98,12 @@ async function createNote() {
                         class="bg-surface-1 px-3 py-2 w-full resize-none"
                         placeholder="Write anything..."
                     />
-                    <small></small>
                 </div>
                 <p v-if="error" role="alert" class="mt-2 text-error">{{ error }}</p>
             </div>
             <footer class="flex p-2">
                 <label class="flex items-center gap-3 select-none">
-                    <input
-                        class="peer sr-only"
-                        type="checkbox"
-                        v-model="isCrosspostEnabled"
-                        :class="{ 'is-init': hasInteracted }"
-                        @change="hasInteracted = true"
-                    />
+                    <input class="peer sr-only" type="checkbox" v-model="isCrosspostEnabled" />
                     <span
                         aria-hidden="true"
                         class="grid size-7 shrink-0 place-content-center rounded-none border-2 border-line bg-surface-1 before:size-5 peer-checked:before:bg-accent peer-focus-visible:outline-2 peer-focus-visible:outline-offset-3 peer-focus-visible:outline-accent"
