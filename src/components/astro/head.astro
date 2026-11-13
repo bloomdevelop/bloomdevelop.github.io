@@ -1,6 +1,8 @@
 ---
 import { DEFAULT_PREVIEW_PDS } from '@/scripts/consts';
 import { Font } from 'astro:assets';
+import { OG_HEIGHT, OG_IMAGE_TYPE, OG_WIDTH, ogImagePath } from '@/scripts/og/config';
+import { registerOg } from '@/scripts/og/registry';
 
 interface Props {
     title?: string;
@@ -27,7 +29,25 @@ const fullTitle = title ? `${title} — ${siteName}` : siteName;
 const canonical = Astro.site
     ? new URL(Astro.url.pathname, Astro.site).toString()
     : Astro.url.pathname;
-const imageUrl = image ? new URL(image, Astro.site ?? Astro.url).toString() : undefined;
+
+// Cards are generated at build time by the og-images integration. The URL is
+// deterministic, so the meta tags can point at the future file. In dev the
+// cards are served on demand by the integration's middleware, so the URL uses
+// the dev origin rather than the production site; otherwise a preview tool
+// would request the card from the deployed site.
+const siteUrl = import.meta.env.DEV ? Astro.url.origin : (Astro.site ?? Astro.url);
+const imageUrl = new URL(ogImagePath(Astro.url.pathname), siteUrl).toString();
+const sourceImageUrl = image ? new URL(image, siteUrl).toString() : undefined;
+
+registerOg({
+    pathname: Astro.url.pathname,
+    title: title ?? siteName,
+    description,
+    image,
+    date: publishedTime,
+    kind: type,
+    siteName,
+});
 ---
 
 <head>
@@ -76,7 +96,12 @@ const imageUrl = image ? new URL(image, Astro.site ?? Astro.url).toString() : un
     <meta property="og:description" content={description} />
     <meta property="og:type" content={type} />
     <meta property="og:url" content={canonical} />
-    {imageUrl && <meta property="og:image" content={imageUrl} />}
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:type" content={OG_IMAGE_TYPE} />
+    <meta property="og:image:width" content={String(OG_WIDTH)} />
+    <meta property="og:image:height" content={String(OG_HEIGHT)} />
+    <meta property="og:image:alt" content={fullTitle} />
+    {sourceImageUrl && <meta name="og-source" content={sourceImageUrl} />}
     {type === 'article' && publishedTime && (
         <meta property="article:published_time" content={publishedTime} />
     )}
@@ -84,10 +109,11 @@ const imageUrl = image ? new URL(image, Astro.site ?? Astro.url).toString() : un
         <meta property="article:modified_time" content={modifiedTime} />
     )}
 
-    <meta name="twitter:card" content={imageUrl ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    {imageUrl && <meta name="twitter:image" content={imageUrl} />}
+    <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={fullTitle} />
 
     <link rel="alternate" type="application/rss+xml" title={siteName} href="/rss.xml" />
 

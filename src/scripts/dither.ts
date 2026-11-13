@@ -14,9 +14,16 @@
  *   <dither-image data-mode="palette" data-pixel-size="3" data-levels="4" data-palette='["#000","#fff"]'>
  *       <img src="..." />
  *   </dither-image>
+ *
+ * Add `data-animate="true"` for a slow loop that walks the Bayer matrix and
+ * breathes the dither strength. The same loop is used by the build-time video
+ * cards in src/integrations/og/, so the cards match the site.
  */
 
-const MAX_PALETTE = 32;
+import { MAX_PALETTE, luma, toOklab, type Rgb } from './dither-core';
+
+/** Seconds per animation loop. Keep in sync with the OG video renderer. */
+const ANIMATION_LOOP = 2;
 
 const VERTEX_SHADER = /* glsl */ `
 attribute vec2 aPosition;
@@ -38,6 +45,7 @@ uniform float uContrast;
 uniform float uSpread;      // dither amplitude for the nearest-colour mode
 uniform float uMode;        // 0 = per-channel colour, 1 = luminance ramp, 2 = nearest colour
 uniform float uPaletteSize;
+uniform float uPhase;       // integer Bayer offset (cells) for animation
 uniform vec3 uPalette[${MAX_PALETTE}];
 uniform vec3 uPaletteLab[${MAX_PALETTE}];
 
@@ -114,7 +122,7 @@ void main() {
     ) * 0.25;
 
     float steps = uLevels - 1.0;
-    float noise = bayer8(cell) - 0.5;
+    float noise = bayer8(cell + vec2(uPhase)) - 0.5;
     float threshold = noise * uStrength / steps;
 
     if (uMode > 1.5) {
@@ -133,8 +141,6 @@ void main() {
     gl_FragColor = vec4(clamp(color, 0.0, 1.0), 1.0);
 }
 `;
-
-type Rgb = [number, number, number];
 
 const DEFAULT_PALETTE = ['#000000', '#ffffff'];
 
@@ -171,22 +177,6 @@ function createProgram(gl: WebGLRenderingContext) {
     return program;
 }
 
-const luma = ([r, g, b]: Rgb) => 0.2126 * r + 0.7152 * g + 0.0722 * b;
-
-const srgbToLinear = (c: number) => (c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4);
-
-const toOklab = ([r, g, b]: Rgb): Rgb => {
-    const [lr, lg, lb] = [srgbToLinear(r), srgbToLinear(g), srgbToLinear(b)] as const;
-    const l = Math.cbrt(0.4122214708 * lr + 0.5363325363 * lg + 0.0514459929 * lb);
-    const m = Math.cbrt(0.2119034982 * lr + 0.6806995451 * lg + 0.1073969566 * lb);
-    const s = Math.cbrt(0.0883024619 * lr + 0.2817188376 * lg + 0.6299787005 * lb);
-    return [
-        0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
-        1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
-        0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
-    ];
-};
-
 class DitherImage extends HTMLElement {
     #canvas = document.createElement('canvas');
     #gl: WebGLRenderingContext | null = null;
@@ -195,13 +185,18 @@ class DitherImage extends HTMLElement {
     #palette: Rgb[] = [];
     #paletteLab: Rgb[] = [];
     #colorScheme = window.matchMedia('(prefers-color-scheme: dark)');
+    #reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     #resizeObserver: ResizeObserver | null = null;
     #themeObserver: MutationObserver | null = null;
+    #visibilityObserver: IntersectionObserver | null = null;
     #frame = 0;
     #connected = false;
+    #animate = false;
+    #visible = true;
 
     connectedCallback() {
         this.#connected = true;
+        this.#animate = this.dataset.animate === 'true';
 
         const img = this.querySelector('img');
         if (!img) return;
@@ -224,6 +219,17 @@ class DitherImage extends HTMLElement {
             attributeFilter: ['data-madoromi', 'class', 'style'],
         });
         this.#colorScheme.addEventListener('change', this.#onThemeChange);
+        this.#reducedMotion.addEventListener('change', this.#onMotionChange);
+        document.addEventListener('visibilitychange', this.#onMotionChange);
+
+        if (this.#animate) {
+            // Stop burning frames for art that is scrolled out of view.
+            this.#visibilityObserver = new IntersectionObserver(([entry]) => {
+                this.#visible = entry.isIntersecting;
+                this.#schedule();
+            });
+            this.#visibilityObserver.observe(this);
+        }
 
         void this.#load(img);
     }
@@ -233,7 +239,10 @@ class DitherImage extends HTMLElement {
         cancelAnimationFrame(this.#frame);
         this.#resizeObserver?.disconnect();
         this.#themeObserver?.disconnect();
+        this.#visibilityObserver?.disconnect();
         this.#colorScheme.removeEventListener('change', this.#onThemeChange);
+        this.#reducedMotion.removeEventListener('change', this.#onMotionChange);
+        document.removeEventListener('visibilitychange', this.#onMotionChange);
         this.#canvas.removeEventListener('webglcontextlost', this.#onContextLost);
         this.#canvas.removeEventListener('webglcontextrestored', this.#onContextRestored);
         this.#canvas.remove();
@@ -357,10 +366,29 @@ class DitherImage extends HTMLElement {
     #schedule() {
         if (!this.#gl) return;
         cancelAnimationFrame(this.#frame);
-        this.#frame = requestAnimationFrame(() => this.#draw());
+
+        const animating =
+            this.#animate && this.#visible && !document.hidden && !this.#reducedMotion.matches;
+
+        this.#frame = requestAnimationFrame(animating ? this.#tick : this.#paintOnce);
     }
 
-    #draw() {
+    #paintOnce = () => {
+        this.#draw(0, 1);
+    };
+
+    #tick = (time: number) => {
+        const loop = ANIMATION_LOOP * 1000;
+        const progress = (time % loop) / loop;
+        const phase = Math.floor(progress * 8) % 8;
+        // Strength breathes from 0.72 to 1 and back over one loop.
+        const strength = 0.72 + 0.28 * (0.5 - 0.5 * Math.cos(progress * Math.PI * 2));
+
+        this.#draw(phase, strength);
+        this.#frame = requestAnimationFrame(this.#tick);
+    };
+
+    #draw(phase = 0, strengthScale = 1) {
         const gl = this.#gl;
         const img = this.#img;
         if (!gl || !img || gl.isContextLost()) return;
@@ -382,11 +410,12 @@ class DitherImage extends HTMLElement {
         gl.uniform2f(this.#uniform('uImageSize'), img.naturalWidth, img.naturalHeight);
         gl.uniform1f(this.#uniform('uPixel'), Math.max(1, this.#num('pixelSize', 3) * dpr));
         gl.uniform1f(this.#uniform('uLevels'), levels);
-        gl.uniform1f(this.#uniform('uStrength'), this.#num('strength', 1));
+        gl.uniform1f(this.#uniform('uStrength'), this.#num('strength', 1) * strengthScale);
         gl.uniform1f(this.#uniform('uContrast'), this.#num('contrast', 1));
         gl.uniform1f(this.#uniform('uSpread'), this.#num('spread', 0.2));
         gl.uniform1f(this.#uniform('uMode'), mode);
         gl.uniform1f(this.#uniform('uPaletteSize'), paletteSize);
+        gl.uniform1f(this.#uniform('uPhase'), phase);
         gl.uniform3fv(this.#uniform('uPalette'), this.#palette.flat());
         gl.uniform3fv(this.#uniform('uPaletteLab'), this.#paletteLab.flat());
 
@@ -401,8 +430,13 @@ class DitherImage extends HTMLElement {
         this.#schedule();
     };
 
+    #onMotionChange = () => {
+        this.#schedule();
+    };
+
     #onContextLost = (event: Event) => {
         event.preventDefault();
+        cancelAnimationFrame(this.#frame);
         this.#canvas.style.opacity = '0';
     };
 
