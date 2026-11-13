@@ -33,6 +33,20 @@ export default defineConfig({
         },
         overrides: [
             {
+                // Vue compiler macros are injected by the SFC compiler, so they
+                // are not imported or declared in `<script setup>` blocks.
+                files: ['**/*.vue'],
+                globals: {
+                    defineEmits: 'readonly',
+                    defineExpose: 'readonly',
+                    defineModel: 'readonly',
+                    defineOptions: 'readonly',
+                    defineProps: 'readonly',
+                    defineSlots: 'readonly',
+                    withDefaults: 'readonly',
+                },
+            },
+            {
                 files: ['**/*.astro'],
                 globals: {
                     Astro: 'readonly',

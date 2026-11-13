@@ -1,0 +1,28 @@
+---
+import AsciiCat from '@/components/astro/ascii-cat.astro';
+
+interface Props {
+    title?: string;
+    titleClass?: string;
+    description?: string;
+    catPrefix?: string;
+    class?: string;
+}
+
+const {
+    title = 'Coming Soon',
+    titleClass,
+    description = 'Come back later!',
+    catPrefix,
+    class: className,
+} = Astro.props;
+---
+
+<div class:list={['flex flex-col justify-center items-center min-w-full min-h-full', className]}>
+    <AsciiCat prefix={catPrefix} />
+    <h2 class:list={['text-3xl', titleClass]}>
+        <slot name="title">{title}</slot>
+    </h2>
+    <span>{description}</span>
+    <slot />
+</div>

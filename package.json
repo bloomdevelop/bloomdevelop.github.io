@@ -10,24 +10,30 @@
         "lint": "vp lint",
         "typecheck": "effect-tsgo tsc --noEmit",
         "check": "vp check",
+        "test": "vp test",
         "prepare": "vp config && effect-tsgo patch --typescript --oxlint"
     },
     "dependencies": {
+        "@astrojs/rss": "^4.0.19",
+        "@astrojs/sitemap": "^3.7.4",
         "@astrojs/vue": "^7.1.2",
         "@atcute/tid": "^1.1.4",
         "@atproto/api": "^0.30.0",
         "@atproto/oauth-client-browser": "^0.5.11",
+        "@ipld/dag-cbor": "^9.2.7",
         "@tailwindcss/typography": "^0.5.20",
         "@tailwindcss/vite": "^4.3.3",
         "astro": "^7.4.4",
         "effect": "^4.1.1",
+        "multiformats": "^13.4.2",
         "tailwindcss": "^4.3.3",
         "vue": "^3.5.44"
     },
     "devDependencies": {
         "@effect/tsgo": "0.63.0",
         "typescript": "7.0.2",
-        "vite-plus": "catalog:"
+        "vite-plus": "catalog:",
+        "vitest": "5.0.5"
     },
     "devEngines": {
         "packageManager": {

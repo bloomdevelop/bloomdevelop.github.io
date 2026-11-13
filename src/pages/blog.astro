@@ -2,35 +2,21 @@
 import MainLayout from '@/layouts/main-layout.astro';
 import { getCollection } from 'astro:content';
 import DitheredImage from '@/components/astro/dithered-image.astro';
+import EmptyState from '@/components/astro/empty-state.astro';
+import { formatPostDate } from '@/scripts/atproto/utils';
 
 const publications = (
     await getCollection('blog', ({ data }) => import.meta.env.DEV || !data.draft)
 ).toSorted((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
-
-// Helper function
-function formatDate(date: string) {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        dateStyle: 'long',
-    });
-
-    return formatter.format(new Date(date));
-}
 ---
 
-<MainLayout>
+<MainLayout
+    title="Publications"
+    description="Longer writings by Spring, from Linux reviews to notes on software."
+>
     <h1 class="text-2xl mb-3">Publications</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-        {!publications.length && (
-            <div class="flex flex-col justify-center items-center min-w-full min-h-full">
-                <pre class="font-maple-mono whitespace-pre leading-none text-ink-subtle font-bold">
-           /\___/\
-         &gt;(-  _  -)&lt;
-        \_( ______)
-                </pre>
-                <h2 class="text-3xl">Coming Soon</h2>
-                <span>Come back later!</span>
-            </div>
-        )}
+        {!publications.length && <EmptyState />}
         {publications.map((publication) => (
             <a
                 href={`/blog/${publication.id}`}
@@ -41,6 +27,8 @@ function formatDate(date: string) {
                         <DitheredImage
                             src={publication.data.headerImage}
                             width={640}
+                            widths={[320, 480, 640]}
+                            sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                             pixelSize={3}
                             class="h-full w-full"
                         />
@@ -48,9 +36,16 @@ function formatDate(date: string) {
                 )}
                 <div class="p-2">
                     <h3 class="flex gap-4 items-center">{publication.data.title}</h3>
-                    <div role="toolbar" class="flex gap-2">
+                    {publication.data.description && (
+                        <p class="mt-1 line-clamp-2 text-sm text-ink-muted">
+                            {publication.data.description}
+                        </p>
+                    )}
+                    <div class="flex gap-2">
                         <small>
-                            <date>{formatDate(publication.data.pubDate.toString())}</date>
+                            <time datetime={publication.data.pubDate.toISOString()}>
+                                {formatPostDate(publication.data.pubDate)}
+                            </time>
                         </small>
                         {publication.data.draft && (
                             <small class="bg-error text-paper px-1 rounded-sm font-bold">

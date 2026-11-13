@@ -1,0 +1,21 @@
+---
+interface Props {
+    prefix?: string;
+    class?: string;
+}
+
+const { prefix, class: className } = Astro.props;
+const art = [
+    ...(prefix ? [`      ${prefix}`] : []),
+    '   /\\___/\\',
+    ' >(-  _  -)<',
+    '\\_( ______)',
+].join('\n');
+---
+
+<pre
+    class:list={[
+        'font-maple-mono whitespace-pre leading-none text-ink-subtle font-bold',
+        className,
+    ]}
+>{art}</pre>

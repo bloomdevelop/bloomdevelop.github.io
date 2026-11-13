@@ -3,9 +3,13 @@ import DitheredImage from '@/components/astro/dithered-image.astro';
 import { getCollection, render } from 'astro:content';
 import MainLayout from '@/layouts/main-layout.astro';
 import Prose from '@/components/astro/prose.astro';
+import { formatPostDate } from '@/scripts/atproto/utils';
 
 export async function getStaticPaths() {
-    const publications = await getCollection('blog');
+    const publications = await getCollection(
+        'blog',
+        ({ data }) => import.meta.env.DEV || !data.draft,
+    );
 
     return Promise.all(
         publications.map(async (publication) => ({
@@ -20,16 +24,30 @@ export async function getStaticPaths() {
 
 const { publication, rendered } = Astro.props;
 const { Content } = rendered;
+const description =
+    publication.data.description ??
+    `${publication.data.title} — a publication on Spring's Website.`;
 ---
 
-<MainLayout>
+<MainLayout
+    title={publication.data.title}
+    description={description}
+    image={publication.data.headerImage?.src}
+    type="article"
+    publishedTime={publication.data.pubDate.toISOString()}
+    modifiedTime={publication.data.updatedDate?.toISOString()}
+>
     <article>
         {publication.data.headerImage && (
-            <div class="media-dither relative left-1/2 right-1/2 mb-4 aspect-video w-screen h-full max-h-1/2 -translate-x-1/2">
+            <div class="media-dither relative left-1/2 right-1/2 mb-4 aspect-video w-screen h-full max-h-[60vh] -translate-x-1/2 overflow-x-clip">
                 <DitheredImage
                     src={publication.data.headerImage}
                     alt={publication.data.headerImageAlt ?? ''}
                     width={1920}
+                    widths={[480, 768, 1280, 1920]}
+                    sizes="100vw"
+                    loading="eager"
+                    fetchpriority="high"
                     pixelSize={4}
                     class="h-full w-full"
                 />
@@ -53,11 +71,19 @@ const { Content } = rendered;
         )}
         <div class="border-b-2 border-nijimi-1 border-dashed pb-2 mb-2">
             <h1 class="mb-2 text-2xl">{publication.data.title}</h1>
-            <time datetime={publication.data.pubDate.toISOString()}>
-                {publication.data.pubDate.toLocaleDateString('en-US', {
-                    dateStyle: 'long',
-                })}
-            </time>
+            <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm">
+                <time datetime={publication.data.pubDate.toISOString()}>
+                    {formatPostDate(publication.data.pubDate)}
+                </time>
+                {publication.data.updatedDate && (
+                    <span class="text-ink-subtle">
+                        Updated
+                        <time datetime={publication.data.updatedDate.toISOString()}>
+                            {formatPostDate(publication.data.updatedDate)}
+                        </time>
+                    </span>
+                )}
+            </div>
             {publication.data.draft && (
                 <div class="flex gap-2 items-center mt-2 bg-error text-paper p-2">
                     <span class="font-md-symbols">warning</span>

@@ -1,10 +1,8 @@
 import type { Agent } from '@atproto/api';
 import { Effect } from 'effect';
-import { ref, type Ref } from 'vue';
+import { isDidAllowed, isInitialized, sharedAgent } from './session';
 
-export const isInitialized = ref(false);
-export const isDidAllowed = ref(false);
-export const sharedAgent: Ref<Agent | null> = ref(null);
+export { isDidAllowed, isInitialized, sharedAgent } from './session';
 
 /**
  * The Vue refs above are the UI's observable view of the ATProto session.

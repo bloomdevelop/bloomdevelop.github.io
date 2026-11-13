@@ -4,10 +4,20 @@
 // Code:
 
 import { now } from '@atcute/tid';
-import type { Agent, AppBskyEmbedExternal, ComAtprotoRepoCreateRecord } from '@atproto/api';
+import type {
+    Agent,
+    AppBskyEmbedExternal,
+    AppBskyFeedPost,
+    ComAtprotoRepoApplyWrites,
+    ComAtprotoRepoCreateRecord,
+} from '@atproto/api';
 import type { BrowserOAuthClient } from '@atproto/oauth-client-browser';
+import * as dagCbor from '@ipld/dag-cbor';
 import { Data, DateTime, Effect, Schema } from 'effect';
+import { CID } from 'multiformats/cid';
+import { sha256 } from 'multiformats/hashes/sha2';
 import { resetAgentState, setDidAllowed, setInitialized, setSharedAgent } from './agent';
+import { setSessionHint, clearOAuthCallbackParams } from './session';
 import { ALLOWED_DIDS, NEW_LOG_LEXICON, OLD_LOG_LEXICON } from '../consts';
 import { constructApiUrl, toGraphemeSegments } from './utils';
 
@@ -126,9 +136,9 @@ const resolveHandle = (identifier: string): Effect.Effect<string, OAuthError> =>
  */
 const beforeLogin = (identifier: string): Effect.Effect<boolean, OAuthError> =>
     Effect.gen(function* () {
-        yield* Effect.logDebug('[OAUTH]', 'performing beforeLogin check for handle', identifier);
+        yield* Effect.logDebug('[OAUTH]', 'performing beforeLogin check for', identifier);
 
-        const did = yield* resolveHandle(identifier);
+        const did = identifier.startsWith('did:') ? identifier : yield* resolveHandle(identifier);
         const allowed = ALLOWED_DIDS.includes(did);
 
         yield* setDidAllowed(allowed);
@@ -177,7 +187,10 @@ export const setupOAuthEffect: Effect.Effect<boolean> = Effect.gen(function* () 
     });
 
     // No stored session: the client is still ready to start a sign-in.
-    if (!result) return true;
+    if (!result) {
+        setSessionHint(false);
+        return true;
+    }
 
     const { session, state } = result;
     if (state != null) {
@@ -211,10 +224,14 @@ export const setupOAuthEffect: Effect.Effect<boolean> = Effect.gen(function* () 
     agent = nextAgent;
     yield* setSharedAgent(nextAgent);
     yield* setInitialized(true);
+    setSessionHint(true);
     yield* Effect.logInfo('[OAUTH]', 'Agent initialized');
 
     return true;
 }).pipe(
+    // The authorization response is single-use; do not leave it in the URL for
+    // a reload to replay. No-op unless this was an OAuth callback page.
+    Effect.ensuring(Effect.sync(() => clearOAuthCallbackParams())),
     Effect.catch((error) =>
         Effect.gen(function* () {
             yield* Effect.logError('[OAUTH]', 'An error occurred during OAuth setup:', error);
@@ -255,7 +272,7 @@ export function setupOAuth(): Promise<boolean> {
  * @param identifier
  * @example await startLoginFlow("did:plc:z72i7hdynmk6r22z27h6tvur")
  */
-export const startLoginFlowEffect = (identifier: string): Effect.Effect<void> =>
+export const startLoginFlowEffect = (identifier: string): Effect.Effect<void, OAuthError> =>
     Effect.gen(function* () {
         // The client is normally set up on page load; initialize it lazily here
         // too in case the user clicks before that finished (or it never ran).
@@ -268,30 +285,45 @@ export const startLoginFlowEffect = (identifier: string): Effect.Effect<void> =>
         }
 
         const client = oauthClient;
-        if (client) {
-            if (yield* beforeLogin(identifier)) {
-                yield* Effect.tryPromise({
-                    try: (signal) =>
-                        client.signIn(identifier, {
-                            state: crypto.randomUUID(),
-                            signal,
-                        }),
-                    catch: (cause) =>
-                        new OAuthError({
-                            message: 'Failed to start the OAuth sign-in flow',
-                            cause,
-                        }),
-                });
-            }
-        } else {
-            yield* Effect.logError(
-                '[OAUTH]',
-                'OAuth client could not be initialized (failed to load @atproto/oauth-client-browser). Try reloading the page.',
-            );
+        if (!client) {
+            return yield* new OAuthError({
+                message:
+                    'Could not initialize the OAuth client (failed to load @atproto/oauth-client-browser). Try reloading the page.',
+            });
         }
+
+        // Setup may have restored an existing session just now (for example when
+        // the caller could not know about it up front); no sign-in is needed.
+        if (agent) return undefined;
+
+        if (!(yield* beforeLogin(identifier))) {
+            return yield* new OAuthError({
+                message: `"${identifier}" is not authorized to log in`,
+            });
+        }
+
+        // Remember that a sign-in is in flight. The OAuth client only creates a
+        // session after the redirect, so on a first login the callback page
+        // would otherwise have no hint that it should run `init()`.
+        setSessionHint(true);
+
+        yield* Effect.tryPromise({
+            try: (signal) =>
+                client.signIn(identifier, {
+                    state: crypto.randomUUID(),
+                    signal,
+                }),
+            catch: (cause) =>
+                new OAuthError({
+                    message: 'Failed to start the OAuth sign-in flow',
+                    cause,
+                }),
+        });
+
+        return undefined;
     }).pipe(
-        Effect.catchCause((cause) =>
-            Effect.logError('[OAUTH]', 'Failed to start OAuth client sign-in flow:', cause),
+        Effect.tapError((error) =>
+            Effect.logError('[OAUTH]', 'Failed to start OAuth client sign-in flow:', error),
         ),
     );
 
@@ -314,6 +346,7 @@ export const revokeSessionEffect: Effect.Effect<void, OAuthError> = Effect.gen(f
         try: () => client.revoke(did),
         catch: (cause) => new OAuthError({ message: 'Failed to revoke the OAuth session', cause }),
     });
+    setSessionHint(false);
     yield* Effect.sync(() => window.location.reload());
 });
 
@@ -326,17 +359,21 @@ export function revokeSession(): Promise<void> {
 
 /**
  * Generate an embed for the given content and TID.
- * @param length - The length of the content as grapheme segments, to avoid recalculating
- * @param content
+ * @param segments - The content as grapheme segments, to avoid recalculating
  * @param generatedTID - A pre-defined TID to use for the embed's URI. It should point to that specific log entry.
  */
 function generateEmbedForContent(
     segments: string[],
     generatedTID: string,
 ): AppBskyEmbedExternal.External {
+    // Do not reuse location.href: composing from a permalink would append a
+    // second ?log= query instead of replacing it.
+    const url = new URL(window.location.pathname, window.location.origin);
+    url.searchParams.set('log', generatedTID);
+
     return {
         $type: 'app.bsky.embed.external#external',
-        uri: `${window.location.href}?log=${generatedTID}`,
+        uri: url.toString(),
         title: "View in Spring's Website",
         description: segments.length > 63 ? `${segments.slice(0, 60).join('')}…` : '', // Skip description because otherwise it looks weird and repetitive
     };
@@ -367,54 +404,90 @@ const createRecord = (
         return response;
     });
 
-/**
- * Create a bluesky post for a log entry.
- * @param tid - TID of the entry
- * @param content - The entry's content
- *
- * YOU SHOULD BE USING {@link createLogEffect}, NOT createCrosspostedLog!!!
- */
-const createCrosspostedLog = (
-    tid: string,
-    content: string,
-    createdAt: string,
-): Effect.Effect<ComAtprotoRepoCreateRecord.Response, AtprotoError | NoSessionError> =>
+const applyWrites = (
+    input: ComAtprotoRepoApplyWrites.InputSchema,
+): Effect.Effect<ComAtprotoRepoApplyWrites.Response, AtprotoError | NoSessionError> =>
     Effect.gen(function* () {
         const currentAgent = yield* requireAgent();
-        const segments = toGraphemeSegments(content);
-        const embedRecord = generateEmbedForContent(segments, tid);
 
-        let text: string;
-        if (segments.length > 300) {
-            // Truncate by grapheme so we never split a surrogate pair (emoji /
-            // astral characters) and produce replacement-character "garbage".
-            // Reserve 3 graphemes for the ellipsis so the post stays within
-            // Bluesky's 300-grapheme limit.
-            text = `${segments.slice(0, 300 - 3).join('')}...`;
-        } else {
-            text = content;
+        const response = yield* Effect.tryPromise({
+            try: () => currentAgent.com.atproto.repo.applyWrites(input),
+            catch: (cause) =>
+                new AtprotoError({
+                    message: `Failed to apply ATProto writes${causeMessage(cause)}`,
+                    cause,
+                }),
+        });
+
+        if (!response.success) {
+            return yield* new AtprotoError({
+                message: 'ATProto writes were not successful',
+                cause: response,
+            });
         }
 
-        return yield* createRecord({
-            repo: currentAgent.assertDid,
-            collection: 'app.bsky.feed.post',
-            rkey: tid,
-            validate: true,
-            record: {
-                $type: 'app.bsky.feed.post',
-                text,
-                embed: {
-                    $type: 'app.bsky.embed.external',
-                    external: embedRecord,
-                },
-                createdAt,
-            },
-        });
+        return response;
     });
 
 /**
- * Create both an entry and a bluesky post at (almost) the same time
- * @todo Use applyWrites to actually create both in a single transaction
+ * Compute the CID a PDS assigns to a record: a DAG-CBOR encoding hashed with
+ * SHA-256. This lets a record reference another record that is created in the
+ * same `applyWrites` transaction.
+ */
+const cidForRecord = (record: Record<string, unknown>): Effect.Effect<string, AtprotoError> =>
+    Effect.tryPromise({
+        try: async () => {
+            const bytes = dagCbor.encode(record);
+            const digest = await sha256.digest(bytes);
+            return CID.createV1(dagCbor.code, digest).toString();
+        },
+        catch: (cause) =>
+            new AtprotoError({
+                message: `Failed to compute the ATProto record CID${causeMessage(cause)}`,
+                cause,
+            }),
+    });
+
+/**
+ * Build the bluesky post record for a log entry.
+ * @param tid - TID of the entry
+ * @param content - The entry's content
+ *
+ * YOU SHOULD BE USING {@link createLogEffect}, NOT buildCrosspostedPost!!!
+ */
+const buildCrosspostedPost = (
+    tid: string,
+    content: string,
+    createdAt: string,
+): AppBskyFeedPost.Record => {
+    const segments = toGraphemeSegments(content);
+    const embedRecord = generateEmbedForContent(segments, tid);
+
+    let text: string;
+    if (segments.length > 300) {
+        // Truncate by grapheme so we never split a surrogate pair (emoji /
+        // astral characters) and produce replacement-character "garbage".
+        // Reserve 3 graphemes for the ellipsis so the post stays within
+        // Bluesky's 300-grapheme limit.
+        text = `${segments.slice(0, 300 - 3).join('')}...`;
+    } else {
+        text = content;
+    }
+
+    return {
+        $type: 'app.bsky.feed.post',
+        text,
+        embed: {
+            $type: 'app.bsky.embed.external',
+            external: embedRecord,
+        },
+        createdAt,
+    };
+};
+
+/**
+ * Create both an entry and a bluesky post in a single transaction, so a
+ * failure can never leave a post pointing at a log entry that doesn't exist.
  *
  * Please use {@link createLogEffect} instead
  */
@@ -424,22 +497,34 @@ const crosspost = (
     createdAt: string,
 ): Effect.Effect<void, AtprotoError | NoSessionError> =>
     Effect.gen(function* () {
-        const crosspostLog = yield* createCrosspostedLog(tid, content, createdAt);
         const currentAgent = yield* requireAgent();
+        const post = buildCrosspostedPost(tid, content, createdAt);
+        const postCid = yield* cidForRecord(post);
 
-        yield* createRecord({
+        yield* applyWrites({
             repo: currentAgent.assertDid,
-            collection: NEW_LOG_LEXICON,
-            rkey: tid,
-            record: {
-                $type: NEW_LOG_LEXICON,
-                content: content,
-                createdAt,
-                blueskyPost: {
-                    uri: crosspostLog.data.uri,
-                    cid: crosspostLog.data.cid,
+            writes: [
+                {
+                    $type: 'com.atproto.repo.applyWrites#create',
+                    collection: 'app.bsky.feed.post',
+                    rkey: tid,
+                    value: post,
                 },
-            },
+                {
+                    $type: 'com.atproto.repo.applyWrites#create',
+                    collection: NEW_LOG_LEXICON,
+                    rkey: tid,
+                    value: {
+                        $type: NEW_LOG_LEXICON,
+                        content,
+                        createdAt,
+                        blueskyPost: {
+                            uri: `at://${currentAgent.assertDid}/app.bsky.feed.post/${tid}`,
+                            cid: postCid,
+                        },
+                    },
+                },
+            ],
         });
     });
 
@@ -458,12 +543,17 @@ export const createLogEffect = (
     AtprotoError | NoSessionError
 > =>
     Effect.gen(function* () {
+        const savedContent = content.trim();
+        if (!savedContent) {
+            return yield* new AtprotoError({ message: 'A note cannot be empty.' });
+        }
+
         const tid = now();
         const nowUtc = yield* DateTime.now;
         const createdAt = DateTime.formatIso(nowUtc);
 
         if (shouldCrosspost) {
-            yield* crosspost(content, tid, createdAt);
+            yield* crosspost(savedContent, tid, createdAt);
         } else {
             const currentAgent = yield* requireAgent();
 
@@ -473,7 +563,7 @@ export const createLogEffect = (
                 rkey: tid,
                 record: {
                     $type: NEW_LOG_LEXICON,
-                    content: content,
+                    content: savedContent,
                     createdAt,
                 },
             });
@@ -481,7 +571,7 @@ export const createLogEffect = (
 
         return {
             rkey: tid,
-            content,
+            content: savedContent,
             createdAt,
         };
     });

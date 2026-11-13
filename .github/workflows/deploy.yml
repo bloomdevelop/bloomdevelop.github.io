@@ -37,6 +37,8 @@ jobs:
                       astro-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
                       astro-${{ runner.os }}-
             - run: pnpm install --frozen-lockfile
+            - run: pnpm check
+            - run: pnpm test
             - run: pnpm build
             - uses: actions/upload-pages-artifact@v3
               with:

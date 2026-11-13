@@ -1,8 +1,27 @@
 ---
 import MainLayout from '@/layouts/main-layout.astro';
 import Notes from '@/components/vue/notes.vue';
+import { loadNotes, type LogEntry } from '@/scripts/atproto/notes';
+
+// Pre-render the public notes so the page is readable and indexable without JS.
+let initialEntries: LogEntry[] = [];
+let initialCursor: string | undefined;
+let initialError = '';
+
+try {
+    const result = await loadNotes();
+    initialEntries = result.entries;
+    initialCursor = result.cursor;
+} catch (e) {
+    initialError = e instanceof Error ? e.message : String(e);
+}
 ---
 
-<MainLayout>
-    <Notes client:only="vue" />
+<MainLayout description="Notes from Spring, published through the AT Protocol.">
+    <Notes
+        client:idle
+        initialEntries={initialEntries}
+        initialCursor={initialCursor}
+        initialError={initialError}
+    />
 </MainLayout>

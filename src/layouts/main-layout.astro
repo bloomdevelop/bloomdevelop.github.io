@@ -2,20 +2,55 @@
 import Head from '@/components/astro/head.astro';
 import '@/styles/global.css';
 import Navigation from '@/components/astro/navigation.astro';
+
+interface Props {
+    title?: string;
+    description?: string;
+    image?: string;
+    type?: 'website' | 'article';
+    noindex?: boolean;
+    publishedTime?: string;
+    modifiedTime?: string;
+}
+
+const { title, description, image, type, noindex, publishedTime, modifiedTime } = Astro.props;
 ---
 
 <html lang="en">
-    <Head />
+    <Head
+        title={title}
+        description={description}
+        image={image}
+        type={type}
+        noindex={noindex}
+        publishedTime={publishedTime}
+        modifiedTime={modifiedTime}
+    />
     <body class="flex min-h-screen flex-col bg-paper text-ink antialiased font-sans">
+        <a
+            href="#main-content"
+            class="fixed top-0 left-3 z-50 -translate-y-full rounded-b-md bg-paper px-4 py-2 font-medium text-ink shadow-lg ring-1 ring-chitsu transition-transform focus:translate-y-0"
+        >
+            Skip to Main Content
+        </a>
         <Navigation />
-        <main class="mx-auto mb-5 flex w-full max-w-4xl flex-1 flex-col px-3">
+        <main
+            id="main-content"
+            tabindex="-1"
+            class="mx-auto mb-5 flex w-full max-w-4xl flex-1 flex-col px-3 outline-none"
+        >
             <slot />
         </main>
-        <footer class="flex flex-col py-5 px-3 gap-2 bg-chrome">
-            <h3 class="text-3xl font-bold">
-                Created by Bloom Perez (&copy; {new Date().getFullYear()})
-            </h3>
-            <p class="text-ink-subtle">Made with love from Dominican Republic ❤️</p>
+        <footer class="bg-chrome py-5">
+            <div class="mx-auto flex w-full max-w-4xl flex-col gap-2 px-3">
+                <h3 class="text-3xl font-bold">
+                    Created by Bloom Perez{' '}
+                    <small class="text-ink-muted text-lg">
+                        (&copy; {new Date().getFullYear()})
+                    </small>
+                </h3>
+                <p class="text-ink-muted">Made with love from Dominican Republic ❤️</p>
+            </div>
         </footer>
     </body>
 </html>

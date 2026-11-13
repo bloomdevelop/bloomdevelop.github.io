@@ -1,4 +1,14 @@
-import { Duration, Effect, Schedule } from 'effect';
+const segmenters = new Map<string, Intl.Segmenter>();
+
+function getSegmenter(lang: string, options: Intl.SegmenterOptions) {
+    const key = `${lang}:${JSON.stringify(options)}`;
+    let segmenter = segmenters.get(key);
+    if (!segmenter) {
+        segmenter = new Intl.Segmenter(lang, options);
+        segmenters.set(key, segmenter);
+    }
+    return segmenter;
+}
 
 /** Splits a string into grapheme clusters. */
 export function toGraphemeSegments(
@@ -6,7 +16,7 @@ export function toGraphemeSegments(
     lang: string = 'en',
     options: Intl.SegmenterOptions = { granularity: 'grapheme' },
 ): string[] {
-    return [...new Intl.Segmenter(lang, options).segment(string)].map((s) => s.segment);
+    return [...getSegmenter(lang, options).segment(string)].map((s) => s.segment);
 }
 
 /**
@@ -34,38 +44,34 @@ export function extractRkeyFromPlainAtURI(uri: string) {
     return uri.split('/').at(-1) ?? '';
 }
 
-export function formatDate(date: string) {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        timeStyle: 'long',
-        dateStyle: 'short',
-    });
+const noteDateFormatters = new Map<string | undefined, Intl.DateTimeFormat>();
 
-    return formatter.format(new Date(date));
+function noteDateFormatter(timeZone?: string) {
+    let formatter = noteDateFormatters.get(timeZone);
+    if (!formatter) {
+        formatter = new Intl.DateTimeFormat('en-US', {
+            timeStyle: 'short',
+            dateStyle: 'medium',
+            ...(timeZone ? { timeZone } : {}),
+        });
+        noteDateFormatters.set(timeZone, formatter);
+    }
+    return formatter;
 }
 
-export interface RetryOptions {
-    readonly initialDelay: number;
-    readonly maxRetries: number;
-}
+const postDateFormatter = new Intl.DateTimeFormat('en-US', {
+    dateStyle: 'long',
+    timeZone: 'UTC',
+});
 
-const DEFAULT_RETRY_OPTIONS: RetryOptions = {
-    initialDelay: 200,
-    maxRetries: 10,
-};
+export function formatNoteDate(date: string, timeZone: string = 'UTC') {
+    return noteDateFormatter(timeZone).format(new Date(date));
+}
 
 /**
- * Retries a typed Effect failure with exponential backoff and jitter.
- *
- * The Effect itself is re-evaluated on every attempt, so wrap Promise-based
- * work in `Effect.tryPromise` before passing it here.
+ * Publication dates are authored as plain calendar dates, so they are formatted
+ * in UTC to keep the build machine's timezone from shifting the day.
  */
-export const retry = <A, E, R>(
-    effect: Effect.Effect<A, E, R>,
-    options: RetryOptions = DEFAULT_RETRY_OPTIONS,
-): Effect.Effect<A, E, R> =>
-    Effect.retry(effect, {
-        times: options.maxRetries,
-        schedule: Schedule.exponential(Duration.millis(options.initialDelay)).pipe(
-            Schedule.jittered,
-        ),
-    });
+export function formatPostDate(date: Date) {
+    return postDateFormatter.format(date);
+}

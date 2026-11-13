@@ -1,21 +1,27 @@
 <script setup lang="ts">
 import { computed, ref, useTemplateRef, watch } from 'vue';
-import { createLog } from '@/scripts/atproto/api';
+import type { createLog } from '@/scripts/atproto/api';
 import { toGraphemeSegments } from '@/scripts/atproto/utils';
+import { primaryButton } from '@/components/vue/ui/button-classes';
+import DialogShell from '@/components/vue/ui/dialog-shell.vue';
 
 // Bluesky posts are limited to 300 graphemes; crossposts reserve 3 for the ellipsis.
 const CROSSPOST_LIMIT = 300;
 const CROSSPOST_ELLIPSIS = '...';
 const CROSSPOST_CONTENT_LIMIT = CROSSPOST_LIMIT - CROSSPOST_ELLIPSIS.length;
 
-const dialog = useTemplateRef<HTMLDialogElement>('dialog');
+const dialog = useTemplateRef<InstanceType<typeof DialogShell>>('dialog');
 const limitPopover = useTemplateRef<HTMLElement>('limitPopover');
 
 const content = ref('');
 const loading = ref(false);
 const isCrosspostEnabled = ref(false);
-const hasInteracted = ref(false);
 const error = ref('');
+
+//  Emit events that only fires once it was created successfully
+const emit = defineEmits<{
+    created: [created: Awaited<ReturnType<typeof createLog>>];
+}>();
 
 // Notes are not limited, but crossposts are counted the same way Bluesky counts them.
 const graphemeCount = computed(() => toGraphemeSegments(content.value).length);
@@ -63,11 +69,12 @@ async function createNote() {
     error.value = '';
 
     try {
-        await createLog(content.value, isCrosspostEnabled.value);
+        const api = await import('@/scripts/atproto/api');
+        const created = await api.createLog(content.value, isCrosspostEnabled.value);
+        emit('created', created);
 
         content.value = '';
         isCrosspostEnabled.value = false;
-        hasInteracted.value = false;
         dialog.value?.close();
     } catch (e) {
         console.error('[COMPOSE]', 'Failed to create note:', e);
@@ -79,46 +86,25 @@ async function createNote() {
 </script>
 
 <template>
-    <dialog
-        ref="dialog"
-        id="ui-dialog-compose"
-        class="m-auto max-w-xl w-full bg-surface-0"
-        @close="hideLimitTooltip"
-    >
-        <header class="flex justify-between items-center p-2">
-            <h1 class="text-xl font-semibold">Create Note</h1>
-
-            <button
-                commandFor="ui-dialog-compose"
-                command="close"
-                class="flex items-center justify-center size-8 hover:bg-surface-1 focus-visible:bg-surface-1"
-            >
-                <span class="font-md-symbols" aria-hidden="true"> close </span>
-            </button>
-        </header>
+    <DialogShell ref="dialog" id="ui-dialog-compose" title="Create Note" @close="hideLimitTooltip">
         <form @submit.prevent="createNote">
             <div class="p-2">
                 <div class="flex flex-col gap-2">
                     <label for="ui-dialog-compose-content" class="sr-only">Note</label>
                     <textarea
+                        required
                         v-model="content"
+                        autofocus="true"
                         id="ui-dialog-compose-content"
                         class="bg-surface-1 px-3 py-2 w-full resize-none"
                         placeholder="Write anything..."
                     />
-                    <small></small>
                 </div>
                 <p v-if="error" role="alert" class="mt-2 text-error">{{ error }}</p>
             </div>
             <footer class="flex p-2">
                 <label class="flex items-center gap-3 select-none">
-                    <input
-                        class="peer sr-only"
-                        type="checkbox"
-                        v-model="isCrosspostEnabled"
-                        :class="{ 'is-init': hasInteracted }"
-                        @change="hasInteracted = true"
-                    />
+                    <input class="peer sr-only" type="checkbox" v-model="isCrosspostEnabled" />
                     <span
                         aria-hidden="true"
                         class="grid size-7 shrink-0 place-content-center rounded-none border-2 border-line bg-surface-1 before:size-5 peer-checked:before:bg-accent peer-focus-visible:outline-2 peer-focus-visible:outline-offset-3 peer-focus-visible:outline-accent"
@@ -155,12 +141,12 @@ async function createNote() {
                     <button
                         :disabled="loading || !content.trim()"
                         type="submit"
-                        class="px-4 py-2 bg-accent text-paper hover:bg-shade-accent/10 disabled:bg-accent/50 disabled:cursor-not-allowed"
+                        :class="primaryButton"
                     >
                         Create
                     </button>
                 </div>
             </footer>
         </form>
-    </dialog>
+    </DialogShell>
 </template>
