@@ -1,5 +1,6 @@
 ---
 import { DEFAULT_PREVIEW_PDS } from '@/scripts/consts';
+import { STANDARD_SITE_PUBLICATION_URI } from '@/scripts/standard-site';
 import { Font } from 'astro:assets';
 import { OG_HEIGHT, OG_IMAGE_TYPE, OG_WIDTH, ogImagePath } from '@/scripts/og/config';
 import { registerOg } from '@/scripts/og/registry';
@@ -12,6 +13,7 @@ interface Props {
     noindex?: boolean;
     publishedTime?: string;
     modifiedTime?: string;
+    standardSiteDocument?: string;
 }
 
 const {
@@ -22,6 +24,7 @@ const {
     noindex = false,
     publishedTime,
     modifiedTime,
+    standardSiteDocument,
 } = Astro.props;
 
 const siteName = "Spring's Website";
@@ -89,6 +92,8 @@ registerOg({
     </script>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <link rel="site.standard.publication" href={STANDARD_SITE_PUBLICATION_URI} />
+    {standardSiteDocument && <link rel="site.standard.document" href={standardSiteDocument} />}
     {noindex && <meta name="robots" content="noindex" />}
 
     <meta property="og:site_name" content={siteName} />

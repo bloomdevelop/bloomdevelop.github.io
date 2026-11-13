@@ -4,6 +4,7 @@ import { getCollection, render } from 'astro:content';
 import MainLayout from '@/layouts/main-layout.astro';
 import Prose from '@/components/astro/prose.astro';
 import { formatPostDate } from '@/scripts/atproto/utils';
+import { standardSiteDocumentUri } from '@/scripts/standard-site';
 
 export async function getStaticPaths() {
     const publications = await getCollection(
@@ -36,6 +37,11 @@ const description =
     type="article"
     publishedTime={publication.data.pubDate.toISOString()}
     modifiedTime={publication.data.updatedDate?.toISOString()}
+    standardSiteDocument={
+        publication.data.draft
+            ? undefined
+            : standardSiteDocumentUri(publication.id, publication.data.pubDate)
+    }
 >
     <article>
         {publication.data.headerImage && (

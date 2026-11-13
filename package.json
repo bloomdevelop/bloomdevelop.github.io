@@ -11,6 +11,7 @@
         "typecheck": "effect-tsgo tsc --noEmit",
         "check": "vp check",
         "test": "vp test",
+        "publish:standard-site": "vpx ./scripts/publish-standard-site.ts",
         "prepare": "vp config && effect-tsgo patch --typescript --oxlint"
     },
     "dependencies": {
@@ -34,9 +35,11 @@
     },
     "devDependencies": {
         "@effect/tsgo": "0.63.0",
+        "@types/node": "^26.6.6",
         "typescript": "7.0.2",
         "vite-plus": "catalog:",
-        "vitest": "5.0.5"
+        "vitest": "5.0.5",
+        "yaml": "^2.9.1"
     },
     "devEngines": {
         "packageManager": {

@@ -52,6 +52,12 @@ export default defineConfig({
                     Astro: 'readonly',
                 },
             },
+            {
+                files: ['scripts/**/*.ts'],
+                globals: {
+                    process: 'readonly',
+                },
+            },
         ],
         env: {
             browser: true,

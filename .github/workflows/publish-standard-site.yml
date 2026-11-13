@@ -1,0 +1,38 @@
+name: Publish standard.site records
+
+on:
+    workflow_dispatch:
+    push:
+        branches: [main]
+        paths:
+            - blog/**
+            - scripts/publish-standard-site.ts
+            - src/scripts/standard-site.ts
+            - .github/workflows/publish-standard-site.yml
+
+permissions:
+    contents: read
+
+concurrency:
+    group: standard-site
+    cancel-in-progress: false
+
+jobs:
+    publish:
+        runs-on: ubuntu-latest
+        env:
+            ATPROTO_IDENTIFIER: ${{ secrets.ATPROTO_IDENTIFIER }}
+            ATPROTO_APP_PASSWORD: ${{ secrets.ATPROTO_APP_PASSWORD }}
+        steps:
+            - uses: actions/checkout@v4
+            - uses: pnpm/action-setup@v4
+              with:
+                  version: 12.16.1
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 22
+                  cache: pnpm
+            - run: pnpm install --frozen-lockfile
+            - name: Publish records
+              if: env.ATPROTO_APP_PASSWORD != ''
+              run: pnpm publish:standard-site
