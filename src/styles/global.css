@@ -3,14 +3,6 @@
 @import './madoromi.css';
 
 /* Fonts */
-@font-face {
-    font-family: 'Intern';
-    src: url('/fonts/Intern-Variable.woff2') format('woff2');
-    font-style: normal;
-    font-weight: 100 900;
-    font-display: swap;
-}
-
 /*
  * Material Symbols is subset to the icon ligatures the site actually uses:
  * add, login, logout, close, dark_mode, light_mode, arrow_back, warning.
@@ -42,8 +34,7 @@
 
 /* Theme */
 @theme inline {
-    --font-sans: var(--inter-variable);
-    --font-intern: 'Intern', sans-serif;
+    --font-sans: var(--allo-variable);
     --font-maple-mono: 'Maple Mono', monospace;
     --font-md-symbols: 'Material Symbols Rounded', sans-serif;
 }
@@ -55,7 +46,7 @@
     h4,
     h5,
     h6 {
-        font-family: var(--font-intern);
+        font-family: var(--font-sans);
         font-optical-sizing: auto;
     }
 }

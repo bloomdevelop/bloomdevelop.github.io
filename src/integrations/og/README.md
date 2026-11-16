@@ -10,7 +10,7 @@ The card is composed of two layers:
 1. **Background** — the page's header image, dithered with the same ordered
    dithering as `src/scripts/dither.ts`, or a procedural "ink bloom" backdrop
    for pages without one. Publications without a media header are covered.
-2. **Text layer** — title, description and date, rendered with satori (Inter +
+2. **Text layer** — title, description and date, rendered with satori (Allo +
    Maple Mono) and composited over a paper scrim.
 
 The animated card walks the Bayer matrix and breathes the dither strength over
@@ -55,7 +55,8 @@ ogImages({
     fps: 12,
     theme: 'light', // or 'dark'
     fonts: {
-        sans: 'public/fonts/Intern-Variable.woff2',
+        // The sans font defaults to Allo from the allo-font package.
+        sans: 'src/fonts/CustomSans.woff2',
         mono: 'public/fonts/MapleMono-Variable.woff2',
     },
     include: (pathname) => true,

@@ -202,6 +202,9 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(@voidzero-dev/vite-plus-core@1.4.0(@types/node@26.6.6)(jiti@2.7.0)(typescript@7.0.2)(yaml@2.9.1))
+      allo-font:
+        specifier: ^1.0.0
+        version: 1.0.0
       astro:
         specifier: ^7.4.4
         version: 7.4.4(@types/node@26.6.6)(jiti@2.7.0)(typescript@7.0.2)(yaml@2.9.1)
@@ -1907,6 +1910,9 @@ packages:
 
   '@yuku-toolchain/types@0.19.0':
     resolution: {integrity: sha512-tFkNbsP4WXX9UMUC5syJGdK9dPMLK0PPaIuXCcCYH75sZ8MrebfBZ2XvCILRTw8AgLivSSCfDa4R67iYBDa4Kg==}
+
+  allo-font@1.0.0:
+    resolution: {integrity: sha512-lHuzg9QRgC7pJVWH2JHmmg530v6b2kF9g3PdctfN9N1EtVI5j3rD9esAZ6ZXDgM5hrZe6HdVbTXFZyOCU9/VrA==}
 
   am-i-vibing@0.5.0:
     resolution: {integrity: sha512-KLcsDhqf1XRrJmJr+9I/C0EX2K+sGrAGZFgkmd84c8TJO9zJBu+/kFInjazu1KfJWFhWDKdRWkpBzEs7s35DVA==}
@@ -4739,6 +4745,8 @@ snapshots:
     optional: true
 
   '@yuku-toolchain/types@0.19.0': {}
+
+  allo-font@1.0.0: {}
 
   am-i-vibing@0.5.0:
     dependencies:

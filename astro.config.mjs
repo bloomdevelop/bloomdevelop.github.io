@@ -18,10 +18,18 @@ export default defineConfig({
     },
     fonts: [
         {
-            cssVariable: '--inter-variable',
-            provider: fontProviders.fontsource(),
-            name: 'Inter Variable',
-            weights: ['100 900'],
+            cssVariable: '--allo-variable',
+            provider: fontProviders.local(),
+            name: 'Allo',
+            options: {
+                variants: [
+                    {
+                        src: ['allo-font/fonts/webfonts/AlloVariable.woff2'],
+                        weight: '100 900',
+                        style: 'normal',
+                    },
+                ],
+            },
         },
     ],
 });

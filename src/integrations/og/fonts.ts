@@ -51,11 +51,11 @@ export const loadCardFonts = async ({ sans, mono }: CardFontPaths): Promise<Font
     // A variable font is reused for every weight; satori resolves the CSS
     // weight to the face and the variation is kept by the rasterizer.
     return [
-        { name: 'Inter', data: sansData, weight: 400, style: 'normal' },
-        { name: 'Inter', data: sansData, weight: 500, style: 'normal' },
-        { name: 'Inter', data: sansData, weight: 600, style: 'normal' },
-        { name: 'Inter', data: sansData, weight: 700, style: 'normal' },
-        { name: 'Inter', data: sansData, weight: 800, style: 'normal' },
+        { name: 'Allo', data: sansData, weight: 400, style: 'normal' },
+        { name: 'Allo', data: sansData, weight: 500, style: 'normal' },
+        { name: 'Allo', data: sansData, weight: 600, style: 'normal' },
+        { name: 'Allo', data: sansData, weight: 700, style: 'normal' },
+        { name: 'Allo', data: sansData, weight: 800, style: 'normal' },
         { name: 'Maple Mono', data: monoData, weight: 400, style: 'normal' },
         { name: 'Maple Mono', data: monoData, weight: 600, style: 'normal' },
     ];

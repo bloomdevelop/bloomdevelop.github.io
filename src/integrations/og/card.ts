@@ -132,7 +132,7 @@ const buildCard = (
             boxSizing: 'border-box',
             padding: `${padding}px`,
             position: 'relative',
-            fontFamily: 'Inter',
+            fontFamily: 'Allo',
             backgroundColor: 'transparent',
         },
         [body, ...overlays],

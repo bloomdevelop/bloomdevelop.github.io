@@ -18,8 +18,9 @@
 import { Buffer } from 'node:buffer';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import { mkdir, readFile, stat, writeFile } from 'node:fs/promises';
+import { createRequire } from 'node:module';
 import { isAbsolute, join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { AstroIntegration } from 'astro';
 import type { CardFontPaths } from './fonts';
 import { generateCard } from './generate';
@@ -71,8 +72,23 @@ interface ResolvedOptions {
     strict: boolean;
 }
 
-const resolveFont = (root: URL, publicDir: URL, value: string | undefined, fallback: string) =>
-    value ? (isAbsolute(value) ? value : new URL(value, root)) : new URL(fallback, publicDir);
+/** Resolves a font exported by an installed package from the project root. */
+const packageFont = (root: URL, specifier: string): URL =>
+    pathToFileURL(createRequire(fileURLToPath(root)).resolve(specifier));
+
+const resolveFont = (
+    root: URL,
+    publicDir: URL,
+    value: string | undefined,
+    fallback: string | URL,
+) =>
+    value
+        ? isAbsolute(value)
+            ? value
+            : new URL(value, root)
+        : fallback instanceof URL
+          ? fallback
+          : new URL(fallback, publicDir);
 
 const resolveOptions = (options: OgImagesOptions, root: URL, publicDir: URL): ResolvedOptions => ({
     video: options.video ?? true,
@@ -83,7 +99,12 @@ const resolveOptions = (options: OgImagesOptions, root: URL, publicDir: URL): Re
     fps: options.fps ?? 12,
     theme: options.theme ?? 'light',
     fonts: {
-        sans: resolveFont(root, publicDir, options.fonts?.sans, 'fonts/Intern-Variable.woff2'),
+        sans: resolveFont(
+            root,
+            publicDir,
+            options.fonts?.sans,
+            packageFont(root, 'allo-font/fonts/webfonts/AlloVariable.woff2'),
+        ),
         mono: resolveFont(root, publicDir, options.fonts?.mono, 'fonts/MapleMono-Variable.woff2'),
     },
     include: options.include ?? (() => true),
