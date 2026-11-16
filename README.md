@@ -54,3 +54,21 @@ available, a looping dithered `og:video` — from
 [`src/integrations/og`](./src/integrations/og/README.md). Pages with a header
 image use it as the dithered backdrop; pages without one get a procedural
 backdrop.
+
+### Weather background
+
+Every page renders a full-viewport WebGL background whose dithered ink-wash
+sky follows the current weather. It is mounted once in
+[`main-layout.astro`](./src/layouts/main-layout.astro) and configured entirely
+from [`src/scripts/weather/config.ts`](./src/scripts/weather/config.ts).
+
+Change `WEATHER_CONFIG.location` to any city:
+
+```ts
+location: {
+    name: 'Santo Domingo, Dominican Republic',
+    latitude: 18.4861,
+    longitude: -69.9312,
+    timeZone: 'America/Santo_Domingo',
+},
+```
