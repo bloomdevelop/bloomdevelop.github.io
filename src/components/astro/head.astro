@@ -1,6 +1,7 @@
 ---
 import { DEFAULT_PREVIEW_PDS } from '@/scripts/consts';
 import { STANDARD_SITE_PUBLICATION_URI } from '@/scripts/standard-site';
+import { WEATHER_CONFIG } from '@/scripts/weather/config';
 import { Font } from 'astro:assets';
 import { OG_HEIGHT, OG_IMAGE_TYPE, OG_WIDTH, ogImagePath } from '@/scripts/og/config';
 import { registerOg } from '@/scripts/og/registry';
@@ -124,6 +125,9 @@ registerOg({
 
     <link rel="preconnect" href={DEFAULT_PREVIEW_PDS} />
     <link rel="preconnect" href="https://api.bsky.app" />
+    {WEATHER_CONFIG.enabled && (
+        <link rel="preconnect" href="https://api.open-meteo.com" crossorigin="anonymous" />
+    )}
     <link
         rel="preload"
         href="/fonts/Intern-Variable.woff2"

@@ -45,7 +45,7 @@ const description =
 >
     <article>
         {publication.data.headerImage && (
-            <div class="media-dither relative left-1/2 right-1/2 mb-4 aspect-video w-screen h-full max-h-[60vh] -translate-x-1/2 overflow-x-clip">
+            <div class="relative left-1/2 right-1/2 mb-4 aspect-video w-screen h-full max-h-[60vh] -translate-x-1/2 overflow-x-clip mask-[linear-gradient(to_bottom,black_70%,transparent)]">
                 <DitheredImage
                     src={publication.data.headerImage}
                     alt={publication.data.headerImageAlt ?? ''}
@@ -82,7 +82,7 @@ const description =
                     {formatPostDate(publication.data.pubDate)}
                 </time>
                 {publication.data.updatedDate && (
-                    <span class="text-ink-subtle">
+                    <span class="text-ink-muted">
                         Updated
                         <time datetime={publication.data.updatedDate.toISOString()}>
                             {formatPostDate(publication.data.updatedDate)}
@@ -106,14 +106,3 @@ const description =
         </div>
     </article>
 </MainLayout>
-
-<style>
-    .media-dither::before {
-        position: absolute;
-        z-index: 21;
-        inset: 0;
-        background-image: linear-gradient(to bottom, transparent, var(--color-paper));
-        content: '';
-        pointer-events: none;
-    }
-</style>

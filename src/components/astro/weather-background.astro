@@ -1,0 +1,24 @@
+---
+import { WEATHER_CONFIG, assertValidWeatherConfig } from '@/scripts/weather/config';
+
+// Fail the build loudly if the editable city/rendering config is out of range.
+assertValidWeatherConfig(WEATHER_CONFIG);
+
+interface Props {
+    class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+{WEATHER_CONFIG.enabled && (
+    <weather-background class:list={[className]} aria-hidden="true" data-state="idle">
+        <div class="wb-fallback" />
+    </weather-background>
+)}
+
+<script>
+    import { defineWeatherBackground } from '@/scripts/weather/background';
+
+    defineWeatherBackground();
+</script>

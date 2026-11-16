@@ -21,6 +21,7 @@
  */
 
 import { MAX_PALETTE, luma, toOklab, type Rgb } from './dither-core';
+import { BAYER_GLSL, OKLAB_GLSL } from './dither-glsl';
 
 /** Seconds per animation loop. Keep in sync with the OG video renderer. */
 const ANIMATION_LOOP = 2;
@@ -49,13 +50,7 @@ uniform float uPhase;       // integer Bayer offset (cells) for animation
 uniform vec3 uPalette[${MAX_PALETTE}];
 uniform vec3 uPaletteLab[${MAX_PALETTE}];
 
-// Procedural 8x8 Bayer matrix, values in [0, 1).
-float bayer2(vec2 a) {
-    a = floor(a);
-    return fract(a.x / 2.0 + a.y * a.y * 0.75);
-}
-float bayer4(vec2 a) { return bayer2(0.5 * a) * 0.25 + bayer2(a); }
-float bayer8(vec2 a) { return bayer4(0.5 * a) * 0.25 + bayer2(a); }
+${BAYER_GLSL}
 
 // Samples the image as if it were drawn with object-fit: cover.
 vec3 sampleCover(vec2 p) {
@@ -65,17 +60,7 @@ vec3 sampleCover(vec2 p) {
     return texture2D(uImage, clamp(uv, 0.0, 1.0)).rgb;
 }
 
-vec3 toOklab(vec3 c) {
-    c = mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));
-    float l = pow(0.4122214708 * c.r + 0.5363325363 * c.g + 0.0514459929 * c.b, 1.0 / 3.0);
-    float m = pow(0.2119034982 * c.r + 0.6806995451 * c.g + 0.1073969566 * c.b, 1.0 / 3.0);
-    float s = pow(0.0883024619 * c.r + 0.2817188376 * c.g + 0.6299787005 * c.b, 1.0 / 3.0);
-    return vec3(
-        0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s,
-        1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s,
-        0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s
-    );
-}
+${OKLAB_GLSL}
 
 vec3 nearestColor(vec3 c) {
     vec3 lab = toOklab(c);

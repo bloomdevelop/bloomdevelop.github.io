@@ -2,6 +2,7 @@
 import Head from '@/components/astro/head.astro';
 import '@/styles/global.css';
 import Navigation from '@/components/astro/navigation.astro';
+import WeatherBackground from '@/components/astro/weather-background.astro';
 
 interface Props {
     title?: string;
@@ -37,7 +38,14 @@ const {
         modifiedTime={modifiedTime}
         standardSiteDocument={standardSiteDocument}
     />
-    <body class="flex min-h-screen flex-col bg-paper text-ink antialiased font-sans">
+    <body class="flex min-h-screen flex-col bg-transparent text-ink antialiased font-sans">
+        {/*
+            Stacking invariant: html owns the paper colour and the weather
+            canvas is a fixed z-index:-1 child of body. Do not put transform,
+            filter, opacity or an opaque background on body (or any ancestor),
+            and do not add a background to body: either would hide the canvas.
+        */}
+        <WeatherBackground />
         <a
             href="#main-content"
             class="fixed top-0 left-3 z-50 -translate-y-40 rounded-b-md bg-paper px-4 py-2 font-medium text-ink shadow-lg ring-1 ring-chitsu transition-transform focus:translate-y-0"
@@ -61,6 +69,17 @@ const {
                     </small>
                 </h3>
                 <p class="text-ink-muted">Made with love from Dominican Republic ❤️</p>
+                <p class="text-ink-muted text-sm">
+                    Weather data by{' '}
+                    <a
+                        href="https://open-meteo.com/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="underline hover:text-ink"
+                    >
+                        Open-Meteo
+                    </a>
+                </p>
             </div>
         </footer>
     </body>

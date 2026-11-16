@@ -85,3 +85,114 @@
 button {
     @apply cursor-pointer;
 }
+
+/* --------------------------------------------------------------------------
+ * Weather background
+ *
+ * The server-rendered .wb-fallback is the no-JS / no-WebGL layer and covers
+ * the frame-compile gap. The canvas is created by
+ * scripts/weather/background.ts and fades in when its first frame is painted.
+ * Keep body free of transforms, filters and opaque backgrounds so the fixed
+ * z-index:-1 host stays visible (see the comment in main-layout.astro).
+ * -------------------------------------------------------------------------- */
+
+html {
+    background-color: var(--madoromi-kami);
+}
+
+weather-background {
+    --wb-tint: transparent;
+    --wb-tint-size: 70% 45%;
+    --wb-tint-x: 74%;
+    --wb-tint-y: 16%;
+
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    display: block;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+    background-color: var(--madoromi-kami);
+}
+
+weather-background > .wb-fallback,
+weather-background > .wb-canvas {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transition: opacity 300ms linear;
+}
+
+weather-background > .wb-fallback {
+    background:
+        radial-gradient(
+            var(--wb-tint-size) at var(--wb-tint-x) var(--wb-tint-y),
+            var(--wb-tint),
+            transparent 70%
+        ),
+        linear-gradient(to bottom, var(--madoromi-hyoshi), var(--madoromi-kami) 72%);
+}
+
+weather-background > .wb-canvas {
+    opacity: 0;
+    image-rendering: pixelated;
+}
+
+weather-background[data-state='ready'] > .wb-canvas {
+    opacity: 1;
+}
+
+weather-background[data-state='ready'] > .wb-fallback {
+    opacity: 0;
+}
+
+/* Weather-aware CSS tint for the fallback layer. All mixes stay well under the
+ * token caps measured by the palette contrast guard. */
+weather-background[data-weather='clear'][data-daylight='day'] {
+    --wb-tint: color-mix(in oklab, var(--madoromi-yamabuki) 10%, var(--madoromi-kami));
+}
+
+weather-background[data-weather='clear'][data-daylight='night'],
+weather-background[data-weather='mainly-clear'][data-daylight='night'],
+weather-background[data-weather='partly-cloudy'][data-daylight='night'] {
+    --wb-tint: color-mix(in oklab, var(--madoromi-fuji) 8%, var(--madoromi-kami));
+    --wb-tint-y: 22%;
+}
+
+weather-background[data-weather='mainly-clear'],
+weather-background[data-weather='partly-cloudy'] {
+    --wb-tint: color-mix(in oklab, var(--madoromi-nijimi2) 10%, var(--madoromi-kami));
+}
+
+weather-background[data-weather='overcast'],
+weather-background[data-weather='fog'] {
+    --wb-tint: color-mix(in oklab, var(--madoromi-nijimi2) 12%, var(--madoromi-kami));
+    --wb-tint-size: 90% 65%;
+}
+
+weather-background[data-weather='drizzle'],
+weather-background[data-weather='rain'],
+weather-background[data-weather='heavy-rain'] {
+    --wb-tint: color-mix(in oklab, var(--madoromi-sora) 10%, var(--madoromi-kami));
+    --wb-tint-size: 90% 60%;
+}
+
+weather-background[data-weather='snow'] {
+    --wb-tint: color-mix(in oklab, var(--madoromi-sora) 7%, var(--madoromi-kami));
+}
+
+weather-background[data-weather='thunderstorm'] {
+    --wb-tint: color-mix(in oklab, var(--madoromi-fuji) 8%, var(--madoromi-kami));
+    --wb-tint-size: 90% 65%;
+}
+
+/* An animated background must never fight a reader who asks for calm, high
+ * contrast, forced colours, or print. */
+@media print, (forced-colors: active), (prefers-contrast: more) {
+    weather-background {
+        display: none;
+    }
+}
