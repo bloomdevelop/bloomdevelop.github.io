@@ -8,6 +8,7 @@ import {
     crossfadeFrames,
     ensureContrast,
     flashEnvelope,
+    lightningState,
     mixSrgb,
     WEATHER_PALETTE_SIZE,
     relativeLuminance,
@@ -204,6 +205,29 @@ describe('buildFrame', () => {
         expect(buildFor('light', 'rain', true).weather[2]).toBe(1);
         expect(buildFor('light', 'snow', true).weather[2]).toBe(2);
     });
+
+    it('renders the thunderstorm mark as flash white, the brightest element', () => {
+        for (const flavour of ['light', 'dark'] as const) {
+            for (const isDay of [true, false]) {
+                const frame = buildFor(flavour, 'thunderstorm', isDay);
+
+                // Neutral: white or gray, never gold or blue.
+                const [r, g, b] = frame.markColor;
+                expect(Math.max(r, g, b) - Math.min(r, g, b)).toBeLessThan(0.12);
+
+                // As bright as the contrast clamp allows.
+                expect(relativeLuminance(frame.markColor)).toBeGreaterThanOrEqual(
+                    relativeLuminance(frame.precipColor) - 1e-4,
+                );
+            }
+        }
+
+        // On a light theme the bolt is paper-white; on a dark theme it only
+        // gets as bright as the ink contrast allows, which still flashes
+        // against the night sky.
+        const light = buildFor('light', 'thunderstorm', false);
+        expect(relativeLuminance(light.markColor)).toBeGreaterThan(0.6);
+    });
 });
 
 describe('crossfadeFrames', () => {
@@ -260,5 +284,64 @@ describe('flashEnvelope', () => {
             last = time;
         }
         expect(strikes).toBeLessThanOrEqual(6);
+    });
+});
+
+describe('lightningState', () => {
+    it('is silent when inactive', () => {
+        const state = lightningState(1.2, 7, false);
+        expect(state.flash).toBe(0);
+        expect(state.bolt).toBe(0);
+    });
+
+    it('keeps the bolt bounded, on-screen and inside the flash', () => {
+        for (let index = 0; index <= 20_000; index++) {
+            const state = lightningState(index / 1000, 13, true);
+
+            expect(state.bolt).toBeGreaterThanOrEqual(0);
+            expect(state.bolt).toBeLessThanOrEqual(1);
+            expect(state.flash).toBeGreaterThanOrEqual(0);
+            expect(state.flash).toBeLessThanOrEqual(0.55);
+            expect(state.x).toBeGreaterThanOrEqual(0.14);
+            expect(state.x).toBeLessThanOrEqual(0.86);
+            expect(Number.isFinite(state.seed)).toBe(true);
+
+            // The bolt flickers only while the sky is lit.
+            if (state.bolt > 0) expect(state.flash).toBeGreaterThan(0);
+        }
+    });
+
+    it('holds one position and shape per strike', () => {
+        for (const seed of [3, 29, 97]) {
+            const identities: string[] = [];
+            let last = '';
+
+            for (let index = 0; index <= 9_000; index++) {
+                const state = lightningState(index / 1000, seed, true);
+                if (state.bolt <= 0.1) continue;
+
+                const identity = `${state.x.toFixed(4)}:${state.seed.toFixed(4)}`;
+                if (identity !== last) {
+                    identities.push(identity);
+                    last = identity;
+                }
+            }
+
+            // Two strikes per cycle; the identity may change from strike one
+            // to strike two but must never flicker back and forth.
+            expect(identities.length).toBeLessThanOrEqual(2);
+        }
+    });
+
+    it('lands strikes in different places across cycles', () => {
+        const positions = new Set<number>();
+
+        for (let index = 0; index <= 90_000; index++) {
+            const state = lightningState(index / 1000, 41, true);
+            if (state.bolt > 0.5) positions.add(Math.round(state.x * 1000));
+        }
+
+        // Ten cycles, two strikes each: the anchor should wander.
+        expect(positions.size).toBeGreaterThanOrEqual(4);
     });
 });

@@ -57,6 +57,30 @@ export const ensureContrast = (
     return paper;
 };
 
+/**
+ * The brightest continuation of `base` toward white that still clears the
+ * target against every role. `ensureContrast` walks toward paper in coarse
+ * sixteenths, which can undershoot badly when paper sits far from white
+ * (dark themes); this bisects the remaining headroom instead. Luminance is
+ * monotone along the mix, so the passing region is a prefix and the search
+ * is exact to any practical precision.
+ */
+export const brightestSafe = (base: Rgb, roles: readonly Rgb[], target: number): Rgb => {
+    let lo = 0;
+    let hi = 1;
+
+    for (let step = 0; step < 20; step++) {
+        const mid = (lo + hi) / 2;
+        if (roles.every((role) => contrastRatio(mixSrgb(base, [1, 1, 1], mid), role) >= target)) {
+            lo = mid;
+        } else {
+            hi = mid;
+        }
+    }
+
+    return mixSrgb(base, [1, 1, 1], lo);
+};
+
 /* --------------------------------------------------------------------------
  * Palette recipes
  * -------------------------------------------------------------------------- */
@@ -169,7 +193,9 @@ const DAY_RECIPES: Record<WeatherFamily, Recipe> = {
         cloud: T('nijimi0', 0.5),
         haze: T('nijimi2', 0.16),
         precip: T('ruri', 0.22),
-        mark: T('yamabuki', 0.26),
+        // Unused: buildFrame overrides the mark for thunderstorms with
+        // flash white (see below).
+        mark: K,
     },
 };
 
@@ -262,7 +288,9 @@ const NIGHT_RECIPES: Record<WeatherFamily, Recipe> = {
         cloud: T('nijimi2', 0.78),
         haze: T('nijimi1', 0.5),
         precip: T('ruri', 0.3),
-        mark: T('yamabuki', 0.3),
+        // Unused: buildFrame overrides the mark for thunderstorms with
+        // flash white (see below).
+        mark: K,
     },
 };
 
@@ -384,6 +412,20 @@ export const buildFrame = (
             settings.clampTarget,
         );
 
+    // Lightning reads white, not gold. The bolt, its halo and the scene-wide
+    // flash all ride the mark slot, so for thunderstorms it is the brightest
+    // colour that still clears the contrast target: essentially the paper on
+    // light themes, and on dark themes the clamp stops just short of the ink,
+    // which still flashes brighter than the night sky.
+    const mark =
+        spec.family === 'thunderstorm'
+            ? brightestSafe(
+                  ensureContrast([1, 1, 1], paper, roles, settings.clampTarget),
+                  roles,
+                  settings.clampTarget,
+              )
+            : resolve(recipe.mark);
+
     // Fixed slot order: paper, skyBottom, skyMid, skyTop, cloud, haze, precip, mark.
     const base: Rgb[] = [
         ensureContrast(paper, paper, roles, settings.clampTarget),
@@ -393,7 +435,7 @@ export const buildFrame = (
         resolve(recipe.cloud),
         resolve(recipe.haze),
         resolve(recipe.precip),
-        resolve(recipe.mark),
+        mark,
     ];
     const slots = addPaletteSteps(base);
     const slotsLab = slots.map(toOklab);
@@ -494,21 +536,61 @@ const hash01 = (value: number): number => fract(Math.sin(value * 127.1 + 311.7) 
 const bump = (time: number, center: number, width: number): number =>
     Math.max(0, 1 - Math.abs(time - center) / width);
 
+export interface LightningState {
+    /** Scene-wide brightening, 0-0.55. Zero for inactive scenes. */
+    readonly flash: number;
+    /** Bolt core visibility this instant, 0-1. Sharper than `flash`. */
+    readonly bolt: number;
+    /** Bolt anchor x across the sky, 0.14-0.86. Stable within a strike. */
+    readonly x: number;
+    /** Shape seed for the bolt's jagged path. Stable within a strike. */
+    readonly seed: number;
+}
+
+const LIGHTNING_IDLE: LightningState = { flash: 0, bolt: 0, x: 0.5, seed: 0 };
+
+const strikeX = (seed: number, cycle: number, strike: number): number =>
+    0.14 + 0.72 * hash01(seed * 7.13 + cycle * 29.3 + strike * 53.1);
+
+const strikeSeed = (seed: number, cycle: number, strike: number): number =>
+    89.0 * hash01(seed * 3.71 + cycle * 91.7 + strike * 47.3);
+
 /**
- * Two strikes per nine-second cycle, each a short double pulse. Returns 0 for
- * inactive scenes so reduced-motion renders never flash.
+ * Two strikes per nine-second cycle: the first a short double pulse, the
+ * second a single pulse. The scene-wide flash and the visible bolt ride the
+ * same timing, but the bolt envelope is sharper so the channel flickers on
+ * and off while the sky stays lit a beat longer. Per-strike position and
+ * shape are hashed from the seed, so every strike lands somewhere new
+ * without jumping mid-flash. Returns zeros for inactive scenes so
+ * reduced-motion renders never flash.
  */
-export const flashEnvelope = (timeSec: number, seed: number, active: boolean): number => {
-    if (!active || !Number.isFinite(timeSec)) return 0;
+export const lightningState = (timeSec: number, seed: number, active: boolean): LightningState => {
+    if (!active || !Number.isFinite(timeSec)) return LIGHTNING_IDLE;
 
     const cycle = Math.floor(timeSec / FLASH_CYCLE);
     const local = timeSec - cycle * FLASH_CYCLE;
     const offset = hash01(seed + cycle * 17.13) * 1.4;
 
-    const strike = Math.max(
-        bump(local, 1.1 + offset, 0.07) * 0.8 + bump(local, 1.24 + offset, 0.06) * 0.45,
-        bump(local, 5.3 + offset * 0.5, 0.06) * 0.6,
-    );
+    const flash =
+        clamp01(
+            Math.max(
+                bump(local, 1.1 + offset, 0.07) * 0.8 + bump(local, 1.24 + offset, 0.06) * 0.45,
+                bump(local, 5.3 + offset * 0.5, 0.06) * 0.6,
+            ),
+        ) * 0.55;
 
-    return clamp01(strike) * 0.55;
+    const boltFirst = bump(local, 1.1 + offset, 0.05) + bump(local, 1.24 + offset, 0.045) * 0.8;
+    const boltSecond = bump(local, 5.3 + offset * 0.5, 0.05);
+    const first = boltFirst >= boltSecond;
+
+    return {
+        flash,
+        bolt: clamp01(Math.max(boltFirst, boltSecond)),
+        x: strikeX(seed, cycle, first ? 0 : 1),
+        seed: strikeSeed(seed, cycle, first ? 0 : 1),
+    };
 };
+
+/** Scene-wide flash only; kept for the static/reduced-motion path. */
+export const flashEnvelope = (timeSec: number, seed: number, active: boolean): number =>
+    lightningState(timeSec, seed, active).flash;

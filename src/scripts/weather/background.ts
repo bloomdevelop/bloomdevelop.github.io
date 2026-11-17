@@ -22,8 +22,9 @@ import { resolveTokens } from './palette';
 import {
     buildFrame,
     crossfadeFrames,
-    flashEnvelope,
+    lightningState,
     WEATHER_PALETTE_SIZE,
+    type LightningState,
     type WeatherFrame,
 } from './scene';
 import { BAYER_GLSL, OKLAB_GLSL } from '../dither-glsl';
@@ -32,7 +33,10 @@ import type { TokenSet, WeatherSceneSpec, WeatherSnapshot } from './types';
 const CROSSFADE_MS = 1200;
 const RESIZE_DEBOUNCE_MS = 150;
 const FRAME_BUDGET_MS = 2000;
-const MIN_FRAGMENT_UNIFORM_VECTORS = 52;
+const MIN_FRAGMENT_UNIFORM_VECTORS = 53;
+
+/** Returned when lightning is off (reduced motion, static frames, no storm). */
+const STORM_IDLE: LightningState = { flash: 0, bolt: 0, x: 0.5, seed: 0 };
 
 const VERTEX_SHADER = /* glsl */ `
 attribute vec2 aPosition;
@@ -67,6 +71,7 @@ uniform vec4 uCloud;   // cover, sharpness, scaleX, scaleY
 uniform vec4 uMotion;  // drift, slant, glow, glowRadius
 uniform vec4 uSky;     // markX, markY, markRadius, stars
 uniform vec4 uWeather; // fog, precip, precipMode, flash
+uniform vec4 uStorm;   // bolt visibility, bolt x, bolt seed, unused
 uniform vec4 uRead;    // wash, corridor, topWash, spread
 
 uniform vec3 uPalette[${WEATHER_PALETTE_SIZE}];
@@ -97,18 +102,45 @@ float fbm3(vec2 p) {
          + 0.15 * vnoise(p * 4.11 + 41.3);
 }
 
-float rainLayer(vec2 uv, float phase, float density) {
+/*
+ * Rain, in three parallax layers. columns/rows set the streak grid: more
+ * columns means thinner, more distant drops; speed is screen heights per
+ * second. Per-cell hashes vary each drop's length and horizontal position so
+ * the field reads as weather, not as a grid.
+ */
+float rainLayer(vec2 uv, float phase, float density, float speed, float columns, float rows, float width) {
     vec2 p = uv;
     p.x += p.y * uMotion.y;
-    p.y -= uTime * 0.9 + phase;
-    vec2 q = p * vec2(46.0, 9.0);
+    p.y -= uTime * speed + phase;
+    vec2 q = p * vec2(columns, rows);
     vec2 id = floor(q);
-    vec2 f = fract(q);
     float h = hash21(id);
-    float on = step(1.0 - density, h);
-    float dash = smoothstep(0.0, 0.18, f.y) * (1.0 - smoothstep(0.45, 0.95, f.y));
-    float thin = 1.0 - smoothstep(0.0, 0.18, abs(f.x - 0.5));
-    return on * dash * thin;
+    if (h < 1.0 - density) return 0.0;
+    vec2 f = fract(q);
+    float span = 0.30 + 0.42 * hash21(id + 19.0);
+    float xoff = 0.5 + (hash21(id + 47.0) - 0.5) * 0.6;
+    float dash = smoothstep(0.0, 0.10, f.y) * (1.0 - smoothstep(span, span + 0.25, f.y));
+    float thin = 1.0 - smoothstep(0.0, width, abs(f.x - xoff));
+    return dash * thin;
+}
+
+/*
+ * Splash ripples where the rain lands, along the bottom of the scene. Each
+ * cell pops an expanding ring on its own phase; at dither resolution the
+ * band reads as scattered flickers of impact.
+ */
+float splashField(vec2 uv, float density) {
+    float band = smoothstep(0.80, 0.86, uv.y) * (1.0 - smoothstep(0.95, 1.0, uv.y));
+    if (band <= 0.0) return 0.0;
+    vec2 q = uv * vec2(44.0, 22.0);
+    vec2 id = floor(q);
+    float h = hash21(id + 31.0);
+    if (h < 1.0 - density) return 0.0;
+    vec2 f = fract(q) - 0.5;
+    float cycle = fract(uTime * 1.3 + h * 9.0);
+    float r = length(f * vec2(1.5, 1.0));
+    float ring = 1.0 - smoothstep(0.05, 0.20, abs(r - cycle * 0.42));
+    return band * ring * (1.0 - cycle * 0.5);
 }
 
 float snowLayer(vec2 uv, float phase, float density) {
@@ -121,6 +153,39 @@ float snowLayer(vec2 uv, float phase, float density) {
     float h = hash21(id);
     float on = step(1.0 - density, h);
     return on * (1.0 - smoothstep(0.08, 0.30, length(f)));
+}
+
+/*
+ * Lightning bolt: distance to a jagged five-node polyline from the cloud base
+ * toward the horizon, with one fork near the middle. Node positions are
+ * hashed from the strike seed the CPU sends per strike, so the shape holds
+ * steady while the bolt is visible and changes with every strike. Distances
+ * are in cell units (x scaled by aspect) so the core stays equally thick in
+ * every dither column.
+ */
+float segmentDistance(vec2 p, vec2 a, vec2 b) {
+    vec2 pa = (p - a) * vec2(uAspect, 1.0);
+    vec2 ba = (b - a) * vec2(uAspect, 1.0);
+    float h = clamp(dot(pa, ba) / max(dot(ba, ba), 1e-6), 0.0, 1.0);
+    return length(pa - ba * h);
+}
+
+float boltPath(vec2 uv, float x0, float seed) {
+    float lean = (hash21(vec2(seed, 3.7)) - 0.5) * 0.42;
+    float d = 1e9;
+    vec2 prev = vec2(x0, 0.06);
+    for (int i = 1; i <= 5; i++) {
+        float t = float(i) / 5.0;
+        float jag = (hash21(vec2(seed + float(i) * 13.1, 7.7)) - 0.5) * 0.16 * (1.0 - abs(t - 0.5));
+        vec2 node = vec2(mix(x0, x0 + lean, t) + jag, mix(0.06, 0.64, t));
+        d = min(d, segmentDistance(uv, prev, node));
+        if (i == 2) {
+            vec2 fork = node + vec2((hash21(vec2(seed, 11.3)) - 0.5) * 0.34, 0.15);
+            d = min(d, segmentDistance(uv, node, fork));
+        }
+        prev = node;
+    }
+    return d;
 }
 
 ${OKLAB_GLSL}
@@ -191,9 +256,15 @@ void main() {
         snow += snowLayer(uv + vec2(0.31, 0.17), 0.5, 0.10 + 0.18 * uWeather.y);
         scene = mix(scene, uPrecipColor, clamp(snow, 0.0, 1.0) * 0.85);
     } else if (uWeather.z > 0.5) {
-        float rain = rainLayer(uv, 0.0, 0.18 + 0.30 * uWeather.y);
-        rain += rainLayer(uv + vec2(0.23, 0.41), 0.37, 0.10 + 0.18 * uWeather.y);
-        scene = mix(scene, uPrecipColor, clamp(rain, 0.0, 1.0) * 0.75);
+        // A slow gust swells the density so the rain breathes with the wind.
+        float gust = 0.75 + 0.45 * vnoise(vec2(uTime * 0.09, 3.7));
+        float rainNear = rainLayer(uv, 0.0, (0.16 + 0.34 * uWeather.y) * gust, 1.25, 34.0, 10.0, 0.15);
+        float rainMid = rainLayer(uv + vec2(0.23, 0.41), 0.37, (0.12 + 0.26 * uWeather.y) * gust, 0.90, 46.0, 9.0, 0.13);
+        float rainFar = rainLayer(uv + vec2(0.61, 0.13), 0.71, (0.08 + 0.18 * uWeather.y) * gust, 0.58, 68.0, 7.0, 0.10);
+        float rain = clamp(rainNear + rainMid * 0.75 + rainFar * 0.5, 0.0, 1.0);
+        scene = mix(scene, uPrecipColor, rain * 0.78);
+        // Impacts where the near layer meets the ground band.
+        scene = mix(scene, uPrecipColor, splashField(uv, 0.10 + 0.30 * uWeather.y) * 0.45);
     }
 
     // Stars only when the scene asks for them (clear/mainly-clear nights).
@@ -208,8 +279,23 @@ void main() {
         scene = mix(scene, uMarkColor, star * 0.65 * twinkle);
     }
 
-    // CPU-timed lightning envelope.
-    scene = mix(scene, uMarkColor, uWeather.w * mix(0.35, 0.75, cloud));
+    // CPU-timed lightning. The whole scene lifts with the strike envelope,
+    // brightest inside the clouds and around the strike column; the bolt
+    // itself is a sharper flicker on the same timing.
+    float strikeNear = exp(-(uv.x - uStorm.y) * (uv.x - uStorm.y) * 8.0)
+                     * (1.0 - smoothstep(0.55, 0.95, uv.y));
+    scene = mix(
+        scene,
+        uMarkColor,
+        clamp(uWeather.w * mix(0.30, 0.70, cloud) + uStorm.x * strikeNear * 0.30, 0.0, 0.85)
+    );
+
+    if (uStorm.x > 0.001) {
+        float d = boltPath(uv, uStorm.y, uStorm.z);
+        float core = 1.0 - smoothstep(0.004, 0.012, d);
+        float halo = exp(-d * d * 90.0) * 0.55;
+        scene = mix(scene, uMarkColor, clamp(uStorm.x * (core * 0.85 + halo), 0.0, 0.85));
+    }
 
     // Readability wash: a little toward paper everywhere, a little more behind
     // the reading column and under the navigation. Cosmetic only; the palette
@@ -633,8 +719,10 @@ class WeatherBackground extends HTMLElement {
         // over roughly fourteen seconds. Both stop for reduced motion.
         const phase = moving ? Math.floor(this.#clock) % 8 : 0;
         const breathe = moving ? 0.75 + 0.25 * Math.sin(this.#clock * 0.45) : 1;
-        const flash =
-            moving && this.#spec?.lightning ? flashEnvelope(this.#clock, this.#seed, true) : 0;
+        const storm: LightningState =
+            moving && this.#spec?.lightning
+                ? lightningState(this.#clock, this.#seed, true)
+                : STORM_IDLE;
 
         gl.uniform2f(this.#uniform('uResolution'), this.#cols, this.#rows);
         gl.uniform1f(this.#uniform('uTime'), time);
@@ -669,8 +757,9 @@ class WeatherBackground extends HTMLElement {
             frame.weather[0],
             frame.weather[1],
             frame.weather[2],
-            flash,
+            storm.flash,
         );
+        gl.uniform4f(this.#uniform('uStorm'), storm.bolt, storm.x, storm.seed, 0);
     }
 
     #renderNow(): void {
